@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mobile Gallery – Best Phones in Simrahi Bazar, Bihar</title>
+<!-- Firebase SDK (v9 compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--card:#1c1c28;
+  --accent:#6c3fff;--accent2:#00d4ff;--gold:#f5c842;
+  --text:#e8e8f0;--muted:#7a7a9a;--border:#2a2a3f;
+  --grad:linear-gradient(135deg,#6c3fff 0%,#00d4ff 100%);
+  --red:#ff4d6d;--green:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;}
+
+/* ── NAVBAR ── */
+nav{position:fixed;top:0;width:100%;z-index:1000;
+  background:rgba(10,10,15,.93);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:70px;}
+.logo{display:flex;align-items:center;gap:12px;font-size:1.4rem;font-weight:900;cursor:pointer;}
+.logo-icon{width:40px;height:40px;background:var(--grad);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .3s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+.nav-right{display:flex;gap:10px;align-items:center;}
+.nav-cta{background:var(--grad);border:none;color:#fff;padding:10px 20px;border-radius:25px;
+  cursor:pointer;font-size:.85rem;font-weight:600;transition:opacity .3s,transform .2s;}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px);}
+/* Admin btn – desktop only */
+.admin-btn{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);
+  color:var(--gold);padding:7px 15px;border-radius:18px;cursor:pointer;
+  font-size:.75rem;font-weight:700;transition:all .3s;display:flex;align-items:center;gap:6px;}
+.admin-btn:hover{background:rgba(245,200,66,.2);}
+@media(max-width:900px){.admin-btn{display:none!important;}}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.hamburger span{display:block;width:25px;height:2px;background:var(--text);border-radius:2px;}
+@media(max-width:700px){
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+}
+
+/* ── PAGES ── */
+.page{display:none;padding-top:70px;min-height:100vh;}
+.page.active{display:block;}
+
+/* ── HERO ── */
+.hero{min-height:calc(100vh - 70px);display:flex;align-items:center;
+  padding:60px 5%;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-100px;right:-200px;width:700px;height:700px;
+  background:radial-gradient(circle,rgba(108,63,255,.15) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-200px;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(0,212,255,.1) 0%,transparent 70%);pointer-events:none;}
+.hero-content{max-width:600px;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(108,63,255,.15);border:1px solid rgba(108,63,255,.4);
+  color:#a78bff;padding:6px 16px;border-radius:20px;
+  font-size:.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px;}
+.hero-badge::before{content:'●';font-size:.5rem;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:900;line-height:1.1;margin-bottom:14px;}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:32px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+.btn-primary{background:var(--grad);color:#fff;border:none;padding:14px 30px;border-radius:30px;
+  font-size:.95rem;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .3s;
+  box-shadow:0 4px 25px rgba(108,63,255,.4);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(108,63,255,.5);}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);
+  padding:14px 30px;border-radius:30px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.hero-stats{display:flex;gap:40px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border);}
+.stat h3{font-size:1.8rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat p{font-size:.8rem;color:var(--muted);margin-top:2px;}
+.hero-visual{position:absolute;right:5%;top:50%;transform:translateY(-50%);width:320px;text-align:center;z-index:1;}
+.phone-mockup{font-size:11rem;line-height:1;filter:drop-shadow(0 20px 60px rgba(108,63,255,.4));animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.brand-orbit{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px;}
+.brand-pill{background:var(--card);border:1px solid var(--border);padding:5px 13px;border-radius:20px;
+  font-size:.76rem;font-weight:600;color:var(--muted);}
+@media(max-width:900px){.hero-visual{display:none;}}
+
+/* ── MARQUEE ── */
+.brands-strip{background:var(--surface);padding:16px 0;overflow:hidden;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.brands-track{display:flex;gap:0;animation:marquee 20s linear infinite;width:max-content;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.brand-item{font-size:1rem;font-weight:700;color:var(--muted);white-space:nowrap;padding:0 30px;display:inline-flex;align-items:center;gap:8px;}
+.brand-item img{height:16px;width:auto;object-fit:contain;filter:brightness(0) invert(0.5);vertical-align:middle;}
+
+/* ── SECTION ── */
+.section{padding:80px 5%;}
+.section-header{text-align:center;margin-bottom:50px;}
+.section-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;margin-bottom:10px;}
+.section-sub{color:var(--muted);font-size:.93rem;max-width:500px;margin:0 auto;}
+
+/* ── PHONE CARDS ── */
+.phones-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;}
+.phone-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;cursor:pointer;}
+.phone-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(108,63,255,.2);border-color:var(--accent);}
+.phone-img{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+  height:190px;display:flex;align-items:center;justify-content:center;
+  font-size:4.5rem;position:relative;overflow:hidden;}
+.phone-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.phone-img .phone-emoji{position:relative;z-index:1;font-size:4.5rem;
+  transition:opacity .3s;}
+.phone-img img ~ .phone-emoji{display:none;}
+.phone-badge{position:absolute;top:12px;right:12px;z-index:2;
+  font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:12px;}
+.phone-badge.new{background:var(--accent2);color:#000;}
+.phone-badge.sale{background:var(--red);color:#fff;}
+.phone-badge.hot{background:#f97316;color:#fff;}
+.phone-info{padding:16px;}
+.phone-brand{font-size:.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.phone-name{font-size:1rem;font-weight:700;margin:4px 0;}
+.phone-specs{font-size:.8rem;color:var(--muted);margin-bottom:12px;}
+.phone-footer{display:flex;align-items:center;justify-content:space-between;}
+.phone-price{font-size:1.1rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.add-btn{background:var(--grad);border:none;color:#fff;width:32px;height:32px;border-radius:50%;
+  cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.add-btn:hover{transform:scale(1.15);}
+
+/* filter */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;justify-content:center;}
+.filter-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);
+  padding:8px 18px;border-radius:20px;cursor:pointer;font-size:.83rem;font-weight:500;transition:all .3s;}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* ── BRANDS PAGE ── */
+.brands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:16px;}
+.brand-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:26px 18px;text-align:center;cursor:pointer;transition:all .3s;}
+.brand-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 30px rgba(108,63,255,.2);}
+.brand-icon{font-size:2.8rem;margin-bottom:10px;display:flex;align-items:center;justify-content:center;}
+.brand-logo{width:70px;height:48px;object-fit:contain;filter:brightness(0) invert(1);opacity:.85;transition:opacity .3s;}
+.brand-card:hover .brand-logo{opacity:1;}
+.brand-item-logo{height:18px;width:auto;object-fit:contain;filter:brightness(0) invert(0.5);vertical-align:middle;margin-right:6px;}
+.brand-name{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.brand-count{font-size:.78rem;color:var(--muted);}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+@media(max-width:800px){.about-grid{grid-template-columns:1fr;}}
+.about-visual{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;text-align:center;}
+.about-features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;}
+.feature-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;}
+.feature-icon{font-size:1.4rem;margin-bottom:8px;}
+.feature-title{font-size:.83rem;font-weight:700;margin-bottom:4px;}
+.feature-desc{font-size:.75rem;color:var(--muted);}
+.about-text h2{font-size:1.9rem;font-weight:800;margin-bottom:14px;}
+.about-text h2 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.about-text p{color:var(--muted);line-height:1.8;margin-bottom:14px;font-size:.93rem;}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px;margin-top:46px;}
+.team-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;text-align:center;}
+.team-avatar{width:68px;height:68px;border-radius:50%;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 12px;}
+.team-name{font-size:.97rem;font-weight:700;}
+.team-role{font-size:.78rem;color:var(--muted);margin-top:4px;}
+
+/* ── CONTACT ── */
+.contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:50px;align-items:start;}
+@media(max-width:800px){.contact-grid{grid-template-columns:1fr;}}
+.contact-item{display:flex;align-items:flex-start;gap:14px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+.contact-icon{width:42px;height:42px;background:rgba(108,63,255,.15);border:1px solid rgba(108,63,255,.3);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.contact-label{font-size:.73rem;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+.contact-value{font-size:.93rem;font-weight:600;}
+.contact-form{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;}
+.contact-form h3{font-size:1.15rem;font-weight:700;margin-bottom:18px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:11px 14px;border-radius:10px;font-size:.88rem;
+  font-family:'Poppins',sans-serif;outline:none;transition:border-color .3s;}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);}
+.form-group textarea{resize:vertical;min-height:90px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+.submit-btn{width:100%;background:var(--grad);border:none;color:#fff;
+  padding:13px;border-radius:10px;font-size:.93rem;font-weight:700;cursor:pointer;transition:opacity .3s;}
+.submit-btn:hover{opacity:.85;}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:50px 5% 28px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:36px;}
+@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.footer-grid{grid-template-columns:1fr;}}
+.footer-logo{font-size:1.4rem;font-weight:900;margin-bottom:10px;}
+.footer-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.footer-desc{color:var(--muted);font-size:.86rem;line-height:1.7;margin-bottom:18px;}
+.social-row{display:flex;gap:10px;}
+.social-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .3s;}
+.social-btn:hover{border-color:var(--accent);transform:translateY(-2px);}
+.footer-col h4{font-size:.86rem;font-weight:700;margin-bottom:14px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:9px;}
+.footer-col ul li a{color:var(--muted);text-decoration:none;font-size:.83rem;transition:color .3s;cursor:pointer;display:inline-flex;align-items:center;gap:7px;}
+.footer-col ul li a img{height:13px;width:auto;object-fit:contain;filter:brightness(0) invert(0.5);}
+.footer-col ul li a:hover{color:var(--accent2);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border);padding-top:18px;font-size:.8rem;color:var(--muted);}
+.footer-bottom span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--card);
+  border:1px solid var(--accent);border-radius:12px;padding:13px 20px;
+  color:var(--text);font-size:.88rem;font-weight:600;
+  transform:translateY(100px);opacity:0;transition:all .4s;box-shadow:0 8px 30px rgba(108,63,255,.3);}
+#toast.show{transform:translateY(0);opacity:1;}
+
+/* ════════════════════════════════════════
+   ADMIN LOGIN OVERLAY
+════════════════════════════════════════ */
+#adminLoginOverlay{display:none;position:fixed;inset:0;z-index:5000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;}
+#adminLoginOverlay.show{display:flex;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:40px 34px;width:360px;max-width:94vw;text-align:center;}
+.login-box .lock{font-size:3rem;margin-bottom:14px;}
+.login-box h2{font-size:1.4rem;font-weight:800;margin-bottom:6px;}
+.login-box h2 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.login-box p{color:var(--muted);font-size:.83rem;margin-bottom:26px;}
+.login-box input{width:100%;background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:12px 14px;border-radius:10px;font-size:.88rem;
+  font-family:'Poppins',sans-serif;outline:none;margin-bottom:12px;transition:border-color .3s;}
+.login-box input:focus{border-color:var(--accent);}
+.login-box .login-submit{width:100%;background:var(--grad);border:none;color:#fff;
+  padding:13px;border-radius:10px;font-size:.93rem;font-weight:700;cursor:pointer;}
+.login-error{color:var(--red);font-size:.8rem;margin-top:10px;display:none;}
+.login-cancel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;margin-top:14px;display:block;width:100%;}
+
+/* ════════════════════════════════════════
+   ADMIN PANEL
+════════════════════════════════════════ */
+#adminPanel{display:none;position:fixed;inset:0;z-index:4000;background:var(--bg);overflow-y:auto;}
+#adminPanel.show{display:block;}
+
+.ap-nav{background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4%;height:62px;position:sticky;top:0;z-index:10;gap:10px;}
+.ap-logo{font-size:1rem;font-weight:800;white-space:nowrap;}
+.ap-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ap-tabs{display:flex;gap:4px;overflow-x:auto;}
+.ap-tab{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:8px;
+  cursor:pointer;font-size:.82rem;font-weight:600;transition:all .3s;
+  font-family:'Poppins',sans-serif;white-space:nowrap;}
+.ap-tab:hover{color:var(--text);background:var(--card);}
+.ap-tab.active{background:var(--accent);color:#fff;}
+.ap-close-btn{background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.3);
+  color:var(--red);padding:7px 14px;border-radius:8px;cursor:pointer;
+  font-size:.82rem;font-weight:700;white-space:nowrap;}
+
+.ap-body{padding:28px 4%;}
+.ap-section{display:none;}
+.ap-section.active{display:block;}
+
+/* stats */
+.ap-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:26px;}
+.ap-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;}
+.ap-stat-num{font-size:1.7rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ap-stat-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;}
+
+/* cards */
+.ap-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px;}
+.ap-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.ap-card-head h3{font-size:.97rem;font-weight:700;}
+
+/* buttons */
+.ap-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;
+  font-size:.8rem;font-weight:600;font-family:'Poppins',sans-serif;transition:all .2s;}
+.ap-btn-primary{background:var(--grad);color:#fff;}
+.ap-btn-primary:hover{opacity:.85;}
+.ap-btn-danger{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);color:var(--red);}
+.ap-btn-danger:hover{background:rgba(255,77,109,.22);}
+.ap-btn-edit{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--accent2);}
+.ap-btn-edit:hover{background:rgba(0,212,255,.2);}
+.ap-btn-sm{padding:5px 11px;font-size:.73rem;}
+
+/* table */
+.ap-table{width:100%;border-collapse:collapse;}
+.ap-table th{text-align:left;font-size:.72rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;padding:9px 10px;border-bottom:1px solid var(--border);}
+.ap-table td{padding:11px 10px;border-bottom:1px solid rgba(42,42,63,.5);font-size:.83rem;vertical-align:middle;}
+.ap-table tr:last-child td{border-bottom:none;}
+.ap-table tr:hover td{background:rgba(255,255,255,.02);}
+.td-act{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* form grid */
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.fg-grid.c3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:600px){.fg-grid,.fg-grid.c3{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:.74rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px;}
+.fg input,.fg select,.fg textarea{background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:10px 13px;border-radius:8px;font-size:.86rem;
+  font-family:'Poppins',sans-serif;outline:none;transition:border-color .3s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg textarea{resize:vertical;min-height:75px;}
+.fg-btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+
+/* photo upload area */
+.photo-upload-area{border:2px dashed var(--border);border-radius:12px;
+  padding:20px;text-align:center;cursor:pointer;transition:border-color .3s;position:relative;}
+.photo-upload-area:hover{border-color:var(--accent);}
+.photo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-preview{width:100%;height:130px;object-fit:cover;border-radius:8px;margin-top:10px;display:none;}
+.photo-upload-label{font-size:.82rem;color:var(--muted);pointer-events:none;}
+.photo-upload-label span{color:var(--accent2);font-weight:600;}
+
+/* badges */
+.bdg-new{background:var(--accent2);color:#000;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;}
+.bdg-sale{background:var(--red);color:#fff;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;}
+.bdg-hot{background:#f97316;color:#fff;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700;}
+
+/* store info grid */
+.si-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+@media(max-width:600px){.si-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     ADMIN LOGIN OVERLAY
+══════════════════════════════════════════ -->
+<div id="adminLoginOverlay">
+  <div class="login-box">
+    <div class="lock">🔐</div>
+    <h2>Admin <span>Login</span></h2>
+    <p>Restricted access – only for store owner</p>
+    <input type="text" id="adminUser" placeholder="Username" autocomplete="off"/>
+    <input type="password" id="adminPass" placeholder="Password"/>
+    <button class="login-submit" onclick="doAdminLogin()">Login →</button>
+    <div class="login-error" id="loginError">❌ Wrong username or password!</div>
+    <button class="login-cancel" onclick="closeAdminLogin()">✕ Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN PANEL
+══════════════════════════════════════════ -->
+<div id="adminPanel">
+  <div class="ap-nav">
+    <div class="ap-logo">⚙️ <span>Admin Panel</span></div>
+    <div class="ap-tabs">
+      <button class="ap-tab active" onclick="apTab('dashboard',this)">📊 Dashboard</button>
+      <button class="ap-tab" onclick="apTab('phones',this)">📱 Phones</button>
+      <button class="ap-tab" onclick="apTab('brands',this)">🏷️ Brands</button>
+      <button class="ap-tab" onclick="apTab('store',this)">🏪 Store Info</button>
+      <button class="ap-tab" onclick="apTab('hero',this)">🏠 Hero</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="fbStatus" style="font-size:.72rem;font-weight:700;padding:4px 10px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;color:var(--muted);white-space:nowrap;">💾 Local Only</span>
+      <button class="ap-close-btn" onclick="exitAdmin()">✕ Exit</button>
+    </div>
+  </div>
+
+  <div class="ap-body">
+
+    <!-- DASHBOARD -->
+    <div class="ap-section active" id="aps-dashboard">
+      <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:6px;">Welcome, Admin 👋</h2>
+      <p style="color:var(--muted);font-size:.86rem;margin-bottom:22px;">Manage your entire store from here.</p>
+      <div class="ap-stats" id="apStatsRow"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+        <div class="ap-card">
+          <div class="ap-card-head"><h3>⚡ Quick Actions</h3></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="ap-btn ap-btn-primary" onclick="apTabClick('phones')">📱 Add New Phone</button>
+            <button class="ap-btn ap-btn-edit" onclick="apTabClick('store')">🏪 Edit Store Info</button>
+            <button class="ap-btn ap-btn-edit" onclick="apTabClick('hero')">🏠 Edit Hero Section</button>
+            <button class="ap-btn ap-btn-edit" onclick="apTabClick('brands')">🏷️ Manage Brands</button>
+          </div>
+        </div>
+        <div class="ap-card">
+          <div class="ap-card-head"><h3>📋 Recent Phones</h3></div>
+          <div id="apRecentPhones"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONES -->
+    <div class="ap-section" id="aps-phones">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3 id="phoneFormTitle">📱 Add New Phone</h3></div>
+        <div class="fg-grid c3">
+          <div class="fg"><label>Brand *</label>
+            <select id="pf-brand">
+              <option value="">-- Select Brand --</option>
+              <option>Apple</option><option>Samsung</option><option>Vivo</option>
+              <option>Oppo</option><option>Xiaomi</option><option>Realme</option>
+              <option>Tecno</option><option>Infinix</option><option>Nokia</option><option>OnePlus</option>
+            </select>
+          </div>
+          <div class="fg"><label>Phone Name *</label><input type="text" id="pf-name" placeholder="e.g. Galaxy A55"/></div>
+          <div class="fg"><label>Price *</label><input type="text" id="pf-price" placeholder="e.g. ₹25,999"/></div>
+          <div class="fg"><label>Specs / Description</label><input type="text" id="pf-specs" placeholder="e.g. 50MP • 128GB • 5000mAh"/></div>
+          <div class="fg"><label>Badge</label>
+            <select id="pf-badge">
+              <option value="">None</option>
+              <option value="new">NEW</option>
+              <option value="sale">SALE</option>
+              <option value="hot">HOT</option>
+            </select>
+          </div>
+          <div class="fg"><label>Emoji Icon (fallback)</label>
+            <input type="text" id="pf-icon" placeholder="📱" maxlength="2" value="📱"/>
+          </div>
+          <!-- PHOTO UPLOAD -->
+          <div class="fg full">
+            <label>Phone Photo (Upload Image)</label>
+            <div class="photo-upload-area" id="photoUploadArea">
+              <input type="file" id="pf-photo" accept="image/*" onchange="previewPhoto(this)"/>
+              <div class="photo-upload-label">📷 Click to upload phone photo<br><span>JPG, PNG, WEBP supported</span></div>
+              <img id="photoPreviewImg" class="photo-preview" alt="preview"/>
+            </div>
+            <input type="hidden" id="pf-photoData" value=""/>
+          </div>
+        </div>
+        <input type="hidden" id="pf-editId" value=""/>
+        <div class="fg-btns">
+          <button class="ap-btn ap-btn-primary" onclick="savePhone()">💾 Save Phone</button>
+          <button class="ap-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);" onclick="clearPhoneForm()">✕ Clear</button>
+        </div>
+      </div>
+
+      <div class="ap-card">
+        <div class="ap-card-head">
+          <h3>All Phones (<span id="phonesCount">0</span>)</h3>
+          <input type="text" id="phoneSearch" placeholder="🔍 Search…" onkeyup="renderAdminPhones()"
+            style="background:var(--surface);border:1px solid var(--border);color:var(--text);
+            padding:7px 12px;border-radius:8px;font-size:.82rem;outline:none;width:180px;"/>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="ap-table">
+            <thead><tr><th>Photo</th><th>Brand</th><th>Name</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead>
+            <tbody id="adminPhonesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANDS -->
+    <div class="ap-section" id="aps-brands">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>🏷️ Add / Edit Brand</h3></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Brand Name *</label><input type="text" id="bf-name" placeholder="e.g. Samsung"/></div>
+          <div class="fg"><label>Emoji Icon</label><input type="text" id="bf-icon" placeholder="📗" maxlength="2"/></div>
+          <div class="fg full"><label>Description</label><input type="text" id="bf-desc" placeholder="e.g. Galaxy Series • 30+ Models"/></div>
+        </div>
+        <input type="hidden" id="bf-editId"/>
+        <div class="fg-btns">
+          <button class="ap-btn ap-btn-primary" onclick="saveBrand()">💾 Save Brand</button>
+          <button class="ap-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);" onclick="clearBrandForm()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>All Brands (<span id="brandsCount">0</span>)</h3></div>
+        <div style="overflow-x:auto;">
+          <table class="ap-table">
+            <thead><tr><th>Icon</th><th>Name</th><th>Description</th><th>Phones</th><th>Actions</th></tr></thead>
+            <tbody id="adminBrandsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORE INFO -->
+    <div class="ap-section" id="aps-store">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>🏪 Edit Store Information</h3></div>
+        <div class="si-grid">
+          <div class="fg"><label>Store Name</label><input type="text" id="si-name"/></div>
+          <div class="fg"><label>Tagline</label><input type="text" id="si-tagline"/></div>
+          <div class="fg"><label>Phone Number</label><input type="text" id="si-phone1"/></div>
+          <div class="fg"><label>WhatsApp Number</label><input type="text" id="si-phone2"/></div>
+          <div class="fg"><label>Email</label><input type="text" id="si-email"/></div>
+          <div class="fg"><label>Store Timings</label><input type="text" id="si-timing"/></div>
+          <div class="fg"><label>Address</label><input type="text" id="si-address"/></div>
+          <div class="fg"><label>Google Maps Link</label><input type="text" id="si-maps"/></div>
+          <div class="fg"><label>Facebook URL</label><input type="text" id="si-fb"/></div>
+          <div class="fg"><label>Instagram URL</label><input type="text" id="si-ig"/></div>
+          <div class="fg"><label>YouTube URL</label><input type="text" id="si-yt"/></div>
+          <div class="fg"><label>Stat: Total Models</label><input type="text" id="si-stat1"/></div>
+          <div class="fg"><label>Stat: Brands Count</label><input type="text" id="si-stat2"/></div>
+          <div class="fg"><label>Stat: Happy Customers</label><input type="text" id="si-stat3"/></div>
+        </div>
+        <div class="fg-btns"><button class="ap-btn ap-btn-primary" onclick="saveStoreInfo()">💾 Save Store Info</button></div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="ap-section" id="aps-hero">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>🏠 Edit Hero Section</h3></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Badge Text</label><input type="text" id="hi-badge"/></div>
+          <div class="fg"><label>Heading Line 1</label><input type="text" id="hi-h1"/></div>
+          <div class="fg"><label>Heading Line 2 (colored)</label><input type="text" id="hi-h2"/></div>
+          <div class="fg full"><label>Description</label><textarea id="hi-desc"></textarea></div>
+          <div class="fg"><label>Button 1 Text</label><input type="text" id="hi-btn1"/></div>
+          <div class="fg"><label>Button 2 Text</label><input type="text" id="hi-btn2"/></div>
+        </div>
+        <div class="fg-btns"><button class="ap-btn ap-btn-primary" onclick="saveHero()">💾 Save Hero</button></div>
+      </div>
+    </div>
+
+  </div><!-- ap-body -->
+</div><!-- adminPanel -->
+
+<!-- ══════════════════════════════════════════
+     MAIN WEBSITE
+══════════════════════════════════════════ -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-icon">📱</div>
+    <span id="siteLogoName">Mobile Gallery</span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a onclick="showPage('phones')" id="nav-phones">Phones</a></li>
+    <li><a onclick="showPage('brands')" id="nav-brands">Brands</a></li>
+    <li><a onclick="showPage('about')" id="nav-about">About Us</a></li>
+    <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <!-- Admin button: visible only on desktop via CSS -->
+    <button class="admin-btn" onclick="openAdminLogin()">⚙️ Admin Panel</button>
+    <button class="nav-cta" onclick="showPage('contact')">📞 Contact Us</button>
+  </div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge" id="heroBadgeEl">Bihar's #1 Mobile Store</div>
+      <h1 id="heroH1El">The Biggest<br><span id="heroH2El">Mobile Store</span></h1>
+      <p id="heroDescEl">Samsung, Apple, Vivo, Oppo, Xiaomi, Realme and many more brands – all in one place. Best price guarantee every day!</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('phones')" id="heroBtn1El">📱 Browse Phones</button>
+        <button class="btn-secondary" onclick="showPage('contact')" id="heroBtn2El">Ask Us Anything</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><h3 id="heroStat1">500+</h3><p>Phone Models</p></div>
+        <div class="stat"><h3 id="heroStat2">15+</h3><p>Brands</p></div>
+        <div class="stat"><h3 id="heroStat3">10K+</h3><p>Happy Customers</p></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="phone-mockup">📱</div>
+      <div class="brand-orbit" id="brandOrbit"></div>
+    </div>
+  </section>
+
+  <div class="brands-strip">
+    <div class="brands-track" id="brandsMarquee"></div>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Hot Deals</div>
+      <h2 class="section-title">Featured Phones</h2>
+      <p class="section-sub">Our most popular phones at the best prices</p>
+    </div>
+    <div class="phones-grid" id="featuredGrid"></div>
+    <div style="text-align:center;margin-top:34px;">
+      <button class="btn-primary" onclick="showPage('phones')">View All Phones →</button>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="section-header">
+      <div class="section-eyebrow">Why Choose Us</div>
+      <h2 class="section-title">Why Mobile Gallery?</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;">
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">✅</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">100% Original Phones</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Only authentic phones – no copies, no duplicates</p></div>
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">💰</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">Best Price Guarantee</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Find it cheaper elsewhere, we'll beat the price!</p></div>
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">🔧</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">Free After-Sale Service</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">We're here after purchase too – free setup & support</p></div>
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">📦</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">Easy Exchange Policy</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Exchange your old phone and upgrade affordably</p></div>
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">💳</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">EMI Available</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Take your favourite phone home in easy installments</p></div>
+      <div class="feature-item" style="border-radius:14px;padding:22px;"><div style="font-size:1.9rem;margin-bottom:10px;">⭐</div><h3 style="font-size:.97rem;font-weight:700;margin-bottom:7px;">10,000+ Happy Customers</h3><p style="font-size:.83rem;color:var(--muted);line-height:1.6;">Thousands of satisfied customers trust us every day</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- PHONES PAGE -->
+<div class="page" id="page-phones">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Collection</div>
+      <h2 class="section-title">All Phones</h2>
+      <p class="section-sub">Filter by brand to find your perfect phone</p>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="phones-grid" id="allPhonesGrid"></div>
+  </section>
+</div>
+
+<!-- BRANDS PAGE -->
+<div class="page" id="page-brands">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Available Brands</div>
+      <h2 class="section-title">All Brands</h2>
+      <p class="section-sub">Top phone brands from around the world – all available here</p>
+    </div>
+    <div class="brands-grid" id="brandsPageGrid"></div>
+    <div style="margin-top:55px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;">
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:18px;text-align:center;">🎁 Special Offers with Every Purchase</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;">
+        <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">📱</div><div style="font-weight:700;margin-bottom:3px;">Free Screen Guard</div><div style="font-size:.78rem;color:var(--muted);">Screen protection with every phone</div></div>
+        <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">🎧</div><div style="font-weight:700;margin-bottom:3px;">Earphones Gift</div><div style="font-size:.78rem;color:var(--muted);">Free earphones on selected phones</div></div>
+        <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">🔋</div><div style="font-weight:700;margin-bottom:3px;">Free Data Transfer</div><div style="font-size:.78rem;color:var(--muted);">We migrate your old phone data free</div></div>
+        <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">📦</div><div style="font-weight:700;margin-bottom:3px;">Box Pack Guarantee</div><div style="font-size:.78rem;color:var(--muted);">Only sealed original box phones</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ABOUT PAGE -->
+<div class="page" id="page-about">
+  <section class="section">
+    <div class="about-grid">
+      <div class="about-visual">
+        <div style="font-size:5.5rem;margin-bottom:18px;">🏪</div>
+        <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:7px;" id="aboutStoreName">Mobile Gallery</h3>
+        <p style="color:var(--muted);font-size:.87rem;margin-bottom:18px;">India's trusted mobile store – serving since 2015</p>
+        <div class="about-features">
+          <div class="feature-item"><div class="feature-icon">✅</div><div class="feature-title">Original Products</div><div class="feature-desc">100% authentic phones</div></div>
+          <div class="feature-item"><div class="feature-icon">🏆</div><div class="feature-title">Award Winning</div><div class="feature-desc">Best store 2023</div></div>
+          <div class="feature-item"><div class="feature-icon">👥</div><div class="feature-title">Expert Staff</div><div class="feature-desc">Trained professionals</div></div>
+          <div class="feature-item"><div class="feature-icon">🔒</div><div class="feature-title">Warranty</div><div class="feature-desc">Official warranty</div></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <div style="font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;">Our Story</div>
+        <h2>Your Trusted <span>Mobile Partner</span></h2>
+        <p>Mobile Gallery was founded in 2015 with a simple idea – give every customer in Bihar a reliable place to buy genuine phones from all major brands, at honest prices, without any compromise.</p>
+        <p>Today we're proud to have served over 10,000 happy customers who keep coming back. Our team of experienced mobile experts helps you choose the best phone for your budget and needs.</p>
+        <p>Whether your budget is ₹8,000 or ₹1,50,000 – we find the best option for you. That's our promise.</p>
+        <div style="background:rgba(108,63,255,.1);border:1px solid rgba(108,63,255,.25);border-radius:12px;padding:16px 18px;margin-top:18px;font-size:.88rem;color:var(--accent2);line-height:1.7;">
+          📍 Located at <strong>Karjain Road, Simrahi Bazar, Bihar 852111</strong> — visit us anytime from Monday to Saturday, 10 AM – 9 PM.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:65px;">
+      <div class="section-header">
+        <div class="section-eyebrow">Our Journey</div>
+        <h2 class="section-title">Since 2015</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;border-top:3px solid var(--accent);"><div style="font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2015</div><div style="font-weight:700;margin:7px 0 3px;">Founded</div><div style="font-size:.8rem;color:var(--muted);">Started with a small shop at Simrahi Bazar</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;border-top:3px solid var(--accent2);"><div style="font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2018</div><div style="font-weight:700;margin:7px 0 3px;">Expansion</div><div style="font-size:.8rem;color:var(--muted);">Added 10+ brands, doubled the store size</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;border-top:3px solid var(--gold);"><div style="font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2021</div><div style="font-weight:700;margin:7px 0 3px;">5,000+ Customers</div><div style="font-size:.8rem;color:var(--muted);">Crossed 5,000 satisfied customer milestone</div></div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;border-top:3px solid var(--accent);"><div style="font-size:1.3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">2024</div><div style="font-weight:700;margin:7px 0 3px;">Award Winner</div><div style="font-size:.8rem;color:var(--muted);">Recognized as Best Mobile Store of the Year</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:55px;">
+      <div class="section-header"><div class="section-eyebrow">Our Team</div><h2 class="section-title">The Experts</h2></div>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-avatar">👨‍💼</div><div class="team-name">Ahmed Raza</div><div class="team-role">Store Owner & Manager</div></div>
+        <div class="team-card"><div class="team-avatar">👩‍💻</div><div class="team-name">Sana Khan</div><div class="team-role">Senior Sales Expert</div></div>
+        <div class="team-card"><div class="team-avatar">👨‍🔧</div><div class="team-name">Usman Ali</div><div class="team-role">Technical Specialist</div></div>
+        <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Bilal Hussain</div><div class="team-role">Customer Support</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT PAGE -->
+<div class="page" id="page-contact">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Get In Touch</div>
+      <h2 class="section-title">Contact Us</h2>
+      <p class="section-sub">Have a question? We're always here to help!</p>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-label">Our Address</div><div class="contact-value" id="ci-address">Karjain Road, Simrahi Bazar, Bihar 852111, India</div></div></div>
+        <div class="contact-item"><div class="contact-icon">📞</div><div><div class="contact-label">Phone Number</div><div class="contact-value" id="ci-phone1">0300-1234567</div></div></div>
+        <div class="contact-item"><div class="contact-icon">💬</div><div><div class="contact-label">WhatsApp</div><div class="contact-value" id="ci-phone2">0300-1234567</div></div></div>
+        <div class="contact-item"><div class="contact-icon">📧</div><div><div class="contact-label">Email</div><div class="contact-value" id="ci-email">info@mobilegallery.in</div></div></div>
+        <div class="contact-item"><div class="contact-icon">⏰</div><div><div class="contact-label">Store Timings</div><div class="contact-value" id="ci-timing">Mon–Sat: 10 AM – 9 PM</div></div></div>
+
+        <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-top:18px;">
+          <iframe src="https://www.google.com/maps?q=Mobile+Gallery,+Karjain+road,+Simrahi+Bazar,+Bihar+852111,+India&output=embed"
+            width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+        <a href="https://maps.app.goo.gl/VqmTRuia7hJc9kg76" target="_blank" id="ci-mapslink"
+          style="display:flex;align-items:center;gap:8px;background:rgba(108,63,255,.1);border:1px solid rgba(108,63,255,.3);
+          color:#a78bff;padding:10px 14px;border-radius:10px;font-size:.83rem;font-weight:600;text-decoration:none;margin-top:10px;">
+          📍 Open in Google Maps →
+        </a>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:14px;">
+          <h4 style="font-size:.88rem;font-weight:700;margin-bottom:12px;">📲 Follow Us</h4>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <span style="background:rgba(29,161,242,.1);border:1px solid rgba(29,161,242,.3);color:#1da1f2;padding:7px 14px;border-radius:18px;font-size:.8rem;font-weight:600;cursor:pointer;" onclick="openSocial('fb')">Facebook</span>
+            <span style="background:rgba(225,48,108,.1);border:1px solid rgba(225,48,108,.3);color:#e1306c;padding:7px 14px;border-radius:18px;font-size:.8rem;font-weight:600;cursor:pointer;" onclick="openSocial('ig')">Instagram</span>
+            <span style="background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:#25d366;padding:7px 14px;border-radius:18px;font-size:.8rem;font-weight:600;cursor:pointer;" onclick="openSocial('wa')">WhatsApp</span>
+            <span style="background:rgba(255,0,0,.1);border:1px solid rgba(255,0,0,.3);color:#ff0000;padding:7px 14px;border-radius:18px;font-size:.8rem;font-weight:600;cursor:pointer;" onclick="openSocial('yt')">YouTube</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <h3>📩 Send Us a Message</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Your Name</label><input type="text" placeholder="e.g. Rahul Sharma" id="formName"/></div>
+          <div class="form-group"><label>Phone Number</label><input type="text" placeholder="98765-43210" id="formPhone"/></div>
+        </div>
+        <div class="form-group"><label>Email (optional)</label><input type="email" placeholder="your@email.com" id="formEmail"/></div>
+        <div class="form-group"><label>Which Brand Are You Interested In?</label>
+          <select id="formBrand">
+            <option value="">-- Select Brand --</option>
+            <option>Apple iPhone</option><option>Samsung Galaxy</option><option>Vivo</option>
+            <option>Oppo</option><option>Xiaomi / Redmi</option><option>Realme</option>
+            <option>Tecno</option><option>Infinix</option><option>Need Guidance</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Your Budget</label>
+          <select id="formBudget">
+            <option value="">-- Select Budget --</option>
+            <option>₹8,000 – ₹15,000</option><option>₹15,000 – ₹30,000</option>
+            <option>₹30,000 – ₹60,000</option><option>₹60,000 – ₹1,00,000</option><option>₹1,00,000+</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message / Question</label><textarea placeholder="Type your question or requirement…" id="formMsg"></textarea></div>
+        <button class="submit-btn" onclick="sendMessage()">📤 Send Message</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">📱 <span id="footerStoreName">Mobile Gallery</span></div>
+      <p class="footer-desc" id="footerDesc">India's trusted mobile store – serving since 2015. All brands, best prices, 100% original. Karjain Road, Simrahi Bazar, Bihar.</p>
+      <div class="social-row">
+        <div class="social-btn" onclick="openSocial('fb')">📘</div>
+        <div class="social-btn" onclick="openSocial('ig')">📸</div>
+        <div class="social-btn" onclick="openSocial('wa')">💬</div>
+        <div class="social-btn" onclick="openSocial('yt')">🎥</div>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Quick Links</h4><ul>
+      <li><a onclick="showPage('home')">Home</a></li>
+      <li><a onclick="showPage('phones')">All Phones</a></li>
+      <li><a onclick="showPage('brands')">Brands</a></li>
+      <li><a onclick="showPage('about')">About Us</a></li>
+      <li><a onclick="showPage('contact')">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Brands</h4><ul id="footerBrandsList"></ul></div>
+    <div class="footer-col"><h4>Services</h4><ul>
+      <li><a>Phone Exchange</a></li><li><a>EMI / Installment</a></li>
+      <li><a>Free Accessories</a></li><li><a>After-Sale Support</a></li><li><a>Data Transfer</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2024 <span id="footerCopyName">Mobile Gallery</span> – All Rights Reserved</div>
+    <div style="font-size:.8rem;color:var(--muted);">Karjain Road, Simrahi Bazar, Bihar, India</div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     MASTER SCRIPT
+══════════════════════════════════════════ -->
+<script>
+// ─── CREDENTIALS ───────────────────────────────────
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'MobileGallery@786';
+
+// ─── STORAGE HELPERS ───────────────────────────────
+function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
+function _svLocal(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+// ─── DEFAULT DATA ──────────────────────────────────
+let phones = ld('mg_phones',[
+  {id:1,brand:'Apple',name:'iPhone 15 Pro Max',specs:'A17 Pro • 48MP • 256GB',price:'₹1,34,900',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:2,brand:'Apple',name:'iPhone 15',specs:'A16 • 48MP • 128GB',price:'₹79,900',icon:'📱',badge:'',badgeText:'',photo:''},
+  {id:3,brand:'Apple',name:'iPhone 14',specs:'A15 • 12MP • 128GB',price:'₹69,900',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
+  {id:4,brand:'Samsung',name:'Galaxy S24 Ultra',specs:'Snapdragon 8 Gen3 • 200MP • 256GB',price:'₹1,29,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:5,brand:'Samsung',name:'Galaxy A55',specs:'Exynos 1480 • 50MP • 128GB',price:'₹38,999',icon:'📱',badge:'',badgeText:'',photo:''},
+  {id:6,brand:'Samsung',name:'Galaxy A35',specs:'Exynos 1380 • 50MP • 128GB',price:'₹30,999',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
+  {id:7,brand:'Vivo',name:'Vivo V30 Pro',specs:'Dimensity 8200 • 50MP • 256GB',price:'₹42,999',icon:'📱',badge:'new',badgeText:'HOT',photo:''},
+  {id:8,brand:'Vivo',name:'Vivo Y200',specs:'Snapdragon 4 Gen1 • 50MP • 128GB',price:'₹22,999',icon:'📱',badge:'',badgeText:'',photo:''},
+  {id:9,brand:'Oppo',name:'Oppo Reno 11',specs:'Dimensity 8200 • 50MP • 256GB',price:'₹32,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:10,brand:'Oppo',name:'Oppo A79',specs:'Dimensity 6020 • 50MP • 128GB',price:'₹18,999',icon:'📱',badge:'',badgeText:'',photo:''},
+  {id:11,brand:'Xiaomi',name:'Redmi Note 13 Pro',specs:'Dimensity 7200 • 200MP • 256GB',price:'₹26,999',icon:'📱',badge:'new',badgeText:'HOT',photo:''},
+  {id:12,brand:'Xiaomi',name:'Redmi 13C',specs:'Helio G85 • 50MP • 128GB',price:'₹10,999',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
+  {id:13,brand:'Realme',name:'Realme 12 Pro+',specs:'Snapdragon 7s Gen2 • 50MP • 256GB',price:'₹27,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:14,brand:'Realme',name:'Realme C67',specs:'Snapdragon 685 • 108MP • 128GB',price:'₹13,999',icon:'📱',badge:'',badgeText:'',photo:''},
+  {id:15,brand:'Tecno',name:'Tecno Camon 30',specs:'Dimensity 7020 • 50MP • 256GB',price:'₹16,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:16,brand:'Infinix',name:'Infinix Note 40 Pro',specs:'Helio G99 • 108MP • 256GB',price:'₹19,999',icon:'📱',badge:'new',badgeText:'HOT',photo:''},
+]);
+
+// ─── BRAND LOGO HELPERS ────────────────────────────
+// Uses jsDelivr (simple-icons CDN) — no CORS issues, reliable, free.
+// Tecno & Infinix use inline SVG text logos since no vector logo CDN exists.
+function brandImg(slug,alt){
+  return `<img class="brand-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg" alt="${alt}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="brand-logo-fallback" style="display:none;font-size:1.5rem;">📱</span>`;
+}
+function brandSvgText(text){
+  return `<svg class="brand-logo" viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:26px;fill:white;opacity:.85;"><text y="22" font-size="18" font-family="Arial,sans-serif" font-weight="700" letter-spacing="1">${text}</text></svg>`;
+}
+
+let brands = ld('mg_brands',[
+{id:1, name:'Apple',    icon:brandImg('apple','Apple'),       desc:'iPhone Series • 12+ Models'},
+{id:2, name:'Samsung',  icon:brandImg('samsung','Samsung'),   desc:'Galaxy Series • 30+ Models'},
+{id:3, name:'Vivo',     icon:brandImg('vivo','Vivo'),         desc:'V & Y Series • 20+ Models'},
+{id:4, name:'Oppo',     icon:brandImg('oppo','Oppo'),         desc:'A & Reno Series • 18+ Models'},
+{id:5, name:'Xiaomi',   icon:brandImg('xiaomi','Xiaomi'),     desc:'Redmi & Note Series • 25+ Models'},
+{id:6, name:'Realme',   icon:brandImg('realme','Realme'),     desc:'C & Number Series • 15+ Models'},
+{id:7, name:'Tecno',    icon:brandSvgText('TECNO'),           desc:'Spark & Camon Series • 12+ Models'},
+{id:8, name:'Infinix',  icon:brandSvgText('INFINIX'),         desc:'Hot & Note Series • 10+ Models'},
+{id:9, name:'Nokia',    icon:brandImg('nokia','Nokia'),       desc:'G & C Series • 8+ Models'},
+{id:10,name:'OnePlus',  icon:brandImg('oneplus','OnePlus'),   desc:'Nord Series • 6+ Models'},
+{id:11,name:'Google',   icon:brandImg('google','Google'),     desc:'Pixel Series • 5+ Models'},
+{id:12,name:'Motorola', icon:brandImg('motorola','Motorola'), desc:'Moto G Series • 8+ Models'}
+]);
+
+let storeInfo = ld('mg_store',{
+  name:'Mobile Gallery',tagline:"Bihar's #1 Mobile Store",
+  phone1:'98765-43210',phone2:'98765-43210',
+  email:'info@mobilegallery.in',timing:'Mon–Sat: 10 AM – 9 PM',
+  address:'Karjain Road, Simrahi Bazar, Bihar 852111, India',
+  maps:'https://maps.app.goo.gl/VqmTRuia7hJc9kg76',
+  fb:'#',ig:'#',wa:'9876543210',yt:'#',
+  stat1:'500+',stat2:'15+',stat3:'10K+',
+});
+
+let heroData = ld('mg_hero',{
+  badge:"Bihar's #1 Mobile Store",h1:'The Biggest',h2:'Mobile Store',
+  desc:'Samsung, Apple, Vivo, Oppo, Xiaomi, Realme and many more brands – all in one place. Best price guarantee every day!',
+  btn1:'📱 Browse Phones',btn2:'Ask Us Anything',
+});
+
+let nextPid = ld('mg_npid',17);
+let nextBid = ld('mg_nbid',13);
+
+// ─── RENDER SITE ───────────────────────────────────
+function renderSite(){
+  // hero
+  document.getElementById('heroBadgeEl').textContent = heroData.badge;
+  const h1 = document.getElementById('heroH1El');
+  h1.innerHTML = heroData.h1 + '<br><span id="heroH2El">' + heroData.h2 + '</span>';
+  document.getElementById('heroDescEl').textContent = heroData.desc;
+  document.getElementById('heroBtn1El').textContent = heroData.btn1;
+  document.getElementById('heroBtn2El').textContent = heroData.btn2;
+  document.getElementById('heroStat1').textContent = storeInfo.stat1;
+  document.getElementById('heroStat2').textContent = storeInfo.stat2;
+  document.getElementById('heroStat3').textContent = storeInfo.stat3;
+  // logos/footer
+  ['siteLogoName','footerStoreName','footerCopyName','aboutStoreName'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent=storeInfo.name;
+  });
+  document.getElementById('footerDesc').textContent = storeInfo.name+' – India\'s trusted mobile store since 2015. All brands, best prices, 100% original. '+storeInfo.address;
+  // contact
+  document.getElementById('ci-address').textContent = storeInfo.address;
+  document.getElementById('ci-phone1').textContent = storeInfo.phone1;
+  document.getElementById('ci-phone2').textContent = storeInfo.phone2;
+  document.getElementById('ci-email').textContent = storeInfo.email;
+  document.getElementById('ci-timing').textContent = storeInfo.timing;
+  document.getElementById('ci-mapslink').href = storeInfo.maps;
+  // brand orbit
+  const ub=[...new Set(phones.map(p=>p.brand))];
+  document.getElementById('brandOrbit').innerHTML=ub.slice(0,6).map(b=>`<span class="brand-pill">${b}</span>`).join('');
+  // marquee
+  const mi=brands.map(b=>`<span class="brand-item">${b.icon} ${b.name}</span>`).join('');
+  document.getElementById('brandsMarquee').innerHTML=mi+mi;
+  // phones
+  document.getElementById('featuredGrid').innerHTML=phones.slice(0,8).map(phoneCard).join('');
+  renderPhonesPage('all');
+  renderBrandsPage();
+  renderFilterBar();
+  // footer brands
+  document.getElementById('footerBrandsList').innerHTML=brands.slice(0,6).map(b=>`<li><a>${b.icon} ${b.name}</a></li>`).join('');
+}
+
+function phoneCard(p){
+  const bdg={new:'new',sale:'sale',hot:'hot'};
+  const hasPhoto = p.photo && p.photo.length > 0;
+  return `<div class="phone-card">
+    <div class="phone-img">
+      ${hasPhoto ? `<img src="${p.photo}" alt="${p.name}"/>` : ''}
+      <span class="phone-emoji">${p.icon||'📱'}</span>
+      ${p.badgeText?`<span class="phone-badge ${bdg[p.badge]||''}">${p.badgeText}</span>`:''}
+    </div>
+    <div class="phone-info">
+      <div class="phone-brand">${p.brand}</div>
+      <div class="phone-name">${p.name}</div>
+      <div class="phone-specs">${p.specs}</div>
+      <div class="phone-footer">
+        <div class="phone-price">${p.price}</div>
+        <button class="add-btn" onclick="addToCart('${p.name.replace(/'/g,"\\'")}')">+</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPhonesPage(brand){
+  const f = brand==='all'?phones:phones.filter(p=>p.brand===brand);
+  document.getElementById('allPhonesGrid').innerHTML = f.length
+    ? f.map(phoneCard).join('')
+    : '<p style="color:var(--muted);grid-column:1/-1;text-align:center;padding:40px;">No phones in this brand yet.</p>';
+}
+
+function renderFilterBar(){
+  const ub=[...new Set(phones.map(p=>p.brand))];
+  document.getElementById('filterBar').innerHTML=
+    `<button class="filter-btn active" onclick="filterPhones('all',this)">All</button>`+
+    ub.map(b=>`<button class="filter-btn" onclick="filterPhones('${b}',this)">${b}</button>`).join('');
+}
+
+function renderBrandsPage(){
+  document.getElementById('brandsPageGrid').innerHTML=brands.map(b=>{
+    const cnt=phones.filter(p=>p.brand===b.name).length;
+    return `<div class="brand-card" onclick="showPage('phones');filterPhones('${b.name}')">
+      <div class="brand-icon">${b.icon}</div>
+      <div class="brand-name">${b.name}</div>
+      <div class="brand-count">${b.desc} • ${cnt} phones</div>
+    </div>`;
+  }).join('');
+}
+
+function filterPhones(brand,btn){
+  showPage('phones');
+  renderPhonesPage(brand);
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+// ─── NAVIGATION ────────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById('nav-'+name);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function addToCart(name){showToast('🛒 '+name+' – inquiry registered!');}
+function sendMessage(){
+  const n=document.getElementById('formName').value;
+  const p=document.getElementById('formPhone').value;
+  if(!n||!p){alert('Please enter your name and phone number.');return;}
+  showToast('✅ Message sent! We will contact you soon.');
+  ['formName','formPhone','formEmail','formMsg'].forEach(id=>document.getElementById(id).value='');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+function openSocial(type){
+  const m={fb:storeInfo.fb,ig:storeInfo.ig,wa:'https://wa.me/'+storeInfo.wa,yt:storeInfo.yt};
+  if(m[type]&&m[type]!=='#') window.open(m[type],'_blank');
+}
+function toggleMenu(){
+  const l=document.getElementById('navLinks');
+  if(l.style.display==='flex'){l.style.display='';}
+  else{l.style.display='flex';l.style.flexDirection='column';l.style.position='absolute';
+    l.style.top='70px';l.style.left='0';l.style.width='100%';
+    l.style.background='#0a0a0f';l.style.padding='20px';l.style.borderBottom='1px solid #2a2a3f';}
+}
+
+// ─── ADMIN LOGIN ────────────────────────────────────
+function openAdminLogin(){document.getElementById('adminLoginOverlay').classList.add('show');}
+function closeAdminLogin(){document.getElementById('adminLoginOverlay').classList.remove('show');document.getElementById('loginError').style.display='none';}
+function doAdminLogin(){
+  if(document.getElementById('adminUser').value===ADMIN_USER && document.getElementById('adminPass').value===ADMIN_PASS){
+    closeAdminLogin();openAdminPanel();
+  } else {document.getElementById('loginError').style.display='block';}
+}
+document.getElementById('adminPass').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
+document.getElementById('adminUser').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('adminPass').focus();});
+
+// ─── ADMIN PANEL ────────────────────────────────────
+function openAdminPanel(){
+  document.getElementById('adminPanel').classList.add('show');
+  renderAdminDashboard();renderAdminPhones();renderAdminBrands();
+  loadStoreForm();loadHeroForm();
+}
+function exitAdmin(){
+  document.getElementById('adminPanel').classList.remove('show');
+  renderSite();showToast('✅ Changes saved and applied!');
+}
+function apTab(name,btn){
+  document.querySelectorAll('.ap-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('aps-'+name).classList.add('active');
+  document.querySelectorAll('.ap-tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  else document.querySelectorAll('.ap-tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+name+"'"))t.classList.add('active');});
+}
+function apTabClick(name){
+  document.querySelectorAll('.ap-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('aps-'+name).classList.add('active');
+  document.querySelectorAll('.ap-tab').forEach(t=>{t.classList.remove('active');if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+name+"'"))t.classList.add('active');});
+}
+
+// dashboard
+function renderAdminDashboard(){
+  document.getElementById('apStatsRow').innerHTML=`
+    <div class="ap-stat"><div class="ap-stat-num">${phones.length}</div><div class="ap-stat-lbl">Total Phones</div></div>
+    <div class="ap-stat"><div class="ap-stat-num">${brands.length}</div><div class="ap-stat-lbl">Brands</div></div>
+    <div class="ap-stat"><div class="ap-stat-num">${phones.filter(p=>p.badge==='new').length}</div><div class="ap-stat-lbl">New Arrivals</div></div>
+    <div class="ap-stat"><div class="ap-stat-num">${phones.filter(p=>p.badge==='sale').length}</div><div class="ap-stat-lbl">On Sale</div></div>`;
+  document.getElementById('apRecentPhones').innerHTML=phones.slice(-5).reverse().map(p=>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${p.photo?`<img src="${p.photo}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;">`:`<span style="font-size:1.4rem;">${p.icon}</span>`}
+        <div><div style="font-size:.83rem;font-weight:600;">${p.name}</div><div style="font-size:.73rem;color:var(--muted);">${p.brand}</div></div>
+      </div>
+      <div style="font-size:.8rem;font-weight:700;color:var(--accent2);">${p.price}</div>
+    </div>`).join('');
+}
+
+// photo preview
+function previewPhoto(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('pf-photoData').value=e.target.result;
+    const img=document.getElementById('photoPreviewImg');
+    img.src=e.target.result;img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+// phones admin
+function renderAdminPhones(){
+  const q=(document.getElementById('phoneSearch')||{value:''}).value.toLowerCase();
+  const f=phones.filter(p=>!q||p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q));
+  document.getElementById('phonesCount').textContent=phones.length;
+  const bh=b=>b==='new'?'<span class="bdg-new">NEW</span>':b==='sale'?'<span class="bdg-sale">SALE</span>':b==='hot'?'<span class="bdg-hot">HOT</span>':'—';
+  document.getElementById('adminPhonesTable').innerHTML=f.map(p=>`
+    <tr>
+      <td>${p.photo
+        ?`<img src="${p.photo}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">`
+        :`<span style="font-size:1.6rem;">${p.icon||'📱'}</span>`}
+      </td>
+      <td><strong>${p.brand}</strong></td>
+      <td style="font-weight:600;max-width:160px;">${p.name}</td>
+      <td style="color:var(--accent2);font-weight:700;">${p.price}</td>
+      <td>${bh(p.badge)}</td>
+      <td><div class="td-act">
+        <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editPhone(${p.id})">✏️ Edit</button>
+        <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deletePhone(${p.id})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function savePhone(){
+  const brand=document.getElementById('pf-brand').value;
+  const name=document.getElementById('pf-name').value.trim();
+  const price=document.getElementById('pf-price').value.trim();
+  const specs=document.getElementById('pf-specs').value.trim();
+  const badgeVal=document.getElementById('pf-badge').value;
+  const icon=document.getElementById('pf-icon').value||'📱';
+  const photo=document.getElementById('pf-photoData').value;
+  const editId=document.getElementById('pf-editId').value;
+  if(!brand||!name||!price){showToast('❌ Brand, name and price are required!');return;}
+  const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
+  const obj={brand,name,price,specs,icon,badge:badgeVal,badgeText:bmap[badgeVal]||'',photo};
+  if(editId){
+    const idx=phones.findIndex(p=>p.id==editId);
+    if(idx>-1){
+      // keep old photo if no new one uploaded
+      if(!photo && phones[idx].photo) obj.photo=phones[idx].photo;
+      phones[idx]={...phones[idx],...obj};
+    }
+  } else {
+    obj.id=nextPid++;sv('mg_npid',nextPid);phones.push(obj);
+  }
+  sv('mg_phones',phones);
+  clearPhoneForm();renderAdminPhones();renderAdminDashboard();
+  showToast(editId?'✅ Phone updated!':'✅ New phone added!');
+}
+
+function editPhone(id){
+  const p=phones.find(x=>x.id==id); if(!p) return;
+  document.getElementById('pf-brand').value=p.brand;
+  document.getElementById('pf-name').value=p.name;
+  document.getElementById('pf-price').value=p.price;
+  document.getElementById('pf-specs').value=p.specs;
+  document.getElementById('pf-badge').value=p.badge||'';
+  document.getElementById('pf-icon').value=p.icon||'📱';
+  document.getElementById('pf-editId').value=p.id;
+  document.getElementById('pf-photoData').value=p.photo||'';
+  document.getElementById('phoneFormTitle').textContent='✏️ Edit Phone: '+p.name;
+  const img=document.getElementById('photoPreviewImg');
+  if(p.photo){img.src=p.photo;img.style.display='block';}
+  else{img.style.display='none';}
+  apTabClick('phones');
+  document.getElementById('aps-phones').scrollIntoView({behavior:'smooth'});
+}
+
+function deletePhone(id){
+  if(!confirm('Delete this phone?')) return;
+  phones=phones.filter(p=>p.id!=id);sv('mg_phones',phones);fbDelete('phones',id);
+  renderAdminPhones();renderAdminDashboard();showToast('🗑️ Phone deleted!');
+}
+
+function clearPhoneForm(){
+  ['pf-brand','pf-name','pf-price','pf-specs','pf-badge','pf-editId','pf-photoData'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pf-icon').value='📱';
+  document.getElementById('pf-photo').value='';
+  document.getElementById('photoPreviewImg').style.display='none';
+  document.getElementById('phoneFormTitle').textContent='📱 Add New Phone';
+}
+
+// brands
+function renderAdminBrands(){
+  document.getElementById('brandsCount').textContent=brands.length;
+  document.getElementById('adminBrandsTable').innerHTML=brands.map(b=>{
+    const cnt=phones.filter(p=>p.brand===b.name).length;
+    return `<tr>
+      <td style="font-size:1.5rem;min-width:60px;"><span style="display:inline-flex;align-items:center;">${typeof b.icon==='string'&&b.icon.includes('<img')?b.icon.replace('class="brand-logo"','style="height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.8;"'):b.icon}</span></td>
+      <td style="font-weight:700;">${b.name}</td>
+      <td style="color:var(--muted);font-size:.8rem;">${b.desc}</td>
+      <td><span style="background:rgba(108,63,255,.15);padding:3px 10px;border-radius:8px;font-size:.75rem;font-weight:700;">${cnt}</span></td>
+      <td><div class="td-act">
+        <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editBrand(${b.id})">✏️ Edit</button>
+        <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteBrand(${b.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function saveBrand(){
+  const name=document.getElementById('bf-name').value.trim();
+  const icon=document.getElementById('bf-icon').value||'📱';
+  const desc=document.getElementById('bf-desc').value.trim();
+  const editId=document.getElementById('bf-editId').value;
+  if(!name){showToast('❌ Brand name is required!');return;}
+  if(editId){const idx=brands.findIndex(b=>b.id==editId);if(idx>-1)brands[idx]={...brands[idx],name,icon,desc};}
+  else{brands.push({id:nextBid++,name,icon,desc});sv('mg_nbid',nextBid);}
+  sv('mg_brands',brands);clearBrandForm();renderAdminBrands();showToast(editId?'✅ Brand updated!':'✅ Brand added!');
+}
+function editBrand(id){
+  const b=brands.find(x=>x.id==id);if(!b)return;
+  document.getElementById('bf-name').value=b.name;
+  document.getElementById('bf-icon').value=b.icon;
+  document.getElementById('bf-desc').value=b.desc;
+  document.getElementById('bf-editId').value=b.id;
+}
+function deleteBrand(id){
+  if(!confirm('Delete this brand?'))return;
+  brands=brands.filter(b=>b.id!=id);sv('mg_brands',brands);fbDelete('brands',id);
+  renderAdminBrands();showToast('🗑️ Brand deleted!');
+}
+function clearBrandForm(){['bf-name','bf-icon','bf-desc','bf-editId'].forEach(id=>document.getElementById(id).value='');}
+
+// store info
+function loadStoreForm(){
+  const m={'si-name':'name','si-tagline':'tagline','si-phone1':'phone1','si-phone2':'phone2',
+    'si-email':'email','si-timing':'timing','si-address':'address','si-maps':'maps',
+    'si-fb':'fb','si-ig':'ig','si-yt':'yt','si-stat1':'stat1','si-stat2':'stat2','si-stat3':'stat3'};
+  Object.entries(m).forEach(([id,key])=>document.getElementById(id).value=storeInfo[key]||'');
+}
+function saveStoreInfo(){
+  const m={'si-name':'name','si-tagline':'tagline','si-phone1':'phone1','si-phone2':'phone2',
+    'si-email':'email','si-timing':'timing','si-address':'address','si-maps':'maps',
+    'si-fb':'fb','si-ig':'ig','si-yt':'yt','si-stat1':'stat1','si-stat2':'stat2','si-stat3':'stat3'};
+  Object.entries(m).forEach(([id,key])=>storeInfo[key]=document.getElementById(id).value);
+  sv('mg_store',storeInfo);showToast('✅ Store info saved!');
+}
+
+// hero
+function loadHeroForm(){
+  const m={'hi-badge':'badge','hi-h1':'h1','hi-h2':'h2','hi-desc':'desc','hi-btn1':'btn1','hi-btn2':'btn2'};
+  Object.entries(m).forEach(([id,key])=>document.getElementById(id).value=heroData[key]||'');
+}
+function saveHero(){
+  const m={'hi-badge':'badge','hi-h1':'h1','hi-h2':'h2','hi-desc':'desc','hi-btn1':'btn1','hi-btn2':'btn2'};
+  Object.entries(m).forEach(([id,key])=>heroData[key]=document.getElementById(id).value);
+  sv('mg_hero',heroData);showToast('✅ Hero section saved!');
+}
+
+// ════════════════════════════════════════════════════
+//  FIREBASE INTEGRATION
+//  👉 Replace the firebaseConfig values below with
+//     YOUR project's config from Firebase Console →
+//     Project Settings → Your apps → SDK setup
+// ════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+
+// ─── Firebase state ─────────────────────────────────
+let db = null;
+let firebaseEnabled = false;
+
+// ─── Init ────────────────────────────────────────────
+(function initFirebase(){
+  try {
+    if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+      console.warn("[Firebase] Config not set – running in localStorage-only mode.");
+      return;
+    }
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firebaseEnabled = true;
+    console.log("[Firebase] Connected ✅");
+  } catch(e) {
+    console.warn("[Firebase] Init failed, using localStorage fallback:", e.message);
+  }
+})();
+
+// ─── Firestore helpers ───────────────────────────────
+// col = 'phones' | 'brands' | 'store' | 'hero'
+async function fbLoad(col, fallback){
+  if (!firebaseEnabled) return fallback;
+  try {
+    if (col === 'store' || col === 'hero') {
+      // single-doc collections
+      const snap = await db.collection('config').doc(col).get();
+      return snap.exists ? snap.data() : fallback;
+    } else {
+      const snap = await db.collection(col).orderBy('id').get();
+      if (snap.empty) return fallback;
+      return snap.docs.map(d => d.data());
+    }
+  } catch(e) {
+    console.warn(`[Firebase] Load '${col}' failed:`, e.message);
+    return fallback;
+  }
+}
+
+async function fbSave(col, data){
+  if (!firebaseEnabled) return;
+  try {
+    if (col === 'store' || col === 'hero') {
+      await db.collection('config').doc(col).set(data);
+    } else {
+      // data is an array → batch write
+      const batch = db.batch();
+      data.forEach(item => {
+        const ref = db.collection(col).doc(String(item.id));
+        batch.set(ref, item);
+      });
+      await batch.commit();
+    }
+    showToast('☁️ Saved to Firebase!');
+  } catch(e) {
+    console.warn(`[Firebase] Save '${col}' failed:`, e.message);
+    showToast('⚠️ Firebase save failed – saved locally only');
+  }
+}
+
+async function fbDelete(col, id){
+  if (!firebaseEnabled) return;
+  try {
+    await db.collection(col).doc(String(id)).delete();
+  } catch(e) {
+    console.warn(`[Firebase] Delete failed:`, e.message);
+  }
+}
+
+// ─── sv() patched to also push to Firebase ───────────
+function sv(k, v){
+  _svLocal(k, v); // always save to localStorage
+  if (typeof fbSave === 'undefined') return; // Firebase not ready yet
+  if (k === 'mg_phones')  fbSave('phones', v);
+  if (k === 'mg_brands')  fbSave('brands', v);
+  if (k === 'mg_store')   fbSave('store', v);
+  if (k === 'mg_hero')    fbSave('hero', v);
+}
+
+// ─── Firebase sync indicator in Admin nav ────────────
+function updateFbStatus(){
+  const el = document.getElementById('fbStatus');
+  if (!el) return;
+  if (!firebaseEnabled) {
+    el.textContent = '💾 Local Only';
+    el.style.color = 'var(--muted)';
+  } else {
+    el.textContent = '☁️ Firebase Active';
+    el.style.color = 'var(--green)';
+  }
+}
+
+// ─── INIT: Load from Firebase first, then render ─────
+async function initApp(){
+  if (firebaseEnabled) {
+    showToast('☁️ Loading from Firebase…');
+    const [fbPhones, fbBrands, fbStore, fbHero] = await Promise.all([
+      fbLoad('phones', phones),
+      fbLoad('brands', brands),
+      fbLoad('store',  storeInfo),
+      fbLoad('hero',   heroData),
+    ]);
+    // Only replace if Firebase returned real data
+    if (fbPhones && fbPhones.length) phones = fbPhones;
+    if (fbBrands && fbBrands.length) brands = fbBrands;
+    if (fbStore  && Object.keys(fbStore).length)  storeInfo = fbStore;
+    if (fbHero   && Object.keys(fbHero).length)   heroData  = fbHero;
+  }
+  renderSite();
+  updateFbStatus();
+}
+
+initApp();
+</script>
+</body>
+</html>
