@@ -7,6 +7,7 @@
 <!-- Firebase SDK (v9 compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -216,6 +217,159 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   border-top:1px solid var(--border);padding-top:18px;font-size:.8rem;color:var(--muted);}
 .footer-bottom span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;}
 
+/* ── PHONE DETAIL OVERLAY (Amazon/Flipkart style) ── */
+#phoneDetailOverlay{display:none;position:fixed;inset:0;z-index:3000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(10px);overflow-y:auto;padding:80px 4% 40px;}
+#phoneDetailOverlay.show{display:block;}
+.pd-container{max-width:960px;margin:0 auto;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;}
+.pd-back{display:flex;align-items:center;gap:8px;background:var(--surface);
+  border-bottom:1px solid var(--border);padding:14px 24px;cursor:pointer;
+  color:var(--muted);font-size:.85rem;font-weight:600;transition:color .3s;}
+.pd-back:hover{color:var(--text);}
+.pd-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media(max-width:700px){.pd-body{grid-template-columns:1fr;}}
+.pd-img-section{background:linear-gradient(135deg,#1a1a2e,#16213e);
+  display:flex;align-items:center;justify-content:center;min-height:320px;
+  position:relative;padding:30px;}
+.pd-img-section img{max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;}
+.pd-img-emoji{font-size:8rem;line-height:1;}
+.pd-badge-overlay{position:absolute;top:18px;left:18px;font-size:.75rem;font-weight:700;
+  padding:5px 12px;border-radius:12px;}
+.pd-info{padding:32px 28px;}
+.pd-brand-tag{font-size:.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;
+  letter-spacing:1.5px;margin-bottom:6px;}
+.pd-name{font-size:1.5rem;font-weight:900;line-height:1.2;margin-bottom:12px;}
+.pd-price-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.pd-price{font-size:2rem;font-weight:900;background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.pd-price-tag{background:rgba(34,197,94,.15);color:var(--green);
+  font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:8px;}
+.pd-specs-box{background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:18px;margin-bottom:20px;}
+.pd-specs-box h4{font-size:.8rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.pd-spec-row{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;}
+.pd-spec-row:last-child{border-bottom:none;}
+.pd-spec-label{color:var(--muted);}
+.pd-spec-value{font-weight:600;}
+.pd-actions{display:flex;flex-direction:column;gap:10px;}
+.pd-btn-wa{background:#25d366;color:#fff;border:none;padding:14px 20px;border-radius:12px;
+  font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:8px;transition:opacity .3s;}
+.pd-btn-wa:hover{opacity:.88;}
+.pd-btn-call{background:var(--grad);color:#fff;border:none;padding:14px 20px;border-radius:12px;
+  font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:8px;transition:opacity .3s;}
+.pd-btn-call:hover{opacity:.88;}
+.pd-features{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px;}
+.pd-feat-pill{background:rgba(108,63,255,.12);border:1px solid rgba(108,63,255,.25);
+  color:#a78bff;padding:5px 12px;border-radius:20px;font-size:.75rem;font-weight:600;}
+
+/* ── GALLERY PAGE ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.gallery-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:all .3s;}
+.gallery-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(108,63,255,.2);border-color:var(--accent);}
+.gallery-img{height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,#1a1a2e,#16213e);}
+.gallery-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.gallery-card:hover .gallery-img img{transform:scale(1.06);}
+.gallery-img-placeholder{display:flex;align-items:center;justify-content:center;
+  height:100%;font-size:4rem;color:var(--muted);}
+.gallery-info{padding:14px 16px;}
+.gallery-desc{font-size:.83rem;color:var(--muted);margin-top:4px;line-height:1.5;}
+.gallery-name{font-size:.97rem;font-weight:700;}
+
+/* Gallery lightbox */
+#galleryLightbox{display:none;position:fixed;inset:0;z-index:6000;
+  background:rgba(0,0,0,.95);align-items:center;justify-content:center;flex-direction:column;}
+#galleryLightbox.show{display:flex;}
+.lb-img{max-width:90vw;max-height:75vh;border-radius:12px;object-fit:contain;}
+.lb-close{position:absolute;top:20px;right:28px;font-size:2rem;cursor:pointer;
+  color:var(--muted);transition:color .2s;background:none;border:none;}
+.lb-close:hover{color:var(--text);}
+.lb-caption{color:var(--text);font-size:.95rem;margin-top:14px;font-weight:600;text-align:center;}
+.lb-sub{color:var(--muted);font-size:.82rem;margin-top:4px;text-align:center;}
+
+/* ── SETTINGS MENU (hamburger ke neeche) ── */
+.nav-settings-item{border-top:1px solid var(--border);margin-top:10px;padding-top:10px;}
+.nav-settings-item a{color:var(--muted)!important;display:flex;align-items:center;gap:8px;}
+.nav-settings-item a:hover{color:var(--text)!important;}
+.nav-user-item{background:rgba(108,63,255,.08);border-radius:10px;padding:10px 14px!important;
+  margin:4px 0;border:1px solid rgba(108,63,255,.2);}
+.nav-user-item a{color:var(--text)!important;font-weight:600;display:flex;align-items:center;gap:8px;}
+
+/* Desktop user button in nav */
+.user-nav-btn{background:rgba(108,63,255,.12);border:1px solid rgba(108,63,255,.3);
+  color:#a78bff;padding:7px 15px;border-radius:18px;cursor:pointer;
+  font-size:.78rem;font-weight:700;transition:all .3s;display:flex;align-items:center;gap:6px;}
+.user-nav-btn:hover{background:rgba(108,63,255,.22);}
+
+/* ── AUTH MODAL ── */
+.auth-overlay{display:none;position:fixed;inset:0;z-index:7000;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;}
+.auth-overlay.show{display:flex;}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:440px;padding:36px 32px;position:relative;margin:16px;}
+.auth-close{position:absolute;top:16px;right:20px;background:none;border:none;
+  color:var(--muted);font-size:1.4rem;cursor:pointer;transition:color .2s;}
+.auth-close:hover{color:var(--text);}
+.auth-logo{text-align:center;font-size:2.5rem;margin-bottom:6px;}
+.auth-title{text-align:center;font-size:1.3rem;font-weight:800;margin-bottom:4px;}
+.auth-sub{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:24px;}
+.auth-field{margin-bottom:16px;}
+.auth-field label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.auth-field input{width:100%;background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:12px 14px;border-radius:10px;font-size:.9rem;
+  font-family:'Poppins',sans-serif;outline:none;transition:border-color .3s;}
+.auth-field input:focus{border-color:var(--accent);}
+.auth-field input::placeholder{color:var(--muted);}
+.auth-btn{width:100%;padding:14px;border:none;border-radius:12px;
+  background:var(--grad);color:#fff;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:opacity .3s;margin-top:6px;}
+.auth-btn:hover{opacity:.88;}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-error{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);
+  color:#ff7f95;padding:10px 14px;border-radius:8px;font-size:.82rem;
+  margin-bottom:14px;display:none;}
+.auth-switch{text-align:center;font-size:.82rem;color:var(--muted);margin-top:16px;}
+.auth-switch span{color:var(--accent2);cursor:pointer;font-weight:600;}
+.auth-switch span:hover{text-decoration:underline;}
+.auth-divider{text-align:center;color:var(--muted);font-size:.78rem;margin:10px 0;}
+.auth-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+  margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PROFILE OVERLAY ── */
+.profile-overlay{display:none;position:fixed;inset:0;z-index:7000;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;}
+.profile-overlay.show{display:flex;}
+.profile-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:460px;padding:36px 32px;position:relative;margin:16px;max-height:90vh;overflow-y:auto;}
+.profile-avatar{width:80px;height:80px;background:var(--grad);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  margin:0 auto 14px;}
+.profile-username{text-align:center;font-size:1.2rem;font-weight:800;margin-bottom:4px;}
+.profile-email{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:24px;}
+.profile-section-title{font-size:.75rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;}
+.profile-info-row{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+.profile-info-row:last-child{border-bottom:none;}
+.profile-info-label{color:var(--muted);}
+.profile-info-value{font-weight:600;}
+.profile-btn{width:100%;padding:12px;border:none;border-radius:10px;
+  font-size:.88rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:10px;}
+.profile-btn-primary{background:var(--grad);color:#fff;}
+.profile-btn-danger{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:#ff4d6d;}
+.profile-btn-danger:hover{background:rgba(255,77,109,.2);}
+.pwd-field{margin-top:8px;}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--card);
   border:1px solid var(--accent);border-radius:12px;padding:13px 20px;
@@ -362,6 +516,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       <button class="ap-tab active" onclick="apTab('dashboard',this)">📊 Dashboard</button>
       <button class="ap-tab" onclick="apTab('phones',this)">📱 Phones</button>
       <button class="ap-tab" onclick="apTab('brands',this)">🏷️ Brands</button>
+      <button class="ap-tab" onclick="apTab('gallery',this)">🖼️ Gallery</button>
       <button class="ap-tab" onclick="apTab('store',this)">🏪 Store Info</button>
       <button class="ap-tab" onclick="apTab('hero',this)">🏠 Hero</button>
     </div>
@@ -482,6 +637,35 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       </div>
     </div>
 
+    <!-- GALLERY -->
+    <div class="ap-section" id="aps-gallery">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>🖼️ Add Shop Photo</h3></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Photo Title *</label><input type="text" id="gf-title" placeholder="e.g. Store Front View"/></div>
+          <div class="fg full"><label>Description</label><input type="text" id="gf-desc" placeholder="e.g. Our beautiful shop entrance at Simrahi Bazar"/></div>
+          <div class="fg full">
+            <label>Upload Photo</label>
+            <div class="photo-upload-area" id="galleryUploadArea">
+              <input type="file" id="gf-photo" accept="image/*" onchange="previewGalleryPhoto(this)"/>
+              <div class="photo-upload-label">📷 Click to upload shop photo<br><span>JPG, PNG, WEBP supported</span></div>
+              <img id="galleryPreviewImg" class="photo-preview" alt="preview"/>
+            </div>
+            <input type="hidden" id="gf-photoData" value=""/>
+          </div>
+        </div>
+        <input type="hidden" id="gf-editId" value=""/>
+        <div class="fg-btns">
+          <button class="ap-btn ap-btn-primary" onclick="saveGalleryPhoto()">💾 Save Photo</button>
+          <button class="ap-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);" onclick="clearGalleryForm()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>All Gallery Photos (<span id="galleryCount">0</span>)</h3></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:4px 0;" id="adminGalleryGrid"></div>
+      </div>
+    </div>
+
     <!-- STORE INFO -->
     <div class="ap-section" id="aps-store">
       <div class="ap-card">
@@ -538,11 +722,28 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <li><a onclick="showPage('phones')" id="nav-phones">Phones</a></li>
     <li><a onclick="showPage('brands')" id="nav-brands">Brands</a></li>
     <li><a onclick="showPage('about')" id="nav-about">About Us</a></li>
+    <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
     <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+    <!-- Settings divider (mobile only) -->
+    <li class="nav-settings-item" id="navSettingsGuest">
+      <a onclick="openRegister()">👤 Register</a>
+    </li>
+    <li class="nav-settings-item" id="navSettingsLogin" style="display:none;">
+      <a onclick="openLogin()">🔑 Login</a>
+    </li>
+    <li class="nav-user-item" id="navSettingsUser" style="display:none;">
+      <a onclick="openProfile()">👤 <span id="navUsername">My Profile</span></a>
+    </li>
+    <li class="nav-settings-item" id="navSettingsLogout" style="display:none;">
+      <a onclick="logoutUser()">🚪 Logout</a>
+    </li>
   </ul>
   <div class="nav-right">
-    <!-- Admin button: visible only on desktop via CSS -->
     <button class="admin-btn" onclick="openAdminLogin()">⚙️ Admin Panel</button>
+    <!-- User button: shows Login or username -->
+    <button class="user-nav-btn" id="userNavBtn" onclick="handleUserNavClick()">
+      👤 <span id="userNavLabel">Login / Register</span>
+    </button>
     <button class="nav-cta" onclick="showPage('contact')">📞 Contact Us</button>
   </div>
   <div class="hamburger" onclick="toggleMenu()">
@@ -682,10 +883,24 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div style="margin-top:55px;">
       <div class="section-header"><div class="section-eyebrow">Our Team</div><h2 class="section-title">The Experts</h2></div>
       <div class="team-grid">
-        <div class="team-card"><div class="team-avatar">👨‍💼</div><div class="team-name">Ahmed Raza</div><div class="team-role">Store Owner & Manager</div></div>
-        <div class="team-card"><div class="team-avatar">👩‍💻</div><div class="team-name">Sana Khan</div><div class="team-role">Senior Sales Expert</div></div>
-        <div class="team-card"><div class="team-avatar">👨‍🔧</div><div class="team-name">Usman Ali</div><div class="team-role">Technical Specialist</div></div>
-        <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Bilal Hussain</div><div class="team-role">Customer Support</div></div>
+        <div class="team-card"><div class="team-avatar">👨‍💼</div><div class="team-name">Aftab Azmi</div><div class="team-role">Store Owner & Manager</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- GALLERY PAGE -->
+<div class="page" id="page-gallery">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Shop</div>
+      <h2 class="section-title">Shop Gallery</h2>
+      <p class="section-sub">Take a look inside our store – Aftab Azmi's Mobile Gallery, Simrahi Bazar</p>
+    </div>
+    <div class="gallery-grid" id="galleryPageGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);">
+        <div style="font-size:4rem;margin-bottom:14px;">🖼️</div>
+        <p>No photos yet. Admin panel se photos add karein!</p>
       </div>
     </div>
   </section>
@@ -787,6 +1002,115 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div style="font-size:.8rem;color:var(--muted);">Karjain Road, Simrahi Bazar, Bihar, India</div>
   </div>
 </footer>
+
+<!-- ══ REGISTER MODAL ══ -->
+<div class="auth-overlay" id="registerOverlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeRegister()">✕</button>
+    <div class="auth-logo">📱</div>
+    <div class="auth-title">Create Account</div>
+    <div class="auth-sub">Aftab Azmi's Mobile Gallery mein register karein</div>
+    <div class="auth-error" id="regError"></div>
+    <div class="auth-field"><label>Full Name *</label><input type="text" id="reg-name" placeholder="Aapka pura naam"/></div>
+    <div class="auth-field"><label>Username *</label><input type="text" id="reg-username" placeholder="unique username (koi space nahi)"/></div>
+    <div class="auth-field"><label>Email *</label><input type="email" id="reg-email" placeholder="aapka@email.com"/></div>
+    <div class="auth-field"><label>Phone Number *</label><input type="tel" id="reg-phone" placeholder="10-digit mobile number"/></div>
+    <div class="auth-field"><label>Password *</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
+    <div class="auth-field"><label>Confirm Password *</label><input type="password" id="reg-pass2" placeholder="Password dobara likhein"/></div>
+    <button class="auth-btn" onclick="doRegister()" id="regBtn">✅ Register Karein</button>
+    <div class="auth-spinner" id="regSpinner"></div>
+    <div class="auth-switch">Pehle se account hai? <span onclick="switchToLogin()">Login karein</span></div>
+  </div>
+</div>
+
+<!-- ══ LOGIN MODAL ══ -->
+<div class="auth-overlay" id="loginOverlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeLogin()">✕</button>
+    <div class="auth-logo">🔑</div>
+    <div class="auth-title">Welcome Back!</div>
+    <div class="auth-sub">Login karein apne account mein</div>
+    <div class="auth-error" id="loginError2"></div>
+    <div class="auth-field"><label>Email ya Username *</label><input type="text" id="log-id" placeholder="Email ya username likhein"/></div>
+    <div class="auth-field"><label>Password *</label><input type="password" id="log-pass" placeholder="Aapka password"/></div>
+    <button class="auth-btn" onclick="doLogin()" id="loginBtn">🔑 Login Karein</button>
+    <div class="auth-spinner" id="loginSpinner"></div>
+    <div class="auth-switch">Account nahi hai? <span onclick="switchToRegister()">Register karein</span></div>
+  </div>
+</div>
+
+<!-- ══ PROFILE OVERLAY ══ -->
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-box">
+    <button class="auth-close" onclick="closeProfile()">✕</button>
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <div class="profile-username" id="profileUsername">Username</div>
+    <div class="profile-email" id="profileEmailDisplay">email@example.com</div>
+
+    <div class="profile-section-title">📋 Account Info</div>
+    <div class="profile-info-row"><span class="profile-info-label">Full Name</span><span class="profile-info-value" id="profileName">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Username</span><span class="profile-info-value" id="profileUsernameInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Email</span><span class="profile-info-value" id="profileEmailInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Phone</span><span class="profile-info-value" id="profilePhoneInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Member Since</span><span class="profile-info-value" id="profileJoined">—</span></div>
+
+    <div class="profile-section-title">🔒 Change Password</div>
+    <div class="auth-error" id="pwdError"></div>
+    <div class="auth-field pwd-field"><label>Current Password</label><input type="password" id="pwd-current" placeholder="Abhi wala password"/></div>
+    <div class="auth-field pwd-field"><label>New Password</label><input type="password" id="pwd-new" placeholder="Naya password (min 6 chars)"/></div>
+    <div class="auth-field pwd-field"><label>Confirm New Password</label><input type="password" id="pwd-confirm" placeholder="Naya password dobara"/></div>
+    <button class="profile-btn profile-btn-primary" onclick="changePassword()" style="margin-top:4px;">🔒 Password Change Karein</button>
+    <button class="profile-btn profile-btn-danger" onclick="logoutUser()" style="margin-top:8px;">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- PHONE DETAIL OVERLAY -->
+<div id="phoneDetailOverlay">
+  <div class="pd-container">
+    <div class="pd-back" onclick="closePhoneDetail()">← Back to Phones</div>
+    <div class="pd-body">
+      <div class="pd-img-section" id="pdImgSection">
+        <span class="pd-img-emoji" id="pdEmoji">📱</span>
+        <span class="pd-badge-overlay phone-badge" id="pdBadgeOverlay" style="display:none;"></span>
+      </div>
+      <div class="pd-info">
+        <div class="pd-brand-tag" id="pdBrand">Brand</div>
+        <div class="pd-name" id="pdName">Phone Name</div>
+        <div class="pd-price-row">
+          <div class="pd-price" id="pdPrice">₹0</div>
+          <span class="pd-price-tag">Best Price Guarantee ✓</span>
+        </div>
+        <div class="pd-specs-box">
+          <h4>Key Specifications</h4>
+          <div id="pdSpecsList"></div>
+        </div>
+        <div class="pd-features">
+          <span class="pd-feat-pill">✅ 100% Original</span>
+          <span class="pd-feat-pill">📦 Box Pack</span>
+          <span class="pd-feat-pill">🔧 Warranty</span>
+          <span class="pd-feat-pill">💳 EMI Available</span>
+          <span class="pd-feat-pill">📲 Free Setup</span>
+        </div>
+        <div class="pd-actions" style="margin-top:20px;">
+          <button class="pd-btn-wa" onclick="inquireWhatsApp()">💬 WhatsApp Inquiry</button>
+          <button class="pd-btn-call" onclick="callStore()">📞 Call Store</button>
+        </div>
+        <div style="margin-top:14px;background:rgba(108,63,255,.08);border:1px solid rgba(108,63,255,.2);
+          border-radius:10px;padding:12px 14px;font-size:.8rem;color:var(--muted);line-height:1.6;">
+          📍 <strong style="color:var(--text);">Aftab Azmi's Mobile Gallery</strong> — Karjain Road, Simrahi Bazar, Bihar 852111
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY LIGHTBOX -->
+<div id="galleryLightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img class="lb-img" id="lbImage" src="" alt=""/>
+  <div class="lb-caption" id="lbCaption"></div>
+  <div class="lb-sub" id="lbSub"></div>
+</div>
 
 <div id="toast"></div>
 
@@ -900,6 +1224,7 @@ function renderSite(){
   document.getElementById('featuredGrid').innerHTML=phones.slice(0,8).map(phoneCard).join('');
   renderPhonesPage('all');
   renderBrandsPage();
+  renderGalleryPage();
   renderFilterBar();
   // footer brands
   document.getElementById('footerBrandsList').innerHTML=brands.slice(0,6).map(b=>`<li><a>${b.icon} ${b.name}</a></li>`).join('');
@@ -908,7 +1233,7 @@ function renderSite(){
 function phoneCard(p){
   const bdg={new:'new',sale:'sale',hot:'hot'};
   const hasPhoto = p.photo && p.photo.length > 0;
-  return `<div class="phone-card">
+  return `<div class="phone-card" onclick="openPhoneDetail(${p.id})">
     <div class="phone-img">
       ${hasPhoto ? `<img src="${p.photo}" alt="${p.name}"/>` : ''}
       <span class="phone-emoji">${p.icon||'📱'}</span>
@@ -920,7 +1245,7 @@ function phoneCard(p){
       <div class="phone-specs">${p.specs}</div>
       <div class="phone-footer">
         <div class="phone-price">${p.price}</div>
-        <button class="add-btn" onclick="addToCart('${p.name.replace(/'/g,"\\'")}')">+</button>
+        <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.name.replace(/'/g,"\\'")}')">+</button>
       </div>
     </div>
   </div>`;
@@ -958,6 +1283,321 @@ function filterPhones(brand,btn){
   if(btn) btn.classList.add('active');
 }
 
+// ─── PHONE DETAIL PAGE ──────────────────────────────
+let currentDetailPhone = null;
+
+function openPhoneDetail(id){
+  const p = phones.find(x=>x.id==id);
+  if(!p) return;
+  currentDetailPhone = p;
+  const ov = document.getElementById('phoneDetailOverlay');
+  const imgSec = document.getElementById('pdImgSection');
+  const oldImg = imgSec.querySelector('img.pd-real-img');
+  if(oldImg) oldImg.remove();
+  if(p.photo){
+    const img = document.createElement('img');
+    img.src=p.photo; img.className='pd-real-img';
+    img.style.cssText='max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;';
+    imgSec.insertBefore(img, imgSec.firstChild);
+    document.getElementById('pdEmoji').style.display='none';
+  } else {
+    document.getElementById('pdEmoji').style.display='block';
+    document.getElementById('pdEmoji').textContent=p.icon||'📱';
+  }
+  const bdgEl=document.getElementById('pdBadgeOverlay');
+  if(p.badgeText){ bdgEl.textContent=p.badgeText; bdgEl.className='pd-badge-overlay phone-badge '+(p.badge||''); bdgEl.style.display='block'; }
+  else bdgEl.style.display='none';
+  document.getElementById('pdBrand').textContent = p.brand;
+  document.getElementById('pdName').textContent  = p.name;
+  document.getElementById('pdPrice').textContent = p.price;
+  const specParts=(p.specs||'').split('•').map(s=>s.trim()).filter(Boolean);
+  const specLabels=['Processor','Camera','Storage','Battery','Display','RAM'];
+  document.getElementById('pdSpecsList').innerHTML=specParts.map((s,i)=>`
+    <div class="pd-spec-row"><span class="pd-spec-label">${specLabels[i]||'Feature'}</span><span class="pd-spec-value">${s}</span></div>`).join('')
+    ||'<div class="pd-spec-row"><span class="pd-spec-label">Specs</span><span class="pd-spec-value">Ask in store</span></div>';
+  ov.classList.add('show'); ov.scrollTop=0; document.body.style.overflow='hidden';
+}
+
+function closePhoneDetail(){
+  document.getElementById('phoneDetailOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function inquireWhatsApp(){
+  if(!currentDetailPhone) return;
+  const msg=encodeURIComponent(`Salaam! Main "${currentDetailPhone.name}" ke baare mein puchna chahta hoon. Price: ${currentDetailPhone.price}. Kya available hai?`);
+  window.open('https://wa.me/'+(storeInfo.wa||'9876543210')+'?text='+msg,'_blank');
+}
+function callStore(){
+  const ph=storeInfo.phone1||storeInfo.wa||'';
+  if(ph) window.location.href='tel:'+ph.replace(/\D/g,'');
+  else showToast('Phone number Admin panel mein set karein');
+}
+
+// ─── GALLERY DATA & FUNCTIONS ────────────────────────
+let gallery  = ld('mg_gallery',[]);
+let nextGid  = ld('mg_ngid',1);
+
+function renderGalleryPage(){
+  const grid=document.getElementById('galleryPageGrid'); if(!grid) return;
+  if(!gallery.length){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);"><div style="font-size:4rem;margin-bottom:14px;">🖼️</div><p>No photos yet. Admin panel se photos add karein!</p></div>';
+    return;
+  }
+  grid.innerHTML=gallery.map(g=>`
+    <div class="gallery-card" onclick="openLightbox(${g.id})">
+      <div class="gallery-img">${g.photo?`<img src="${g.photo}" alt="${g.title}" loading="lazy"/>`:'<div class="gallery-img-placeholder">🏪</div>'}</div>
+      <div class="gallery-info"><div class="gallery-name">${g.title}</div>${g.desc?`<div class="gallery-desc">${g.desc}</div>`:''}</div>
+    </div>`).join('');
+}
+function openLightbox(id){
+  const g=gallery.find(x=>x.id==id); if(!g||!g.photo) return;
+  document.getElementById('lbImage').src=g.photo;
+  document.getElementById('lbCaption').textContent=g.title;
+  document.getElementById('lbSub').textContent=g.desc||"Aftab Azmi's Mobile Gallery, Simrahi Bazar";
+  document.getElementById('galleryLightbox').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('galleryLightbox').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhoneDetail();closeLightbox();}});
+
+function previewGalleryPhoto(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('gf-photoData').value=e.target.result;
+    const img=document.getElementById('galleryPreviewImg');
+    img.src=e.target.result; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function saveGalleryPhoto(){
+  const title=document.getElementById('gf-title').value.trim();
+  const desc=document.getElementById('gf-desc').value.trim();
+  const photo=document.getElementById('gf-photoData').value;
+  const editId=document.getElementById('gf-editId').value;
+  if(!title){showToast('❌ Title required!');return;}
+  const obj={title,desc,photo};
+  if(editId){
+    const idx=gallery.findIndex(g=>g.id==editId);
+    if(idx>-1){if(!photo&&gallery[idx].photo)obj.photo=gallery[idx].photo;gallery[idx]={...gallery[idx],...obj};}
+  } else { obj.id=nextGid++;_svLocal('mg_ngid',nextGid);gallery.push(obj); }
+  _svLocal('mg_gallery',gallery); fbSaveGallery();
+  clearGalleryForm();renderAdminGallery();renderGalleryPage();
+  showToast(editId?'✅ Photo updated!':'✅ Photo added!');
+}
+function deleteGalleryPhoto(id){
+  if(!confirm('Delete this photo?'))return;
+  gallery=gallery.filter(g=>g.id!=id);_svLocal('mg_gallery',gallery);
+  if(firebaseEnabled) db.collection('gallery').doc(String(id)).delete().catch(e=>console.warn(e));
+  renderAdminGallery();renderGalleryPage();showToast('🗑️ Photo deleted!');
+}
+function editGalleryPhoto(id){
+  const g=gallery.find(x=>x.id==id);if(!g)return;
+  document.getElementById('gf-title').value=g.title;
+  document.getElementById('gf-desc').value=g.desc||'';
+  document.getElementById('gf-editId').value=g.id;
+  document.getElementById('gf-photoData').value=g.photo||'';
+  const img=document.getElementById('galleryPreviewImg');
+  if(g.photo){img.src=g.photo;img.style.display='block';}else img.style.display='none';
+  apTabClick('gallery');
+}
+function clearGalleryForm(){
+  ['gf-title','gf-desc','gf-editId','gf-photoData'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('gf-photo').value='';
+  document.getElementById('galleryPreviewImg').style.display='none';
+}
+function renderAdminGallery(){
+  const cnt=gallery.length;
+  document.getElementById('galleryCount').textContent=cnt;
+  const grid=document.getElementById('adminGalleryGrid');
+  if(!cnt){grid.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:10px;">No photos yet. Add some above!</p>';return;}
+  grid.innerHTML=gallery.map(g=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      ${g.photo?`<img src="${g.photo}" style="width:100%;height:130px;object-fit:cover;" loading="lazy"/>`:'<div style="height:130px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--muted);">🏪</div>'}
+      <div style="padding:10px;">
+        <div style="font-size:.83rem;font-weight:700;margin-bottom:4px;">${g.title}</div>
+        ${g.desc?`<div style="font-size:.74rem;color:var(--muted);margin-bottom:8px;">${g.desc}</div>`:''}
+        <div style="display:flex;gap:6px;">
+          <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editGalleryPhoto(${g.id})">✏️</button>
+          <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteGalleryPhoto(${g.id})">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+async function fbSaveGallery(){
+  if(!firebaseEnabled) return;
+  try{const batch=db.batch();gallery.forEach(item=>batch.set(db.collection('gallery').doc(String(item.id)),item));await batch.commit();}
+  catch(e){console.warn('[Firebase] Gallery save failed:',e.message);}
+}
+
+
+// === USER AUTH SYSTEM — Firebase Auth + Firestore ===
+let auth = null;
+let currentUser = null;
+let currentUserData = null;
+
+function initAuth(){
+  if(!firebaseEnabled) return;
+  auth = firebase.auth();
+  auth.onAuthStateChanged(async (user)=>{
+    if(user){
+      currentUser = user;
+      try{
+        const snap = await db.collection('users').doc(user.uid).get();
+        currentUserData = snap.exists ? snap.data() : null;
+      }catch(e){ currentUserData=null; }
+      updateAuthUI();
+    } else { currentUser=null; currentUserData=null; updateAuthUI(); }
+  });
+}
+
+function updateAuthUI(){
+  const loggedIn=!!currentUser;
+  const uname=currentUserData?.username||currentUser?.email?.split('@')[0]||'User';
+  const btn=document.getElementById('userNavBtn');
+  const lbl=document.getElementById('userNavLabel');
+  if(btn&&lbl){
+    if(loggedIn){lbl.textContent='👤 '+uname;btn.style.background='rgba(34,197,94,.12)';btn.style.borderColor='rgba(34,197,94,.3)';btn.style.color='var(--green)';}
+    else{lbl.textContent='Login / Register';btn.style.background='';btn.style.borderColor='';btn.style.color='';}
+  }
+  const g=document.getElementById('navSettingsGuest');
+  const li=document.getElementById('navSettingsLogin');
+  const u=document.getElementById('navSettingsUser');
+  const lo=document.getElementById('navSettingsLogout');
+  const un=document.getElementById('navUsername');
+  if(loggedIn){g&&(g.style.display='none');li&&(li.style.display='none');u&&(u.style.display='block');lo&&(lo.style.display='block');un&&(un.textContent=uname);}
+  else{g&&(g.style.display='block');li&&(li.style.display='block');u&&(u.style.display='none');lo&&(lo.style.display='none');}
+}
+
+function handleUserNavClick(){if(currentUser)openProfile();else openRegister();}
+
+function openRegister(){closeMenu();document.getElementById('registerOverlay').classList.add('show');clearAuthForms();}
+function closeRegister(){document.getElementById('registerOverlay').classList.remove('show');}
+function switchToLogin(){closeRegister();openLogin();}
+function switchToRegister(){closeLogin();openRegister();}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const username=document.getElementById('reg-username').value.trim().toLowerCase().replace(/\s/g,'');
+  const email=document.getElementById('reg-email').value.trim();
+  const phone=document.getElementById('reg-phone').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  const pass2=document.getElementById('reg-pass2').value;
+  const errEl=document.getElementById('regError');
+  errEl.style.display='none';
+  if(!name||!username||!email||!phone||!pass||!pass2){showAuthError(errEl,'❌ Saare fields bharna zaroori hai!');return;}
+  if(username.length<3){showAuthError(errEl,'❌ Username kam se kam 3 characters!');return;}
+  if(!/^[a-z0-9_]+$/.test(username)){showAuthError(errEl,'❌ Username mein sirf letters, numbers, underscore!');return;}
+  if(phone.replace(/\D/g,'').length<10){showAuthError(errEl,'❌ Phone number 10 digits ka hona chahiye!');return;}
+  if(pass.length<6){showAuthError(errEl,'❌ Password min 6 characters!');return;}
+  if(pass!==pass2){showAuthError(errEl,'❌ Dono passwords match nahi karte!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  setAuthLoading('reg',true);
+  try{
+    const usnap=await db.collection('usernames').doc(username).get();
+    if(usnap.exists){showAuthError(errEl,'❌ Yeh username pehle se le liya gaya hai!');setAuthLoading('reg',false);return;}
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    const uid=cred.user.uid;
+    const userData={uid,name,username,email,phone,joinedAt:new Date().toISOString(),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    await db.collection('users').doc(uid).set(userData);
+    await db.collection('usernames').doc(username).set({uid,email});
+    currentUserData=userData;
+    closeRegister();
+    showToast('🎉 Welcome '+name+'! Account ban gaya!');
+  }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
+  setAuthLoading('reg',false);
+}
+
+function openLogin(){closeMenu();document.getElementById('loginOverlay').classList.add('show');clearAuthForms();}
+function closeLogin(){document.getElementById('loginOverlay').classList.remove('show');}
+
+async function doLogin(){
+  let identifier=document.getElementById('log-id').value.trim();
+  const pass=document.getElementById('log-pass').value;
+  const errEl=document.getElementById('loginError2');
+  errEl.style.display='none';
+  if(!identifier||!pass){showAuthError(errEl,'❌ Email/Username aur password zaroori hai!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  setAuthLoading('login',true);
+  try{
+    let email=identifier;
+    if(!identifier.includes('@')){
+      const usnap=await db.collection('usernames').doc(identifier.toLowerCase()).get();
+      if(!usnap.exists){showAuthError(errEl,'❌ Yeh username registered nahi hai!');setAuthLoading('login',false);return;}
+      email=usnap.data().email;
+    }
+    await auth.signInWithEmailAndPassword(email,pass);
+    closeLogin();
+    showToast('✅ Login ho gaye! Welcome back!');
+  }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
+  setAuthLoading('login',false);
+}
+
+function openProfile(){
+  closeMenu();
+  if(!currentUser){openLogin();return;}
+  const d=currentUserData||{};
+  document.getElementById('profileAvatar').textContent=(d.name||'U')[0].toUpperCase();
+  document.getElementById('profileUsername').textContent=d.username||'--';
+  document.getElementById('profileEmailDisplay').textContent=d.email||currentUser.email;
+  document.getElementById('profileName').textContent=d.name||'--';
+  document.getElementById('profileUsernameInfo').textContent=d.username||'--';
+  document.getElementById('profileEmailInfo').textContent=d.email||currentUser.email;
+  document.getElementById('profilePhoneInfo').textContent=d.phone||'--';
+  const joined=d.joinedAt?new Date(d.joinedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'--';
+  document.getElementById('profileJoined').textContent=joined;
+  document.getElementById('pwdError').style.display='none';
+  ['pwd-current','pwd-new','pwd-confirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('profileOverlay').classList.add('show');
+}
+function closeProfile(){document.getElementById('profileOverlay').classList.remove('show');}
+
+async function changePassword(){
+  const current=document.getElementById('pwd-current').value;
+  const newPwd=document.getElementById('pwd-new').value;
+  const confirm=document.getElementById('pwd-confirm').value;
+  const errEl=document.getElementById('pwdError');
+  errEl.style.display='none';
+  if(!current||!newPwd||!confirm){showAuthError(errEl,'❌ Saare fields bharen!');return;}
+  if(newPwd.length<6){showAuthError(errEl,'❌ Naya password min 6 chars!');return;}
+  if(newPwd!==confirm){showAuthError(errEl,'❌ Naye passwords match nahi karte!');return;}
+  if(!currentUser)return;
+  try{
+    const cred=firebase.auth.EmailAuthProvider.credential(currentUser.email,current);
+    await currentUser.reauthenticateWithCredential(cred);
+    await currentUser.updatePassword(newPwd);
+    ['pwd-current','pwd-new','pwd-confirm'].forEach(id=>document.getElementById(id).value='');
+    showToast('✅ Password change ho gaya!');closeProfile();
+  }catch(e){showAuthError(errEl,e.code==='auth/wrong-password'?'❌ Current password galat hai!':friendlyAuthError(e.code));}
+}
+
+async function logoutUser(){
+  if(!confirm('Kya aap logout karna chahte hain?'))return;
+  closeProfile();closeMenu();
+  if(auth)await auth.signOut();
+  showToast('👋 Logout ho gaye!');
+}
+
+function showAuthError(el,msg){el.textContent=msg;el.style.display='block';}
+function clearAuthForms(){
+  ['reg-name','reg-username','reg-email','reg-phone','reg-pass','reg-pass2','log-id','log-pass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['regError','loginError2'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+}
+function setAuthLoading(type,on){
+  if(type==='reg'){document.getElementById('regBtn').style.display=on?'none':'block';document.getElementById('regSpinner').style.display=on?'block':'none';}
+  else{document.getElementById('loginBtn').style.display=on?'none':'block';document.getElementById('loginSpinner').style.display=on?'block':'none';}
+}
+function closeMenu(){const l=document.getElementById('navLinks');if(l)l.style.display='';}
+function friendlyAuthError(code){
+  const map={'auth/email-already-in-use':'❌ Yeh email pehle se register hai!','auth/invalid-email':'❌ Email format sahi nahi hai!','auth/weak-password':'❌ Password zyada weak hai!','auth/user-not-found':'❌ Email/Username registered nahi hai!','auth/wrong-password':'❌ Password galat hai!','auth/too-many-requests':'❌ Zyada attempts! Thodi der baad try karein.','auth/network-request-failed':'❌ Internet connection check karein!','auth/invalid-credential':'❌ Email ya password galat hai!'};
+  return map[code]||'❌ Error: '+code;
+}
+
+
 // ─── NAVIGATION ────────────────────────────────────
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -966,6 +1606,9 @@ function showPage(name){
   const el=document.getElementById('nav-'+name);
   if(el) el.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  // Mobile menu band karo
+  const l=document.getElementById('navLinks');
+  l.style.display='';
 }
 function addToCart(name){showToast('🛒 '+name+' – inquiry registered!');}
 function sendMessage(){
@@ -1006,7 +1649,7 @@ document.getElementById('adminUser').addEventListener('keydown',e=>{if(e.key==='
 // ─── ADMIN PANEL ────────────────────────────────────
 function openAdminPanel(){
   document.getElementById('adminPanel').classList.add('show');
-  renderAdminDashboard();renderAdminPhones();renderAdminBrands();
+  renderAdminDashboard();renderAdminPhones();renderAdminBrands();renderAdminGallery();
   loadStoreForm();loadHeroForm();
 }
 function exitAdmin(){
@@ -1245,7 +1888,6 @@ async function fbLoad(col, fallback){
   if (!firebaseEnabled) return fallback;
   try {
     if (col === 'store' || col === 'hero') {
-      // single-doc collections
       const snap = await db.collection('config').doc(col).get();
       return snap.exists ? snap.data() : fallback;
     } else {
@@ -1316,17 +1958,18 @@ function updateFbStatus(){
 async function initApp(){
   if (firebaseEnabled) {
     showToast('☁️ Loading from Firebase…');
-    const [fbPhones, fbBrands, fbStore, fbHero] = await Promise.all([
+    const [fbPhones, fbBrands, fbStore, fbHero, fbGallery] = await Promise.all([
       fbLoad('phones', phones),
       fbLoad('brands', brands),
       fbLoad('store',  storeInfo),
       fbLoad('hero',   heroData),
+      fbLoad('gallery',gallery),
     ]);
-    // Only replace if Firebase returned real data
-    if (fbPhones && fbPhones.length) phones = fbPhones;
-    if (fbBrands && fbBrands.length) brands = fbBrands;
-    if (fbStore  && Object.keys(fbStore).length)  storeInfo = fbStore;
-    if (fbHero   && Object.keys(fbHero).length)   heroData  = fbHero;
+    if (fbPhones  && fbPhones.length)                phones     = fbPhones;
+    if (fbBrands  && fbBrands.length)                brands     = fbBrands;
+    if (fbStore   && Object.keys(fbStore).length)    storeInfo  = fbStore;
+    if (fbHero    && Object.keys(fbHero).length)     heroData   = fbHero;
+    if (fbGallery && fbGallery.length)               gallery    = fbGallery;
   }
   renderSite();
   updateFbStatus();
