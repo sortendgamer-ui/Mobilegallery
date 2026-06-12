@@ -7,6 +7,7 @@
 <!-- Firebase SDK (v9 compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -290,6 +291,84 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 .lb-close:hover{color:var(--text);}
 .lb-caption{color:var(--text);font-size:.95rem;margin-top:14px;font-weight:600;text-align:center;}
 .lb-sub{color:var(--muted);font-size:.82rem;margin-top:4px;text-align:center;}
+
+/* ── SETTINGS MENU (hamburger ke neeche) ── */
+.nav-settings-item{border-top:1px solid var(--border);margin-top:10px;padding-top:10px;}
+.nav-settings-item a{color:var(--muted)!important;display:flex;align-items:center;gap:8px;}
+.nav-settings-item a:hover{color:var(--text)!important;}
+.nav-user-item{background:rgba(108,63,255,.08);border-radius:10px;padding:10px 14px!important;
+  margin:4px 0;border:1px solid rgba(108,63,255,.2);}
+.nav-user-item a{color:var(--text)!important;font-weight:600;display:flex;align-items:center;gap:8px;}
+
+/* Desktop user button in nav */
+.user-nav-btn{background:rgba(108,63,255,.12);border:1px solid rgba(108,63,255,.3);
+  color:#a78bff;padding:7px 15px;border-radius:18px;cursor:pointer;
+  font-size:.78rem;font-weight:700;transition:all .3s;display:flex;align-items:center;gap:6px;}
+.user-nav-btn:hover{background:rgba(108,63,255,.22);}
+
+/* ── AUTH MODAL ── */
+.auth-overlay{display:none;position:fixed;inset:0;z-index:7000;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;}
+.auth-overlay.show{display:flex;}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:440px;padding:36px 32px;position:relative;margin:16px;}
+.auth-close{position:absolute;top:16px;right:20px;background:none;border:none;
+  color:var(--muted);font-size:1.4rem;cursor:pointer;transition:color .2s;}
+.auth-close:hover{color:var(--text);}
+.auth-logo{text-align:center;font-size:2.5rem;margin-bottom:6px;}
+.auth-title{text-align:center;font-size:1.3rem;font-weight:800;margin-bottom:4px;}
+.auth-sub{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:24px;}
+.auth-field{margin-bottom:16px;}
+.auth-field label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.auth-field input{width:100%;background:var(--surface);border:1px solid var(--border);
+  color:var(--text);padding:12px 14px;border-radius:10px;font-size:.9rem;
+  font-family:'Poppins',sans-serif;outline:none;transition:border-color .3s;}
+.auth-field input:focus{border-color:var(--accent);}
+.auth-field input::placeholder{color:var(--muted);}
+.auth-btn{width:100%;padding:14px;border:none;border-radius:12px;
+  background:var(--grad);color:#fff;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:opacity .3s;margin-top:6px;}
+.auth-btn:hover{opacity:.88;}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-error{background:rgba(255,77,109,.12);border:1px solid rgba(255,77,109,.3);
+  color:#ff7f95;padding:10px 14px;border-radius:8px;font-size:.82rem;
+  margin-bottom:14px;display:none;}
+.auth-switch{text-align:center;font-size:.82rem;color:var(--muted);margin-top:16px;}
+.auth-switch span{color:var(--accent2);cursor:pointer;font-weight:600;}
+.auth-switch span:hover{text-decoration:underline;}
+.auth-divider{text-align:center;color:var(--muted);font-size:.78rem;margin:10px 0;}
+.auth-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+  margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PROFILE OVERLAY ── */
+.profile-overlay{display:none;position:fixed;inset:0;z-index:7000;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+  align-items:center;justify-content:center;}
+.profile-overlay.show{display:flex;}
+.profile-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:460px;padding:36px 32px;position:relative;margin:16px;max-height:90vh;overflow-y:auto;}
+.profile-avatar{width:80px;height:80px;background:var(--grad);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  margin:0 auto 14px;}
+.profile-username{text-align:center;font-size:1.2rem;font-weight:800;margin-bottom:4px;}
+.profile-email{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:24px;}
+.profile-section-title{font-size:.75rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;}
+.profile-info-row{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+.profile-info-row:last-child{border-bottom:none;}
+.profile-info-label{color:var(--muted);}
+.profile-info-value{font-weight:600;}
+.profile-btn{width:100%;padding:12px;border:none;border-radius:10px;
+  font-size:.88rem;font-weight:700;cursor:pointer;transition:all .3s;margin-top:10px;}
+.profile-btn-primary{background:var(--grad);color:#fff;}
+.profile-btn-danger{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:#ff4d6d;}
+.profile-btn-danger:hover{background:rgba(255,77,109,.2);}
+.pwd-field{margin-top:8px;}
 
 /* ── TOAST ── */
 #toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--card);
@@ -645,10 +724,19 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <li><a onclick="showPage('about')" id="nav-about">About Us</a></li>
     <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
     <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+    <li class="nav-user-item" id="navSettingsUser" style="display:none;">
+      <a onclick="openProfile()">👤 <span id="navUsername">My Profile</span></a>
+    </li>
+    <li class="nav-settings-item" id="navSettingsLogout" style="display:none;">
+      <a onclick="logoutUser()">🚪 Logout</a>
+    </li>
   </ul>
   <div class="nav-right">
-    <!-- Admin button: visible only on desktop via CSS -->
     <button class="admin-btn" onclick="openAdminLogin()">⚙️ Admin Panel</button>
+    <!-- User button: shows Login or username -->
+    <button class="user-nav-btn" id="userNavBtn" onclick="handleUserNavClick()">
+      👤 <span id="userNavLabel">Login / Register</span>
+    </button>
     <button class="nav-cta" onclick="showPage('contact')">📞 Contact Us</button>
   </div>
   <div class="hamburger" onclick="toggleMenu()">
@@ -907,6 +995,67 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div style="font-size:.8rem;color:var(--muted);">Karjain Road, Simrahi Bazar, Bihar, India</div>
   </div>
 </footer>
+
+<!-- ══ REGISTER MODAL ══ -->
+<div class="auth-overlay" id="registerOverlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeRegister()">✕</button>
+    <div class="auth-logo">📱</div>
+    <div class="auth-title">Create Account</div>
+    <div class="auth-sub">Aftab Azmi's Mobile Gallery mein register karein</div>
+    <div class="auth-error" id="regError"></div>
+    <div class="auth-field"><label>Full Name *</label><input type="text" id="reg-name" placeholder="Aapka pura naam"/></div>
+    <div class="auth-field"><label>Username *</label><input type="text" id="reg-username" placeholder="unique username (koi space nahi)"/></div>
+    <div class="auth-field"><label>Email *</label><input type="email" id="reg-email" placeholder="aapka@email.com"/></div>
+    <div class="auth-field"><label>Phone Number *</label><input type="tel" id="reg-phone" placeholder="10-digit mobile number"/></div>
+    <div class="auth-field"><label>Password *</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
+    <div class="auth-field"><label>Confirm Password *</label><input type="password" id="reg-pass2" placeholder="Password dobara likhein"/></div>
+    <button class="auth-btn" onclick="doRegister()" id="regBtn">✅ Register Karein</button>
+    <div class="auth-spinner" id="regSpinner"></div>
+    <div class="auth-switch">Pehle se account hai? <span onclick="switchToLogin()">Login karein</span></div>
+  </div>
+</div>
+
+<!-- ══ LOGIN MODAL ══ -->
+<div class="auth-overlay" id="loginOverlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeLogin()">✕</button>
+    <div class="auth-logo">🔑</div>
+    <div class="auth-title">Welcome Back!</div>
+    <div class="auth-sub">Login karein apne account mein</div>
+    <div class="auth-error" id="loginError2"></div>
+    <div class="auth-field"><label>Email ya Username *</label><input type="text" id="log-id" placeholder="Email ya username likhein"/></div>
+    <div class="auth-field"><label>Password *</label><input type="password" id="log-pass" placeholder="Aapka password"/></div>
+    <button class="auth-btn" onclick="doLogin()" id="loginBtn">🔑 Login Karein</button>
+    <div class="auth-spinner" id="loginSpinner"></div>
+    <div class="auth-switch">Account nahi hai? <span onclick="switchToRegister()">Register karein</span></div>
+  </div>
+</div>
+
+<!-- ══ PROFILE OVERLAY ══ -->
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-box">
+    <button class="auth-close" onclick="closeProfile()">✕</button>
+    <div class="profile-avatar" id="profileAvatar">👤</div>
+    <div class="profile-username" id="profileUsername">Username</div>
+    <div class="profile-email" id="profileEmailDisplay">email@example.com</div>
+
+    <div class="profile-section-title">📋 Account Info</div>
+    <div class="profile-info-row"><span class="profile-info-label">Full Name</span><span class="profile-info-value" id="profileName">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Username</span><span class="profile-info-value" id="profileUsernameInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Email</span><span class="profile-info-value" id="profileEmailInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Phone</span><span class="profile-info-value" id="profilePhoneInfo">—</span></div>
+    <div class="profile-info-row"><span class="profile-info-label">Member Since</span><span class="profile-info-value" id="profileJoined">—</span></div>
+
+    <div class="profile-section-title">🔒 Change Password</div>
+    <div class="auth-error" id="pwdError"></div>
+    <div class="auth-field pwd-field"><label>Current Password</label><input type="password" id="pwd-current" placeholder="Abhi wala password"/></div>
+    <div class="auth-field pwd-field"><label>New Password</label><input type="password" id="pwd-new" placeholder="Naya password (min 6 chars)"/></div>
+    <div class="auth-field pwd-field"><label>Confirm New Password</label><input type="password" id="pwd-confirm" placeholder="Naya password dobara"/></div>
+    <button class="profile-btn profile-btn-primary" onclick="changePassword()" style="margin-top:4px;">🔒 Password Change Karein</button>
+    <button class="profile-btn profile-btn-danger" onclick="logoutUser()" style="margin-top:8px;">🚪 Logout</button>
+  </div>
+</div>
 
 <!-- PHONE DETAIL OVERLAY -->
 <div id="phoneDetailOverlay">
@@ -1206,7 +1355,7 @@ function closeLightbox(){
   document.getElementById('galleryLightbox').classList.remove('show');
   document.body.style.overflow='';
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhoneDetail();closeLightbox();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhoneDetail();closeLightbox();closeRegister();closeLogin();closeProfile();}});
 
 function previewGalleryPhoto(input){
   const file=input.files[0]; if(!file) return;
@@ -1277,6 +1426,168 @@ async function fbSaveGallery(){
   try{const batch=db.batch();gallery.forEach(item=>batch.set(db.collection('gallery').doc(String(item.id)),item));await batch.commit();}
   catch(e){console.warn('[Firebase] Gallery save failed:',e.message);}
 }
+
+
+// === USER AUTH SYSTEM — Firebase Auth + Firestore ===
+let auth = null;
+let currentUser = null;
+let currentUserData = null;
+
+function initAuth(){
+  if(!firebaseEnabled) return;
+  auth = firebase.auth();
+  auth.onAuthStateChanged(async (user)=>{
+    if(user){
+      currentUser = user;
+      try{
+        const snap = await db.collection('users').doc(user.uid).get();
+        currentUserData = snap.exists ? snap.data() : null;
+      }catch(e){ currentUserData=null; }
+      updateAuthUI();
+    } else { currentUser=null; currentUserData=null; updateAuthUI(); }
+  });
+}
+
+function updateAuthUI(){
+  const loggedIn=!!currentUser;
+  const uname=currentUserData?.username||currentUser?.email?.split('@')[0]||'User';
+  const btn=document.getElementById('userNavBtn');
+  const lbl=document.getElementById('userNavLabel');
+  if(btn&&lbl){
+    if(loggedIn){lbl.textContent='👤 '+uname;btn.style.background='rgba(34,197,94,.12)';btn.style.borderColor='rgba(34,197,94,.3)';btn.style.color='var(--green)';}
+    else{lbl.textContent='Login / Register';btn.style.background='';btn.style.borderColor='';btn.style.color='';}
+  }
+  const u=document.getElementById('navSettingsUser');
+  const lo=document.getElementById('navSettingsLogout');
+  const un=document.getElementById('navUsername');
+  if(loggedIn){u&&(u.style.display='block');lo&&(lo.style.display='block');un&&(un.textContent=uname);}
+  else{u&&(u.style.display='none');lo&&(lo.style.display='none');}
+}
+
+function handleUserNavClick(){if(currentUser)openProfile();else openRegister();}
+
+function openRegister(){closeMenu();document.getElementById('registerOverlay').classList.add('show');clearAuthForms();}
+function closeRegister(){document.getElementById('registerOverlay').classList.remove('show');}
+function switchToLogin(){closeRegister();openLogin();}
+function switchToRegister(){closeLogin();openRegister();}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const username=document.getElementById('reg-username').value.trim().toLowerCase().replace(/\s/g,'');
+  const email=document.getElementById('reg-email').value.trim();
+  const phone=document.getElementById('reg-phone').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  const pass2=document.getElementById('reg-pass2').value;
+  const errEl=document.getElementById('regError');
+  errEl.style.display='none';
+  if(!name||!username||!email||!phone||!pass||!pass2){showAuthError(errEl,'❌ Saare fields bharna zaroori hai!');return;}
+  if(username.length<3){showAuthError(errEl,'❌ Username kam se kam 3 characters!');return;}
+  if(!/^[a-z0-9_]+$/.test(username)){showAuthError(errEl,'❌ Username mein sirf letters, numbers, underscore!');return;}
+  if(phone.replace(/\D/g,'').length<10){showAuthError(errEl,'❌ Phone number 10 digits ka hona chahiye!');return;}
+  if(pass.length<6){showAuthError(errEl,'❌ Password min 6 characters!');return;}
+  if(pass!==pass2){showAuthError(errEl,'❌ Dono passwords match nahi karte!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  setAuthLoading('reg',true);
+  try{
+    const usnap=await db.collection('usernames').doc(username).get();
+    if(usnap.exists){showAuthError(errEl,'❌ Yeh username pehle se le liya gaya hai!');setAuthLoading('reg',false);return;}
+    const cred=await auth.createUserWithEmailAndPassword(email,pass);
+    const uid=cred.user.uid;
+    const userData={uid,name,username,email,phone,joinedAt:new Date().toISOString(),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    await db.collection('users').doc(uid).set(userData);
+    await db.collection('usernames').doc(username).set({uid,email});
+    currentUserData=userData;
+    closeRegister();
+    showToast('🎉 Welcome '+name+'! Account ban gaya!');
+  }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
+  setAuthLoading('reg',false);
+}
+
+function openLogin(){closeMenu();document.getElementById('loginOverlay').classList.add('show');clearAuthForms();}
+function closeLogin(){document.getElementById('loginOverlay').classList.remove('show');}
+
+async function doLogin(){
+  let identifier=document.getElementById('log-id').value.trim();
+  const pass=document.getElementById('log-pass').value;
+  const errEl=document.getElementById('loginError2');
+  errEl.style.display='none';
+  if(!identifier||!pass){showAuthError(errEl,'❌ Email/Username aur password zaroori hai!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  setAuthLoading('login',true);
+  try{
+    let email=identifier;
+    if(!identifier.includes('@')){
+      const usnap=await db.collection('usernames').doc(identifier.toLowerCase()).get();
+      if(!usnap.exists){showAuthError(errEl,'❌ Yeh username registered nahi hai!');setAuthLoading('login',false);return;}
+      email=usnap.data().email;
+    }
+    await auth.signInWithEmailAndPassword(email,pass);
+    closeLogin();
+    showToast('✅ Login ho gaye! Welcome back!');
+  }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
+  setAuthLoading('login',false);
+}
+
+function openProfile(){
+  closeMenu();
+  if(!currentUser){openLogin();return;}
+  const d=currentUserData||{};
+  document.getElementById('profileAvatar').textContent=(d.name||'U')[0].toUpperCase();
+  document.getElementById('profileUsername').textContent=d.username||'--';
+  document.getElementById('profileEmailDisplay').textContent=d.email||currentUser.email;
+  document.getElementById('profileName').textContent=d.name||'--';
+  document.getElementById('profileUsernameInfo').textContent=d.username||'--';
+  document.getElementById('profileEmailInfo').textContent=d.email||currentUser.email;
+  document.getElementById('profilePhoneInfo').textContent=d.phone||'--';
+  const joined=d.joinedAt?new Date(d.joinedAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'--';
+  document.getElementById('profileJoined').textContent=joined;
+  document.getElementById('pwdError').style.display='none';
+  ['pwd-current','pwd-new','pwd-confirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('profileOverlay').classList.add('show');
+}
+function closeProfile(){document.getElementById('profileOverlay').classList.remove('show');}
+
+async function changePassword(){
+  const current=document.getElementById('pwd-current').value;
+  const newPwd=document.getElementById('pwd-new').value;
+  const confirm=document.getElementById('pwd-confirm').value;
+  const errEl=document.getElementById('pwdError');
+  errEl.style.display='none';
+  if(!current||!newPwd||!confirm){showAuthError(errEl,'❌ Saare fields bharen!');return;}
+  if(newPwd.length<6){showAuthError(errEl,'❌ Naya password min 6 chars!');return;}
+  if(newPwd!==confirm){showAuthError(errEl,'❌ Naye passwords match nahi karte!');return;}
+  if(!currentUser)return;
+  try{
+    const cred=firebase.auth.EmailAuthProvider.credential(currentUser.email,current);
+    await currentUser.reauthenticateWithCredential(cred);
+    await currentUser.updatePassword(newPwd);
+    ['pwd-current','pwd-new','pwd-confirm'].forEach(id=>document.getElementById(id).value='');
+    showToast('✅ Password change ho gaya!');closeProfile();
+  }catch(e){showAuthError(errEl,e.code==='auth/wrong-password'?'❌ Current password galat hai!':friendlyAuthError(e.code));}
+}
+
+async function logoutUser(){
+  if(!confirm('Kya aap logout karna chahte hain?'))return;
+  closeProfile();closeMenu();
+  if(auth)await auth.signOut();
+  showToast('👋 Logout ho gaye!');
+}
+
+function showAuthError(el,msg){el.textContent=msg;el.style.display='block';}
+function clearAuthForms(){
+  ['reg-name','reg-username','reg-email','reg-phone','reg-pass','reg-pass2','log-id','log-pass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['regError','loginError2'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+}
+function setAuthLoading(type,on){
+  if(type==='reg'){document.getElementById('regBtn').style.display=on?'none':'block';document.getElementById('regSpinner').style.display=on?'block':'none';}
+  else{document.getElementById('loginBtn').style.display=on?'none':'block';document.getElementById('loginSpinner').style.display=on?'block':'none';}
+}
+function closeMenu(){const l=document.getElementById('navLinks');if(l)l.style.display='';}
+function friendlyAuthError(code){
+  const map={'auth/email-already-in-use':'❌ Yeh email pehle se register hai!','auth/invalid-email':'❌ Email format sahi nahi hai!','auth/weak-password':'❌ Password zyada weak hai!','auth/user-not-found':'❌ Email/Username registered nahi hai!','auth/wrong-password':'❌ Password galat hai!','auth/too-many-requests':'❌ Zyada attempts! Thodi der baad try karein.','auth/network-request-failed':'❌ Internet connection check karein!','auth/invalid-credential':'❌ Email ya password galat hai!'};
+  return map[code]||'❌ Error: '+code;
+}
+
 
 // ─── NAVIGATION ────────────────────────────────────
 function showPage(name){
@@ -1653,6 +1964,7 @@ async function initApp(){
   }
   renderSite();
   updateFbStatus();
+  initAuth(); // User auth system start karo
 }
 
 initApp();
