@@ -498,10 +498,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div class="lock">🔐</div>
     <h2>Admin <span>Login</span></h2>
     <p>Restricted access – only for store owner</p>
-    <input type="text" id="adminUser" placeholder="Username" autocomplete="off"/>
+    <input type="email" id="adminUser" placeholder="Admin Email" autocomplete="off"/>
     <input type="password" id="adminPass" placeholder="Password"/>
     <button class="login-submit" onclick="doAdminLogin()">Login →</button>
-    <div class="login-error" id="loginError">❌ Wrong username or password!</div>
+    <div class="login-error" id="loginError">❌ Wrong email or password!</div>
     <button class="login-cancel" onclick="closeAdminLogin()">✕ Cancel</button>
   </div>
 </div>
@@ -1112,8 +1112,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 ══════════════════════════════════════════ -->
 <script>
 // ─── CREDENTIALS ───────────────────────────────────
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'MobileGallery@786';
+const ADMIN_USER = 'mobilegalleryweb.mobile.com';
+const ADMIN_PASS = 'mobilegallery#@123';
 
 // ─── STORAGE HELPERS ───────────────────────────────
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
@@ -1845,12 +1845,14 @@ function saveHero(){
 //     Project Settings → Your apps → SDK setup
 // ════════════════════════════════════════════════════
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey: "AIzaSyCNVbDwQ3Vw7kGHx9bsICKf5CVAm4pYwVY",
+  authDomain: "mobilegallery-f1f0c.firebaseapp.com",
+  databaseURL: "https://mobilegallery-f1f0c-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "mobilegallery-f1f0c",
+  storageBucket: "mobilegallery-f1f0c.firebasestorage.app",
+  messagingSenderId: "1012971244261",
+  appId: "1:1012971244261:web:c2d9fc62e659454e67620c",
+  measurementId: "G-3R7B0Q9HCF"
 };
 
 // ─── Firebase state ─────────────────────────────────
@@ -1860,7 +1862,7 @@ let firebaseEnabled = false;
 // ─── Init ────────────────────────────────────────────
 (function initFirebase(){
   try {
-    if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+    if (firebaseConfig.apiKey === "DISABLED") {
       console.warn("[Firebase] Config not set – running in localStorage-only mode.");
       return;
     }
