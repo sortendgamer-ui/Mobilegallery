@@ -370,6 +370,68 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 .profile-btn-danger:hover{background:rgba(255,77,109,.2);}
 .pwd-field{margin-top:8px;}
 
+/* ── REVIEWS PAGE ── */
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.review-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;transition:all .3s;}
+.review-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+.review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.review-avatar{width:44px;height:44px;border-radius:50%;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:700;color:#fff;flex-shrink:0;}
+.review-name{font-weight:700;font-size:.95rem;}
+.review-date{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.review-stars{display:flex;gap:3px;margin-bottom:10px;}
+.review-stars span{font-size:1.1rem;}
+.review-text{font-size:.85rem;color:var(--muted);line-height:1.6;}
+.reviews-summary{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px;text-align:center;margin-bottom:32px;}
+.reviews-avg{font-size:3.5rem;font-weight:900;background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.reviews-avg-stars{font-size:1.6rem;margin:8px 0 4px;}
+.reviews-total{font-size:.82rem;color:var(--muted);}
+.add-review-box{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px;margin-bottom:32px;}
+.add-review-box h3{font-size:1.1rem;font-weight:700;margin-bottom:18px;}
+.star-picker{display:flex;gap:8px;margin-bottom:16px;cursor:pointer;}
+.star-picker span{font-size:2rem;transition:transform .2s;user-select:none;}
+.star-picker span:hover{transform:scale(1.2);}
+.star-picker span.active{filter:drop-shadow(0 0 6px #f5c842);}
+.review-submit-btn{background:var(--grad);border:none;color:#fff;padding:12px 28px;
+  border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .3s;}
+.review-submit-btn:hover{opacity:.85;}
+.review-login-note{background:rgba(108,63,255,.08);border:1px solid rgba(108,63,255,.2);
+  border-radius:10px;padding:14px 18px;font-size:.85rem;color:var(--muted);text-align:center;}
+
+/* ── MESSAGES ADMIN ── */
+.msg-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;margin-bottom:12px;}
+.msg-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.msg-name{font-weight:700;font-size:.92rem;}
+.msg-time{font-size:.72rem;color:var(--muted);}
+.msg-meta{display:flex;gap:14px;font-size:.78rem;color:var(--muted);margin-bottom:8px;flex-wrap:wrap;}
+.msg-meta span{display:flex;align-items:center;gap:4px;}
+.msg-body{font-size:.85rem;color:var(--text);line-height:1.6;
+  background:rgba(108,63,255,.05);border-radius:8px;padding:10px 12px;}
+.msg-unread{border-left:3px solid var(--accent);}
+.msg-badge-new{background:rgba(108,63,255,.15);color:#a78bff;
+  font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+
+/* ── EVENTS PAGE ── */
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:18px;
+  overflow:hidden;transition:all .3s;cursor:default;}
+.event-card:hover{transform:translateY(-5px);box-shadow:0 18px 50px rgba(108,63,255,.2);border-color:var(--accent);}
+.event-img{height:220px;overflow:hidden;position:relative;background:linear-gradient(135deg,#1a1a2e,#16213e);}
+.event-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.event-card:hover .event-img img{transform:scale(1.05);}
+.event-img-placeholder{display:flex;align-items:center;justify-content:center;height:100%;font-size:5rem;}
+.event-badge{position:absolute;top:14px;left:14px;background:var(--grad);
+  color:#fff;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:12px;letter-spacing:.5px;}
+.event-info{padding:20px 22px 22px;}
+.event-title{font-size:1.05rem;font-weight:800;margin-bottom:8px;line-height:1.3;}
+.event-desc{font-size:.83rem;color:var(--muted);line-height:1.65;}
+.event-date{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--accent2);
+  font-weight:600;margin-top:12px;}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--card);
   border:1px solid var(--accent);border-radius:12px;padding:13px 20px;
@@ -515,8 +577,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div class="ap-tabs">
       <button class="ap-tab active" onclick="apTab('dashboard',this)">📊 Dashboard</button>
       <button class="ap-tab" onclick="apTab('phones',this)">📱 Phones</button>
+      <button class="ap-tab" onclick="apTab('gadgets',this)">🛍️ Gadgets</button>
       <button class="ap-tab" onclick="apTab('brands',this)">🏷️ Brands</button>
+      <button class="ap-tab" onclick="apTab('events',this)">🎉 Events</button>
       <button class="ap-tab" onclick="apTab('gallery',this)">🖼️ Gallery</button>
+      <button class="ap-tab" onclick="apTab('messages',this)">📩 Messages <span id="msgBadge" style="background:var(--red);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px;margin-left:4px;display:none;">0</span></button>
+      <button class="ap-tab" onclick="apTab('reviews',this)">⭐ Reviews</button>
       <button class="ap-tab" onclick="apTab('store',this)">🏪 Store Info</button>
       <button class="ap-tab" onclick="apTab('hero',this)">🏠 Hero</button>
     </div>
@@ -637,6 +703,83 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       </div>
     </div>
 
+    <!-- GADGETS ADMIN -->
+    <div class="ap-section" id="aps-gadgets">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3 id="gadgetFormTitle">🛍️ Add New Product</h3></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Category *</label>
+            <select id="gd-cat">
+              <option value="">-- Select Category --</option>
+              <option>Smart Watch</option><option>Earbuds</option><option>Earphones</option>
+              <option>Headphones</option><option>Phone Cover</option><option>Tempered Glass</option>
+              <option>Charger</option><option>Cable</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label>Product Name *</label><input type="text" id="gd-name" placeholder="e.g. TWS Earbuds Pro"/></div>
+          <div class="fg"><label>Price *</label><input type="text" id="gd-price" placeholder="e.g. ₹1,499"/></div>
+          <div class="fg"><label>Icon Emoji</label><input type="text" id="gd-icon" placeholder="e.g. 🎧" maxlength="4"/></div>
+          <div class="fg full"><label>Short Description *</label><input type="text" id="gd-desc" placeholder="e.g. Active noise cancellation, 30hr battery, Bluetooth 5.3"/></div>
+          <div class="fg"><label>Badge</label>
+            <select id="gd-badge">
+              <option value="">None</option>
+              <option value="new">NEW</option>
+              <option value="sale">SALE</option>
+              <option value="hot">HOT</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="gd-editId" value=""/>
+        <div class="fg-btns">
+          <button class="ap-btn ap-btn-primary" onclick="saveGadget()">💾 Save Product</button>
+          <button class="ap-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);" onclick="clearGadgetForm()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>All Products (<span id="gadgetCount">0</span>)</h3></div>
+        <table class="ap-table">
+          <thead><tr><th>Category</th><th>Name</th><th>Price</th><th>Badge</th><th>Actions</th></tr></thead>
+          <tbody id="adminGadgetsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EVENTS ADMIN -->
+    <div class="ap-section" id="aps-events">
+      <div class="ap-card">
+        <div class="ap-card-head"><h3 id="eventFormTitle">🎉 Add New Event</h3></div>
+        <div class="fg-grid">
+          <div class="fg"><label>Event Title *</label><input type="text" id="ev-title" placeholder="e.g. Eid Special Sale 2025"/></div>
+          <div class="fg"><label>Badge Label</label><input type="text" id="ev-badge" placeholder="e.g. SALE, NEW, LIVE"/></div>
+          <div class="fg full"><label>Description *</label>
+            <textarea id="ev-desc" placeholder="Describe the event — offers, discounts, dates, details…"
+              style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+              padding:12px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.85rem;
+              min-height:80px;resize:vertical;outline:none;"></textarea>
+          </div>
+          <div class="fg"><label>Event Date</label><input type="text" id="ev-date" placeholder="e.g. 20 June 2025"/></div>
+          <div class="fg full">
+            <label>Event Photo</label>
+            <div class="photo-upload-area" id="eventUploadArea">
+              <input type="file" id="ev-photo" accept="image/*" onchange="previewEventPhoto(this)"/>
+              <div class="photo-upload-label">📷 Click to upload event photo<br><span>JPG, PNG, WEBP supported</span></div>
+              <img id="eventPreviewImg" class="photo-preview" alt="preview"/>
+            </div>
+            <input type="hidden" id="ev-photoData" value=""/>
+          </div>
+        </div>
+        <input type="hidden" id="ev-editId" value=""/>
+        <div class="fg-btns">
+          <button class="ap-btn ap-btn-primary" onclick="saveEvent()">💾 Save Event</button>
+          <button class="ap-btn" style="background:var(--surface);border:1px solid var(--border);color:var(--muted);" onclick="clearEventForm()">✕ Clear</button>
+        </div>
+      </div>
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>All Events (<span id="eventCount">0</span>)</h3></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;" id="adminEventsGrid"></div>
+      </div>
+    </div>
+
     <!-- GALLERY -->
     <div class="ap-section" id="aps-gallery">
       <div class="ap-card">
@@ -663,6 +806,28 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       <div class="ap-card">
         <div class="ap-card-head"><h3>All Gallery Photos (<span id="galleryCount">0</span>)</h3></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;padding:4px 0;" id="adminGalleryGrid"></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="ap-section" id="aps-messages">
+      <div class="ap-card">
+        <div class="ap-card-head">
+          <h3>📩 Customer Messages (<span id="msgCount">0</span>)</h3>
+          <button class="ap-btn ap-btn-danger" onclick="clearAllMessages()" style="font-size:.75rem;padding:6px 12px;">🗑️ Clear All</button>
+        </div>
+        <div id="adminMsgList"><p style="color:var(--muted);font-size:.85rem;">Koi message nahi abhi.</p></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS ADMIN -->
+    <div class="ap-section" id="aps-reviews">
+      <div class="ap-card">
+        <div class="ap-card-head">
+          <h3>⭐ Customer Reviews (<span id="adminReviewCount">0</span>)</h3>
+          <div style="font-size:.82rem;color:var(--muted);">Average: <strong id="adminAvgRating">—</strong></div>
+        </div>
+        <div id="adminReviewList"><p style="color:var(--muted);font-size:.85rem;">Koi review nahi abhi.</p></div>
       </div>
     </div>
 
@@ -720,10 +885,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   <ul class="nav-links" id="navLinks">
     <li><a onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
     <li><a onclick="showPage('phones')" id="nav-phones">Phones</a></li>
+    <li><a onclick="showPage('gadgets')" id="nav-gadgets">Gadgets</a></li>
     <li><a onclick="showPage('brands')" id="nav-brands">Brands</a></li>
+    <li><a onclick="showPage('events')" id="nav-events">Events</a></li>
     <li><a onclick="showPage('about')" id="nav-about">About Us</a></li>
     <li><a onclick="showPage('gallery')" id="nav-gallery">Gallery</a></li>
     <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+    <li><a onclick="showPage('reviews')" id="nav-reviews">⭐ Reviews</a></li>
     <li class="nav-user-item" id="navSettingsUser" style="display:none;">
       <a onclick="openProfile()">👤 <span id="navUsername">My Profile</span></a>
     </li>
@@ -812,6 +980,19 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   </section>
 </div>
 
+<!-- GADGETS PAGE -->
+<div class="page" id="page-gadgets">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Accessories & More</div>
+      <h2 class="section-title">Gadgets & Accessories</h2>
+      <p class="section-sub">Smart watches, earbuds, headphones, covers, tempered glass and much more</p>
+    </div>
+    <div class="filter-bar" id="gadgetFilterBar"></div>
+    <div class="phones-grid" id="gadgetsGrid"></div>
+  </section>
+</div>
+
 <!-- BRANDS PAGE -->
 <div class="page" id="page-brands">
   <section class="section">
@@ -828,6 +1009,23 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
         <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">🎧</div><div style="font-weight:700;margin-bottom:3px;">Earphones Gift</div><div style="font-size:.78rem;color:var(--muted);">Free earphones on selected phones</div></div>
         <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">🔋</div><div style="font-weight:700;margin-bottom:3px;">Free Data Transfer</div><div style="font-size:.78rem;color:var(--muted);">We migrate your old phone data free</div></div>
         <div style="text-align:center;padding:14px;"><div style="font-size:1.9rem;margin-bottom:7px;">📦</div><div style="font-weight:700;margin-bottom:3px;">Box Pack Guarantee</div><div style="font-size:.78rem;color:var(--muted);">Only sealed original box phones</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- EVENTS PAGE -->
+<div class="page" id="page-events">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Latest Happenings</div>
+      <h2 class="section-title">Events & Offers</h2>
+      <p class="section-sub">Stay updated with our latest events, sales, and special offers at Aftab Azmi's Mobile Gallery</p>
+    </div>
+    <div class="events-grid" id="eventsPageGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted);">
+        <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+        <p style="font-size:1rem;">No events yet. Check back soon!</p>
       </div>
     </div>
   </section>
@@ -888,12 +1086,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <div class="section-header">
       <div class="section-eyebrow">Our Shop</div>
       <h2 class="section-title">Shop Gallery</h2>
-      <p class="section-sub">Take a look inside our store – Aftab Azmi's Mobile Gallery, Simrahi Bazar</p>
+      <p class="section-sub">Take a look inside our store — Aftab Azmi's Mobile Gallery, Simrahi Bazar</p>
     </div>
     <div class="gallery-grid" id="galleryPageGrid">
       <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);">
         <div style="font-size:4rem;margin-bottom:14px;">🖼️</div>
-        <p>No photos yet. Admin panel se photos add karein!</p>
+        <p>No photos yet. Add photos from the Admin Panel!</p>
       </div>
     </div>
   </section>
@@ -964,6 +1162,58 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   </section>
 </div>
 
+<!-- REVIEWS PAGE -->
+<div class="page" id="page-reviews">
+  <section class="section">
+    <div class="section-header">
+      <div class="section-eyebrow">Customer Feedback</div>
+      <h2 class="section-title">Reviews & Ratings</h2>
+      <p class="section-sub">What our customers say about Aftab Azmi's Mobile Gallery</p>
+    </div>
+
+    <!-- Summary -->
+    <div class="reviews-summary" id="reviewsSummary">
+      <div class="reviews-avg" id="reviewsAvgNum">—</div>
+      <div class="reviews-avg-stars" id="reviewsAvgStars">⭐⭐⭐⭐⭐</div>
+      <div class="reviews-total" id="reviewsTotal">No reviews yet</div>
+    </div>
+
+    <!-- Add Review Box -->
+    <div class="add-review-box" id="addReviewBox">
+      <h3>✍️ Write Your Review</h3>
+      <div id="reviewLoginNote" class="review-login-note" style="display:none;">
+        👤 Please <span style="color:var(--accent2);cursor:pointer;font-weight:600;" onclick="openLogin()">Login</span> or <span style="color:var(--accent2);cursor:pointer;font-weight:600;" onclick="openRegister()">Register</span> to write a review.
+      </div>
+      <div id="reviewFormInner">
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:8px;">Select your rating:</div>
+        <div class="star-picker" id="starPicker">
+          <span onclick="setReviewStar(1)" data-star="1">☆</span>
+          <span onclick="setReviewStar(2)" data-star="2">☆</span>
+          <span onclick="setReviewStar(3)" data-star="3">☆</span>
+          <span onclick="setReviewStar(4)" data-star="4">☆</span>
+          <span onclick="setReviewStar(5)" data-star="5">☆</span>
+        </div>
+        <div class="auth-field" style="margin-bottom:14px;">
+          <label style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px;">Apna Review Likhein</label>
+          <textarea id="reviewText" placeholder="Share your experience at our store…"
+            style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+            padding:12px 14px;border-radius:10px;font-size:.88rem;font-family:'Poppins',sans-serif;
+            resize:vertical;min-height:90px;outline:none;"></textarea>
+        </div>
+        <button class="review-submit-btn" onclick="submitReview()">⭐ Submit Review</button>
+      </div>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="reviews-grid" id="reviewsGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
+        <div style="font-size:3rem;margin-bottom:12px;">⭐</div>
+        <p>Abhi koi review nahi. Pehle review dein!</p>
+      </div>
+    </div>
+  </section>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -981,8 +1231,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       <li><a onclick="showPage('home')">Home</a></li>
       <li><a onclick="showPage('phones')">All Phones</a></li>
       <li><a onclick="showPage('brands')">Brands</a></li>
+      <li><a onclick="showPage('events')">🎉 Events</a></li>
       <li><a onclick="showPage('about')">About Us</a></li>
       <li><a onclick="showPage('contact')">Contact</a></li>
+      <li><a onclick="showPage('reviews')">⭐ Reviews</a></li>
     </ul></div>
     <div class="footer-col"><h4>Brands</h4><ul id="footerBrandsList"></ul></div>
     <div class="footer-col"><h4>Services</h4><ul>
@@ -1002,17 +1254,17 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <button class="auth-close" onclick="closeRegister()">✕</button>
     <div class="auth-logo">📱</div>
     <div class="auth-title">Create Account</div>
-    <div class="auth-sub">Aftab Azmi's Mobile Gallery mein register karein</div>
+    <div class="auth-sub">Register at Aftab Azmi's Mobile Gallery</div>
     <div class="auth-error" id="regError"></div>
-    <div class="auth-field"><label>Full Name *</label><input type="text" id="reg-name" placeholder="Aapka pura naam"/></div>
-    <div class="auth-field"><label>Username *</label><input type="text" id="reg-username" placeholder="unique username (koi space nahi)"/></div>
-    <div class="auth-field"><label>Email *</label><input type="email" id="reg-email" placeholder="aapka@email.com"/></div>
+    <div class="auth-field"><label>Full Name *</label><input type="text" id="reg-name" placeholder="Your full name"/></div>
+    <div class="auth-field"><label>Username *</label><input type="text" id="reg-username" placeholder="Unique username (no spaces)"/></div>
+    <div class="auth-field"><label>Email *</label><input type="email" id="reg-email" placeholder="your@email.com"/></div>
     <div class="auth-field"><label>Phone Number *</label><input type="tel" id="reg-phone" placeholder="10-digit mobile number"/></div>
     <div class="auth-field"><label>Password *</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
-    <div class="auth-field"><label>Confirm Password *</label><input type="password" id="reg-pass2" placeholder="Password dobara likhein"/></div>
-    <button class="auth-btn" onclick="doRegister()" id="regBtn">✅ Register Karein</button>
+    <div class="auth-field"><label>Confirm Password *</label><input type="password" id="reg-pass2" placeholder="Confirm your password"/></div>
+    <button class="auth-btn" onclick="doRegister()" id="regBtn">✅ Create Account</button>
     <div class="auth-spinner" id="regSpinner"></div>
-    <div class="auth-switch">Pehle se account hai? <span onclick="switchToLogin()">Login karein</span></div>
+    <div class="auth-switch">Already have an account? <span onclick="switchToLogin()">Login</span></div>
   </div>
 </div>
 
@@ -1022,13 +1274,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <button class="auth-close" onclick="closeLogin()">✕</button>
     <div class="auth-logo">🔑</div>
     <div class="auth-title">Welcome Back!</div>
-    <div class="auth-sub">Login karein apne account mein</div>
+    <div class="auth-sub">Login apne account mein</div>
     <div class="auth-error" id="loginError2"></div>
-    <div class="auth-field"><label>Email ya Username *</label><input type="text" id="log-id" placeholder="Email ya username likhein"/></div>
-    <div class="auth-field"><label>Password *</label><input type="password" id="log-pass" placeholder="Aapka password"/></div>
-    <button class="auth-btn" onclick="doLogin()" id="loginBtn">🔑 Login Karein</button>
+    <div class="auth-field"><label>Email or Username *</label><input type="text" id="log-id" placeholder="Enter email or username"/></div>
+    <div class="auth-field"><label>Password *</label><input type="password" id="log-pass" placeholder="Your password"/></div>
+    <button class="auth-btn" onclick="doLogin()" id="loginBtn">🔑 Login</button>
     <div class="auth-spinner" id="loginSpinner"></div>
-    <div class="auth-switch">Account nahi hai? <span onclick="switchToRegister()">Register karein</span></div>
+    <div class="auth-switch">Don't have an account? <span onclick="switchToRegister()">Register</span></div>
   </div>
 </div>
 
@@ -1049,10 +1301,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 
     <div class="profile-section-title">🔒 Change Password</div>
     <div class="auth-error" id="pwdError"></div>
-    <div class="auth-field pwd-field"><label>Current Password</label><input type="password" id="pwd-current" placeholder="Abhi wala password"/></div>
-    <div class="auth-field pwd-field"><label>New Password</label><input type="password" id="pwd-new" placeholder="Naya password (min 6 chars)"/></div>
-    <div class="auth-field pwd-field"><label>Confirm New Password</label><input type="password" id="pwd-confirm" placeholder="Naya password dobara"/></div>
-    <button class="profile-btn profile-btn-primary" onclick="changePassword()" style="margin-top:4px;">🔒 Password Change Karein</button>
+    <div class="auth-field pwd-field"><label>Current Password</label><input type="password" id="pwd-current" placeholder="Current password"/></div>
+    <div class="auth-field pwd-field"><label>New Password</label><input type="password" id="pwd-new" placeholder="New password (min 6 chars)"/></div>
+    <div class="auth-field pwd-field"><label>Confirm New Password</label><input type="password" id="pwd-confirm" placeholder="Confirm new password"/></div>
+    <button class="profile-btn profile-btn-primary" onclick="changePassword()" style="margin-top:4px;">🔒 Change Password</button>
     <button class="profile-btn profile-btn-danger" onclick="logoutUser()" style="margin-top:8px;">🚪 Logout</button>
   </div>
 </div>
@@ -1218,6 +1470,9 @@ function renderSite(){
   renderPhonesPage('all');
   renderBrandsPage();
   renderGalleryPage();
+  renderGadgetsPage('All');
+  renderEventsPage();
+  renderReviewsPage();
   renderFilterBar();
   // footer brands
   document.getElementById('footerBrandsList').innerHTML=brands.slice(0,6).map(b=>`<li><a>${b.icon} ${b.name}</a></li>`).join('');
@@ -1324,7 +1579,7 @@ function inquireWhatsApp(){
 function callStore(){
   const ph=storeInfo.phone1||storeInfo.wa||'';
   if(ph) window.location.href='tel:'+ph.replace(/\D/g,'');
-  else showToast('Phone number Admin panel mein set karein');
+  else showToast('Phone number not set — please update in Admin Panel');
 }
 
 // ─── GALLERY DATA & FUNCTIONS ────────────────────────
@@ -1334,7 +1589,7 @@ let nextGid  = ld('mg_ngid',1);
 function renderGalleryPage(){
   const grid=document.getElementById('galleryPageGrid'); if(!grid) return;
   if(!gallery.length){
-    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);"><div style="font-size:4rem;margin-bottom:14px;">🖼️</div><p>No photos yet. Admin panel se photos add karein!</p></div>';
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);"><div style="font-size:4rem;margin-bottom:14px;">🖼️</div><p>No photos yet. Add photos from the Admin Panel!</p></div>';
     return;
   }
   grid.innerHTML=gallery.map(g=>`
@@ -1480,17 +1735,17 @@ async function doRegister(){
   const pass2=document.getElementById('reg-pass2').value;
   const errEl=document.getElementById('regError');
   errEl.style.display='none';
-  if(!name||!username||!email||!phone||!pass||!pass2){showAuthError(errEl,'❌ Saare fields bharna zaroori hai!');return;}
-  if(username.length<3){showAuthError(errEl,'❌ Username kam se kam 3 characters!');return;}
-  if(!/^[a-z0-9_]+$/.test(username)){showAuthError(errEl,'❌ Username mein sirf letters, numbers, underscore!');return;}
-  if(phone.replace(/\D/g,'').length<10){showAuthError(errEl,'❌ Phone number 10 digits ka hona chahiye!');return;}
-  if(pass.length<6){showAuthError(errEl,'❌ Password min 6 characters!');return;}
-  if(pass!==pass2){showAuthError(errEl,'❌ Dono passwords match nahi karte!');return;}
-  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  if(!name||!username||!email||!phone||!pass||!pass2){showAuthError(errEl,'❌ All fields are required!');return;}
+  if(username.length<3){showAuthError(errEl,'❌ Username must be at least 3 characters!');return;}
+  if(!/^[a-z0-9_]+$/.test(username)){showAuthError(errEl,'❌ Username can only contain letters, numbers and underscore!');return;}
+  if(phone.replace(/\D/g,'').length<10){showAuthError(errEl,'❌ Phone number must be 10 digits!');return;}
+  if(pass.length<6){showAuthError(errEl,'❌ Password must be at least 6 characters!');return;}
+  if(pass!==pass2){showAuthError(errEl,'❌ Passwords do not match!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase not connected!');return;}
   setAuthLoading('reg',true);
   try{
     const usnap=await db.collection('usernames').doc(username).get();
-    if(usnap.exists){showAuthError(errEl,'❌ Yeh username pehle se le liya gaya hai!');setAuthLoading('reg',false);return;}
+    if(usnap.exists){showAuthError(errEl,'❌ This username is already taken!');setAuthLoading('reg',false);return;}
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
     const uid=cred.user.uid;
     const userData={uid,name,username,email,phone,joinedAt:new Date().toISOString(),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
@@ -1498,7 +1753,7 @@ async function doRegister(){
     await db.collection('usernames').doc(username).set({uid,email});
     currentUserData=userData;
     closeRegister();
-    showToast('🎉 Welcome '+name+'! Account ban gaya!');
+    showToast('🎉 Welcome '+name+'! Account created successfully!');
   }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
   setAuthLoading('reg',false);
 }
@@ -1511,19 +1766,19 @@ async function doLogin(){
   const pass=document.getElementById('log-pass').value;
   const errEl=document.getElementById('loginError2');
   errEl.style.display='none';
-  if(!identifier||!pass){showAuthError(errEl,'❌ Email/Username aur password zaroori hai!');return;}
-  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase connect nahi hai!');return;}
+  if(!identifier||!pass){showAuthError(errEl,'❌ Email/Username and password are required!');return;}
+  if(!firebaseEnabled){showAuthError(errEl,'❌ Firebase not connected!');return;}
   setAuthLoading('login',true);
   try{
     let email=identifier;
     if(!identifier.includes('@')){
       const usnap=await db.collection('usernames').doc(identifier.toLowerCase()).get();
-      if(!usnap.exists){showAuthError(errEl,'❌ Yeh username registered nahi hai!');setAuthLoading('login',false);return;}
+      if(!usnap.exists){showAuthError(errEl,'❌ This username is not registered!');setAuthLoading('login',false);return;}
       email=usnap.data().email;
     }
     await auth.signInWithEmailAndPassword(email,pass);
     closeLogin();
-    showToast('✅ Login ho gaye! Welcome back!');
+    showToast('✅ Login successful! Welcome back!');
   }catch(e){showAuthError(errEl,friendlyAuthError(e.code));}
   setAuthLoading('login',false);
 }
@@ -1553,24 +1808,24 @@ async function changePassword(){
   const confirm=document.getElementById('pwd-confirm').value;
   const errEl=document.getElementById('pwdError');
   errEl.style.display='none';
-  if(!current||!newPwd||!confirm){showAuthError(errEl,'❌ Saare fields bharen!');return;}
-  if(newPwd.length<6){showAuthError(errEl,'❌ Naya password min 6 chars!');return;}
-  if(newPwd!==confirm){showAuthError(errEl,'❌ Naye passwords match nahi karte!');return;}
+  if(!current||!newPwd||!confirm){showAuthError(errEl,'❌ All fields are required!');return;}
+  if(newPwd.length<6){showAuthError(errEl,'❌ New password must be at least 6 characters!');return;}
+  if(newPwd!==confirm){showAuthError(errEl,'❌ New passwords do not match!');return;}
   if(!currentUser)return;
   try{
     const cred=firebase.auth.EmailAuthProvider.credential(currentUser.email,current);
     await currentUser.reauthenticateWithCredential(cred);
     await currentUser.updatePassword(newPwd);
     ['pwd-current','pwd-new','pwd-confirm'].forEach(id=>document.getElementById(id).value='');
-    showToast('✅ Password change ho gaya!');closeProfile();
-  }catch(e){showAuthError(errEl,e.code==='auth/wrong-password'?'❌ Current password galat hai!':friendlyAuthError(e.code));}
+    showToast('✅ Password changed successfully!');closeProfile();
+  }catch(e){showAuthError(errEl,e.code==='auth/wrong-password'?'❌ Current password is incorrect!':friendlyAuthError(e.code));}
 }
 
 async function logoutUser(){
-  if(!confirm('Kya aap logout karna chahte hain?'))return;
+  if(!confirm('Are you sure you want to logout?'))return;
   closeProfile();closeMenu();
   if(auth)await auth.signOut();
-  showToast('👋 Logout ho gaye!');
+  showToast('👋 Logged out successfully!');
 }
 
 function showAuthError(el,msg){el.textContent=msg;el.style.display='block';}
@@ -1584,7 +1839,7 @@ function setAuthLoading(type,on){
 }
 function closeMenu(){const l=document.getElementById('navLinks');if(l)l.style.display='';}
 function friendlyAuthError(code){
-  const map={'auth/email-already-in-use':'❌ Yeh email pehle se register hai!','auth/invalid-email':'❌ Email format sahi nahi hai!','auth/weak-password':'❌ Password zyada weak hai!','auth/user-not-found':'❌ Email/Username registered nahi hai!','auth/wrong-password':'❌ Password galat hai!','auth/too-many-requests':'❌ Zyada attempts! Thodi der baad try karein.','auth/network-request-failed':'❌ Internet connection check karein!','auth/invalid-credential':'❌ Email ya password galat hai!'};
+  const map={'auth/email-already-in-use':'❌ This email is already registered!','auth/invalid-email':'❌ Invalid email format!','auth/weak-password':'❌ Password too weak — min 6 characters!','auth/user-not-found':'❌ Email or username not found!','auth/wrong-password':'❌ Incorrect password!','auth/too-many-requests':'❌ Too many attempts. Please try again later.','auth/network-request-failed':'❌ Check your internet connection!','auth/invalid-credential':'❌ Invalid email or password!'};
   return map[code]||'❌ Error: '+code;
 }
 
@@ -1597,17 +1852,33 @@ function showPage(name){
   const el=document.getElementById('nav-'+name);
   if(el) el.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  // Mobile menu band karo
+  // Close mobile menu
   const l=document.getElementById('navLinks');
   l.style.display='';
 }
 function addToCart(name){showToast('🛒 '+name+' – inquiry registered!');}
 function sendMessage(){
-  const n=document.getElementById('formName').value;
-  const p=document.getElementById('formPhone').value;
-  if(!n||!p){alert('Please enter your name and phone number.');return;}
+  const n=document.getElementById('formName').value.trim();
+  const p=document.getElementById('formPhone').value.trim();
+  const e=document.getElementById('formEmail').value.trim();
+  const b=(document.getElementById('formBrand')||{value:''}).value;
+  const bu=(document.getElementById('formBudget')||{value:''}).value;
+  const m=document.getElementById('formMsg').value.trim();
+  if(!n||!p){showToast('❌ Please enter your name and phone number.');return;}
+  const msg={id:Date.now(),name:n,phone:p,email:e,brand:b,budget:bu,message:m,
+    time:new Date().toISOString(),read:false};
+  // Save to localStorage
+  let msgs=ld('mg_messages',[]);msgs.unshift(msg);_svLocal('mg_messages',msgs);
+  // Save to Firebase
+  if(firebaseEnabled){
+    db.collection('messages').doc(String(msg.id)).set(msg)
+      .then(()=>console.log('[Firebase] Message saved'))
+      .catch(e=>console.warn('[Firebase] Message save failed:',e.message));
+  }
   showToast('✅ Message sent! We will contact you soon.');
   ['formName','formPhone','formEmail','formMsg'].forEach(id=>document.getElementById(id).value='');
+  if(document.getElementById('formBrand'))document.getElementById('formBrand').value='';
+  if(document.getElementById('formBudget'))document.getElementById('formBudget').value='';
 }
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -1641,6 +1912,8 @@ document.getElementById('adminUser').addEventListener('keydown',e=>{if(e.key==='
 function openAdminPanel(){
   document.getElementById('adminPanel').classList.add('show');
   renderAdminDashboard();renderAdminPhones();renderAdminBrands();renderAdminGallery();
+  renderAdminGadgets();renderAdminEvents();
+  renderAdminMessages();renderAdminReviews();
   loadStoreForm();loadHeroForm();
 }
 function exitAdmin(){
@@ -1839,7 +2112,378 @@ function saveHero(){
 }
 
 // ════════════════════════════════════════════════════
-//  FIREBASE INTEGRATION
+// ─── EVENTS DATA & FUNCTIONS ─────────────────────────
+let events   = ld('mg_events',[]);
+let nextEvid = ld('mg_nevid',1);
+
+function renderEventsPage(){
+  const grid = document.getElementById('eventsPageGrid');
+  if(!grid) return;
+  if(!events.length){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted);"><div style="font-size:4rem;margin-bottom:16px;">🎉</div><p style="font-size:1rem;">No events yet. Check back soon!</p></div>';
+    return;
+  }
+  grid.innerHTML = events.map(e=>`
+    <div class="event-card">
+      <div class="event-img">
+        ${e.photo?`<img src="${e.photo}" alt="${e.title}" loading="lazy"/>`:'<div class="event-img-placeholder">🎉</div>'}
+        ${e.badge?`<span class="event-badge">${e.badge}</span>`:''}
+      </div>
+      <div class="event-info">
+        ${e.date?`<div class="event-date">📅 ${e.date}</div>`:''}
+        <div class="event-title">${e.title}</div>
+        <div class="event-desc">${e.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+function previewEventPhoto(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('ev-photoData').value=e.target.result;
+    const img=document.getElementById('eventPreviewImg');
+    img.src=e.target.result;img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveEvent(){
+  const title  = document.getElementById('ev-title').value.trim();
+  const desc   = document.getElementById('ev-desc').value.trim();
+  const badge  = document.getElementById('ev-badge').value.trim();
+  const date   = document.getElementById('ev-date').value.trim();
+  const photo  = document.getElementById('ev-photoData').value;
+  const editId = document.getElementById('ev-editId').value;
+  if(!title||!desc){showToast('❌ Title and description are required!');return;}
+  const obj={title,desc,badge,date,photo};
+  if(editId){
+    const idx=events.findIndex(e=>e.id==editId);
+    if(idx>-1){if(!photo&&events[idx].photo)obj.photo=events[idx].photo;events[idx]={...events[idx],...obj};}
+  } else {
+    obj.id=nextEvid++;_svLocal('mg_nevid',nextEvid);events.push(obj);
+  }
+  _svLocal('mg_events',events);
+  if(firebaseEnabled) fbSaveCollection('events',events);
+  clearEventForm();renderAdminEvents();renderEventsPage();
+  showToast(editId?'✅ Event updated!':'✅ Event added!');
+}
+
+function deleteEvent(id){
+  if(!confirm('Delete this event?'))return;
+  events=events.filter(e=>e.id!=id);_svLocal('mg_events',events);
+  if(firebaseEnabled) db.collection('events').doc(String(id)).delete().catch(e=>{});
+  renderAdminEvents();renderEventsPage();showToast('🗑️ Event deleted!');
+}
+
+function editEvent(id){
+  const e=events.find(x=>x.id==id);if(!e)return;
+  document.getElementById('ev-title').value=e.title;
+  document.getElementById('ev-desc').value=e.desc;
+  document.getElementById('ev-badge').value=e.badge||'';
+  document.getElementById('ev-date').value=e.date||'';
+  document.getElementById('ev-editId').value=e.id;
+  document.getElementById('ev-photoData').value=e.photo||'';
+  const img=document.getElementById('eventPreviewImg');
+  if(e.photo){img.src=e.photo;img.style.display='block';}else img.style.display='none';
+  document.getElementById('eventFormTitle').textContent='✏️ Edit Event: '+e.title;
+  apTabClick('events');
+}
+
+function clearEventForm(){
+  ['ev-title','ev-desc','ev-badge','ev-date','ev-editId','ev-photoData'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ev-photo').value='';
+  document.getElementById('eventPreviewImg').style.display='none';
+  document.getElementById('eventFormTitle').textContent='🎉 Add New Event';
+}
+
+function renderAdminEvents(){
+  document.getElementById('eventCount').textContent=events.length;
+  const grid=document.getElementById('adminEventsGrid');
+  if(!events.length){grid.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px;">No events yet. Add one above!</p>';return;}
+  grid.innerHTML=events.map(e=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      ${e.photo?`<img src="${e.photo}" style="width:100%;height:130px;object-fit:cover;" loading="lazy"/>`:'<div style="height:130px;display:flex;align-items:center;justify-content:center;font-size:3rem;">🎉</div>'}
+      <div style="padding:12px;">
+        ${e.badge?`<span style="background:var(--grad);color:#fff;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:8px;">${e.badge}</span><br>`:''}
+        <div style="font-size:.83rem;font-weight:700;margin:6px 0 3px;line-height:1.3;">${e.title}</div>
+        ${e.date?`<div style="font-size:.72rem;color:var(--accent2);margin-bottom:6px;">📅 ${e.date}</div>`:''}
+        <div style="font-size:.74rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">${e.desc.substring(0,80)}${e.desc.length>80?'…':''}</div>
+        <div style="display:flex;gap:6px;">
+          <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editEvent(${e.id})">✏️ Edit</button>
+          <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteEvent(${e.id})">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── GADGETS ADMIN ───────────────────────────────────
+function saveGadget(){
+  const cat    = document.getElementById('gd-cat').value;
+  const name   = document.getElementById('gd-name').value.trim();
+  const price  = document.getElementById('gd-price').value.trim();
+  const icon   = document.getElementById('gd-icon').value||'📦';
+  const desc   = document.getElementById('gd-desc').value.trim();
+  const badge  = document.getElementById('gd-badge').value;
+  const editId = document.getElementById('gd-editId').value;
+  if(!cat||!name||!price||!desc){showToast('❌ Category, name, price and description are required!');return;}
+  const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
+  const obj={cat,name,price,icon,desc,badge,badgeText:bmap[badge]||''};
+  if(editId){
+    const idx=gadgets.findIndex(g=>g.id==editId);
+    if(idx>-1) gadgets[idx]={...gadgets[idx],...obj};
+  } else {
+    obj.id=nextGadgetId++;_svLocal('mg_ngadgetid',nextGadgetId);gadgets.push(obj);
+  }
+  _svLocal('mg_gadgets',gadgets);
+  if(firebaseEnabled) fbSaveCollection('gadgets',gadgets);
+  clearGadgetForm();renderAdminGadgets();renderGadgetsPage();
+  showToast(editId?'✅ Product updated!':'✅ Product added!');
+}
+
+function deleteGadget(id){
+  if(!confirm('Delete this product?'))return;
+  gadgets=gadgets.filter(g=>g.id!=id);_svLocal('mg_gadgets',gadgets);
+  if(firebaseEnabled) db.collection('gadgets').doc(String(id)).delete().catch(e=>{});
+  renderAdminGadgets();renderGadgetsPage();showToast('🗑️ Product deleted!');
+}
+
+function editGadget(id){
+  const g=gadgets.find(x=>x.id==id);if(!g)return;
+  document.getElementById('gd-cat').value=g.cat;
+  document.getElementById('gd-name').value=g.name;
+  document.getElementById('gd-price').value=g.price;
+  document.getElementById('gd-icon').value=g.icon||'📦';
+  document.getElementById('gd-desc').value=g.desc;
+  document.getElementById('gd-badge').value=g.badge||'';
+  document.getElementById('gd-editId').value=g.id;
+  document.getElementById('gadgetFormTitle').textContent='✏️ Edit: '+g.name;
+  apTabClick('gadgets');
+}
+
+function clearGadgetForm(){
+  ['gd-cat','gd-name','gd-price','gd-icon','gd-desc','gd-badge','gd-editId'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('gadgetFormTitle').textContent='🛍️ Add New Product';
+}
+
+function renderAdminGadgets(){
+  document.getElementById('gadgetCount').textContent=gadgets.length;
+  const bh=b=>b==='new'?'<span class="bdg-new">NEW</span>':b==='sale'?'<span class="bdg-sale">SALE</span>':b==='hot'?'<span class="bdg-hot">HOT</span>':'—';
+  document.getElementById('adminGadgetsTable').innerHTML=gadgets.map(g=>`
+    <tr>
+      <td><span style="font-size:1.3rem;">${g.icon||'📦'}</span> <strong>${g.cat}</strong></td>
+      <td style="font-weight:600;">${g.name}</td>
+      <td style="color:var(--accent2);font-weight:700;">${g.price}</td>
+      <td>${bh(g.badge)}</td>
+      <td><div class="td-act">
+        <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editGadget(${g.id})">✏️ Edit</button>
+        <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteGadget(${g.id})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// Helper: batch save any collection to Firebase
+async function fbSaveCollection(col, data){
+  if(!firebaseEnabled)return;
+  try{
+    const batch=db.batch();
+    data.forEach(item=>batch.set(db.collection(col).doc(String(item.id)),item));
+    await batch.commit();
+  }catch(e){console.warn('[Firebase] fbSaveCollection failed:',e.message);}
+}
+
+// ─── REALME LOGO FIX ────────────────────────────────
+(function fixRealmeLogo(){
+  const idx=brands.findIndex(b=>b.name==='Realme');
+  if(idx>-1&&brands[idx].icon&&brands[idx].icon.includes('realme.svg')){
+    brands[idx].icon=brandSvgText('realme');
+  }
+})();
+
+// ─── MESSAGES ADMIN ──────────────────────────────────
+async function renderAdminMessages(){
+  let msgs=ld('mg_messages',[]);
+  if(firebaseEnabled){
+    try{const snap=await db.collection('messages').orderBy('id','desc').get();if(!snap.empty)msgs=snap.docs.map(d=>d.data());}catch(e){}
+  }
+  const unread=msgs.filter(m=>!m.read).length;
+  document.getElementById('msgCount').textContent=msgs.length;
+  const badge=document.getElementById('msgBadge');
+  if(unread>0){badge.textContent=unread;badge.style.display='inline';}else badge.style.display='none';
+  if(!msgs.length){document.getElementById('adminMsgList').innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:10px;">No messages yet.</p>';return;}
+  document.getElementById('adminMsgList').innerHTML=msgs.map(m=>`
+    <div class="msg-card ${m.read?'':'msg-unread'}" id="msgcard-${m.id}">
+      <div class="msg-card-head">
+        <div><div class="msg-name">${m.name} ${!m.read?'<span class="msg-badge-new">NEW</span>':''}</div>
+        <div class="msg-time">${new Date(m.time).toLocaleString('en-IN')}</div></div>
+        <div style="display:flex;gap:6px;">
+          <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="markMsgRead(${m.id})">✓ Read</button>
+          <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteMsg(${m.id})">🗑️</button>
+        </div>
+      </div>
+      <div class="msg-meta">
+        <span>📞 ${m.phone}</span>${m.email?`<span>📧 ${m.email}</span>`:''}
+        ${m.brand?`<span>📱 ${m.brand}</span>`:''}${m.budget?`<span>💰 ${m.budget}</span>`:''}
+      </div>
+      ${m.message?`<div class="msg-body">${m.message}</div>`:''}
+    </div>`).join('');
+}
+function markMsgRead(id){
+  let msgs=ld('mg_messages',[]);const idx=msgs.findIndex(m=>m.id==id);
+  if(idx>-1){msgs[idx].read=true;_svLocal('mg_messages',msgs);}
+  if(firebaseEnabled)db.collection('messages').doc(String(id)).update({read:true}).catch(e=>{});
+  renderAdminMessages();
+}
+function deleteMsg(id){
+  if(!confirm('Delete this message?'))return;
+  let msgs=ld('mg_messages',[]);msgs=msgs.filter(m=>m.id!=id);_svLocal('mg_messages',msgs);
+  if(firebaseEnabled)db.collection('messages').doc(String(id)).delete().catch(e=>{});
+  renderAdminMessages();showToast('🗑️ Message deleted!');
+}
+function clearAllMessages(){
+  if(!confirm('Delete ALL messages? This cannot be undone.'))return;
+  _svLocal('mg_messages',[]);
+  if(firebaseEnabled){db.collection('messages').get().then(snap=>{const b=db.batch();snap.docs.forEach(d=>b.delete(d.ref));b.commit();}).catch(e=>{});}
+  renderAdminMessages();showToast('🗑️ All messages cleared!');
+}
+
+// ─── REVIEWS SYSTEM ──────────────────────────────────
+let reviews=ld('mg_reviews',[]);
+let nextRid=ld('mg_nrid',1);
+let selectedStar=0;
+
+function setReviewStar(n){
+  selectedStar=n;
+  document.querySelectorAll('#starPicker span').forEach((s,i)=>{
+    s.textContent=i<n?'⭐':'☆';s.classList.toggle('active',i<n);
+  });
+}
+async function submitReview(){
+  if(!currentUser){openLogin();return;}
+  if(selectedStar===0){showToast('❌ Please select a star rating!');return;}
+  const text=document.getElementById('reviewText').value.trim();
+  if(!text){showToast('❌ Please write your review!');return;}
+  const d=currentUserData||{};
+  const rev={id:nextRid++,uid:currentUser.uid,name:d.name||d.username||currentUser.email.split('@')[0],
+    username:d.username||'',stars:selectedStar,text,time:new Date().toISOString()};
+  _svLocal('mg_nrid',nextRid);reviews.unshift(rev);_svLocal('mg_reviews',reviews);
+  if(firebaseEnabled)db.collection('reviews').doc(String(rev.id)).set(rev).catch(e=>{});
+  document.getElementById('reviewText').value='';selectedStar=0;
+  document.querySelectorAll('#starPicker span').forEach(s=>{s.textContent='☆';s.classList.remove('active');});
+  renderReviewsPage();showToast('⭐ Thank you for your review!');
+}
+async function renderReviewsPage(){
+  if(firebaseEnabled){try{const snap=await db.collection('reviews').orderBy('id','desc').get();if(!snap.empty){reviews=snap.docs.map(d=>d.data());_svLocal('mg_reviews',reviews);}}catch(e){}}
+  const total=reviews.length;
+  const avg=total?reviews.reduce((s,r)=>s+r.stars,0)/total:0;
+  document.getElementById('reviewsAvgNum').textContent=total?avg.toFixed(1):'—';
+  document.getElementById('reviewsAvgStars').textContent=total?'⭐'.repeat(Math.round(avg))+'☆'.repeat(5-Math.round(avg)):'☆☆☆☆☆';
+  document.getElementById('reviewsTotal').textContent=total?`Based on ${total} review${total>1?'s':''}`:'No reviews yet — be the first!';
+  const loginNote=document.getElementById('reviewLoginNote');
+  const formInner=document.getElementById('reviewFormInner');
+  if(currentUser){loginNote.style.display='none';formInner.style.display='block';}
+  else{loginNote.style.display='block';formInner.style.display='none';}
+  const grid=document.getElementById('reviewsGrid');
+  if(!total){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);"><div style="font-size:3rem;margin-bottom:12px;">⭐</div><p>No reviews yet. Be the first to review!</p></div>';return;}
+  grid.innerHTML=reviews.map(r=>`
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar">${(r.name||'U')[0].toUpperCase()}</div>
+        <div><div class="review-name">${r.name}</div>
+        <div class="review-date">${new Date(r.time).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
+      </div>
+      <div class="review-stars">${'<span>⭐</span>'.repeat(r.stars)}${'<span style="opacity:.3">☆</span>'.repeat(5-r.stars)}</div>
+      <div class="review-text">${r.text}</div>
+    </div>`).join('');
+}
+async function renderAdminReviews(){
+  if(firebaseEnabled){try{const snap=await db.collection('reviews').orderBy('id','desc').get();if(!snap.empty)reviews=snap.docs.map(d=>d.data());}catch(e){}}
+  const total=reviews.length;const avg=total?reviews.reduce((s,r)=>s+r.stars,0)/total:0;
+  document.getElementById('adminReviewCount').textContent=total;
+  document.getElementById('adminAvgRating').textContent=total?avg.toFixed(1)+' ⭐':'—';
+  if(!total){document.getElementById('adminReviewList').innerHTML='<p style="color:var(--muted);font-size:.85rem;">No reviews yet.</p>';return;}
+  document.getElementById('adminReviewList').innerHTML=reviews.map(r=>`
+    <div class="msg-card">
+      <div class="msg-card-head">
+        <div><div class="msg-name">${r.name} ${'⭐'.repeat(r.stars)}</div>
+        <div class="msg-time">${new Date(r.time).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div></div>
+        <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteReview(${r.id})">🗑️</button>
+      </div>
+      <div class="msg-body" style="margin-top:8px;">${r.text}</div>
+    </div>`).join('');
+}
+function deleteReview(id){
+  if(!confirm('Delete this review?'))return;
+  reviews=reviews.filter(r=>r.id!=id);_svLocal('mg_reviews',reviews);
+  if(firebaseEnabled)db.collection('reviews').doc(String(id)).delete().catch(e=>{});
+  renderAdminReviews();renderReviewsPage();showToast('🗑️ Review deleted!');
+}
+
+// ─── GADGETS DATA & RENDER ───────────────────────────
+let gadgets=ld('mg_gadgets',[
+  {id:1,cat:'Smart Watch',name:'Smart Watch Pro X1',desc:'Heart rate, SpO2, sleep tracking, 7-day battery',price:'₹1,999',icon:'⌚',badge:'hot',badgeText:'HOT'},
+  {id:2,cat:'Smart Watch',name:'Fitness Band Ultra',desc:'Step counter, calorie tracker, waterproof IP67',price:'₹999',icon:'⌚',badge:'',badgeText:''},
+  {id:3,cat:'Earbuds',name:'TWS Earbuds Pro',desc:'Active noise cancellation, 30hr battery, Bluetooth 5.3',price:'₹1,499',icon:'🎧',badge:'new',badgeText:'NEW'},
+  {id:4,cat:'Earbuds',name:'Bass Boost Buds',desc:'Deep bass, 25hr playtime, IPX5 water resistant',price:'₹799',icon:'🎧',badge:'sale',badgeText:'SALE'},
+  {id:5,cat:'Earphones',name:'Wired Earphones HD',desc:'Hi-Fi sound, in-line mic, tangle-free cable',price:'₹299',icon:'🎵',badge:'',badgeText:''},
+  {id:6,cat:'Earphones',name:'Sports Earphones',desc:'Sweat-proof, magnetic, secure fit for workouts',price:'₹499',icon:'🎵',badge:'',badgeText:''},
+  {id:7,cat:'Headphones',name:'Over-Ear Headphones',desc:'40mm drivers, foldable design, 20hr battery',price:'₹1,299',icon:'🎵',badge:'hot',badgeText:'HOT'},
+  {id:8,cat:'Headphones',name:'Gaming Headset RGB',desc:'Surround sound, noise-cancelling mic, LED lighting',price:'₹1,799',icon:'🎵',badge:'new',badgeText:'NEW'},
+  {id:9,cat:'Phone Cover',name:'Silicone Case Pack',desc:'Shockproof, drop protection, all models available',price:'₹149',icon:'📱',badge:'',badgeText:''},
+  {id:10,cat:'Phone Cover',name:'Leather Flip Cover',desc:'Wallet style, card slots, magnetic closure',price:'₹299',icon:'📱',badge:'',badgeText:''},
+  {id:11,cat:'Tempered Glass',name:'9H Tempered Glass',desc:'Anti-scratch, full glue, all phone models available',price:'₹99',icon:'🔲',badge:'',badgeText:''},
+  {id:12,cat:'Tempered Glass',name:'Privacy Screen Guard',desc:'Anti-spy, blue light filter, 9H hardness',price:'₹199',icon:'🔲',badge:'new',badgeText:'NEW'},
+  {id:13,cat:'Charger',name:'65W Fast Charger',desc:'GaN technology, universal compatibility, USB-C',price:'₹899',icon:'🔌',badge:'hot',badgeText:'HOT'},
+  {id:14,cat:'Charger',name:'20000mAh Power Bank',desc:'Dual USB + Type-C, fast charge, LED indicator',price:'₹1,299',icon:'🔋',badge:'',badgeText:''},
+  {id:15,cat:'Cable',name:'Braided USB-C Cable',desc:'5A fast charging, 1.5m, nylon braided, durable',price:'₹199',icon:'🔌',badge:'',badgeText:''},
+]);
+let nextGadgetId=ld('mg_ngadgetid',16);
+const gadgetCats=['All','Smart Watch','Earbuds','Earphones','Headphones','Phone Cover','Tempered Glass','Charger','Cable'];
+let currentGadgetFilter='All';
+
+function renderGadgetsPage(filter){
+  if(filter!==undefined)currentGadgetFilter=filter;
+  const f=currentGadgetFilter;
+  const list=f==='All'?gadgets:gadgets.filter(g=>g.cat===f);
+  const fb=document.getElementById('gadgetFilterBar');
+  if(fb)fb.innerHTML=gadgetCats.map(c=>`<button class="filter-btn ${f===c?'active':''}" onclick="renderGadgetsPage('${c}')">${c}</button>`).join('');
+  const grid=document.getElementById('gadgetsGrid');if(!grid)return;
+  if(!list.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);"><div style="font-size:4rem;">🛍️</div><p>No products in this category yet.</p></div>';return;}
+  const bdg={new:'new',sale:'sale',hot:'hot'};
+  grid.innerHTML=list.map(g=>`
+    <div class="phone-card">
+      <div class="phone-img" style="display:flex;align-items:center;justify-content:center;min-height:140px;font-size:5rem;position:relative;">
+        <span>${g.icon||'📦'}</span>
+        ${g.badgeText?`<span class="phone-badge ${bdg[g.badge]||''}">${g.badgeText}</span>`:''}
+      </div>
+      <div class="phone-info">
+        <div class="phone-brand">${g.cat}</div>
+        <div class="phone-name">${g.name}</div>
+        <div class="phone-specs" style="font-size:.78rem;line-height:1.5;">${g.desc}</div>
+        <div class="phone-footer">
+          <div class="phone-price">${g.price}</div>
+          <button class="add-btn" onclick="addToCart('${g.name.replace(/'/g,"\\'")}')">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ─── ENGLISH strings override ────────────────────────
+function friendlyAuthError(code){
+  const map={
+    'auth/email-already-in-use':'❌ This email is already registered!',
+    'auth/invalid-email':'❌ Invalid email format!',
+    'auth/weak-password':'❌ Password too weak — min 6 characters!',
+    'auth/user-not-found':'❌ Email or username not registered!',
+    'auth/wrong-password':'❌ Incorrect password!',
+    'auth/too-many-requests':'❌ Too many attempts. Please try again later.',
+    'auth/network-request-failed':'❌ Check your internet connection!',
+    'auth/invalid-credential':'❌ Invalid email or password!'
+  };
+  return map[code]||'❌ Error: '+code;
+}
+
+// ════════════════════════════════════════════════════
 //  👉 Replace the firebaseConfig values below with
 //     YOUR project's config from Firebase Console →
 //     Project Settings → Your apps → SDK setup
@@ -1908,10 +2552,10 @@ async function fbSave(col, data){
       });
       await batch.commit();
     }
-    showToast('☁️ Saved to Firebase!');
+    showToast('☁️ Saved to cloud!');
   } catch(e) {
     console.warn(`[Firebase] Save '${col}' failed:`, e.message);
-    showToast('⚠️ Firebase save failed – saved locally only');
+    showToast('⚠️ Cloud save failed – saved locally');
   }
 }
 
@@ -1950,7 +2594,7 @@ function updateFbStatus(){
 // ─── INIT: Load from Firebase first, then render ─────
 async function initApp(){
   if (firebaseEnabled) {
-    showToast('☁️ Loading from Firebase…');
+    showToast('☁️ Loading data...');
     const [fbPhones, fbBrands, fbStore, fbHero, fbGallery] = await Promise.all([
       fbLoad('phones', phones),
       fbLoad('brands', brands),
@@ -1966,7 +2610,7 @@ async function initApp(){
   }
   renderSite();
   updateFbStatus();
-  initAuth(); // User auth system start karo
+  initAuth();
 }
 
 initApp();
