@@ -8,6 +8,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<!-- Cashfree Payments SDK — opens the secure checkout popup (UPI/GPay/PhonePe/Paytm/Cards) -->
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -229,6 +231,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 .pd-back:hover{color:var(--text);}
 .pd-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
 @media(max-width:700px){.pd-body{grid-template-columns:1fr;}}
+.pd-img-col{display:flex;flex-direction:column;background:linear-gradient(135deg,#1a1a2e,#16213e);padding-bottom:18px;}
 .pd-img-section{background:linear-gradient(135deg,#1a1a2e,#16213e);
   display:flex;align-items:center;justify-content:center;min-height:320px;
   position:relative;padding:30px;}
@@ -432,6 +435,108 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 .event-date{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--accent2);
   font-weight:600;margin-top:12px;}
 
+/* ── MULTI-PHOTO UPLOAD (3 slots) ── */
+.multi-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.multi-photo-slot{position:relative;}
+.multi-photo-slot .photo-upload-area{min-height:110px;padding:14px 8px;}
+.multi-photo-slot .photo-upload-label{font-size:.72rem;}
+.multi-photo-slot .photo-preview{max-height:90px;}
+.multi-photo-slot-num{position:absolute;top:6px;left:6px;background:var(--grad);
+  color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:8px;z-index:2;}
+
+/* ── PRODUCT DETAIL THUMBNAIL GALLERY ── */
+.pd-thumb-row{display:flex;gap:8px;margin-top:14px;justify-content:center;}
+.pd-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;cursor:pointer;
+  border:2px solid var(--border);transition:all .25s;flex-shrink:0;background:var(--surface);}
+.pd-thumb img{width:100%;height:100%;object-fit:cover;}
+.pd-thumb.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(108,63,255,.3);}
+.pd-thumb:hover{border-color:var(--accent2);}
+
+/* ── PRE-ORDER BUTTON (Product Detail) ── */
+.pd-btn-preorder{background:linear-gradient(135deg,#f5c842,#f59e0b);border:none;color:#1a1a1a;
+  padding:14px 20px;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .3s;}
+.pd-btn-preorder:hover{opacity:.88;}
+
+/* ── PRE-ORDER MODAL (Step 1: details) ── */
+.preorder-overlay{display:none;position:fixed;inset:0;z-index:8000;
+  background:rgba(0,0,0,.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;overflow-y:auto;}
+.preorder-overlay.show{display:flex;}
+.preorder-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:480px;padding:32px 28px;position:relative;margin:16px;max-height:92vh;overflow-y:auto;}
+.preorder-product-summary{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin-bottom:20px;display:flex;gap:14px;align-items:center;}
+.preorder-product-summary img{width:60px;height:60px;object-fit:cover;border-radius:10px;background:#1a1a2e;}
+.preorder-product-summary .pp-emoji{font-size:2.4rem;width:60px;text-align:center;}
+.preorder-product-name{font-weight:700;font-size:.92rem;}
+.preorder-product-price{font-size:.8rem;color:var(--muted);margin-top:3px;}
+.preorder-pct-row{display:flex;gap:10px;margin-bottom:18px;}
+.preorder-pct-btn{flex:1;padding:14px;border:2px solid var(--border);border-radius:12px;
+  background:var(--surface);text-align:center;cursor:pointer;transition:all .25s;}
+.preorder-pct-btn.active{border-color:var(--accent);background:rgba(108,63,255,.1);}
+.preorder-pct-label{font-size:.78rem;color:var(--muted);}
+.preorder-pct-value{font-size:1.3rem;font-weight:800;margin-top:2px;}
+.preorder-amount-box{background:rgba(108,63,255,.08);border:1px solid rgba(108,63,255,.25);
+  border-radius:12px;padding:14px 16px;margin-bottom:18px;text-align:center;}
+.preorder-amount-box .amt{font-size:1.8rem;font-weight:900;background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.preorder-amount-box .lbl{font-size:.76rem;color:var(--muted);margin-top:2px;}
+
+/* ── PAYMENT PAGE (Step 2: pay) ── */
+.payment-overlay{display:none;position:fixed;inset:0;z-index:8100;
+  background:rgba(0,0,0,.92);backdrop-filter:blur(14px);align-items:center;justify-content:center;overflow-y:auto;}
+.payment-overlay.show{display:flex;}
+.payment-box{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  width:100%;max-width:440px;padding:30px 26px;position:relative;margin:16px;max-height:92vh;overflow-y:auto;text-align:center;}
+.payment-amount-display{font-size:2.4rem;font-weight:900;background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:8px 0 2px;}
+.payment-method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0;}
+.payment-method-btn{background:var(--surface);border:2px solid var(--border);border-radius:14px;
+  padding:16px 10px;cursor:pointer;transition:all .25s;text-align:center;}
+.payment-method-btn:hover{border-color:var(--accent2);}
+.payment-method-btn.active{border-color:var(--accent);background:rgba(108,63,255,.1);}
+.payment-method-btn .pm-icon{font-size:1.8rem;margin-bottom:4px;}
+.payment-method-btn .pm-name{font-size:.78rem;font-weight:700;}
+.payment-qr-box{background:#fff;border-radius:16px;padding:18px;margin:16px 0;display:none;}
+.payment-qr-box.show{display:block;}
+.payment-qr-box img{width:100%;max-width:230px;border-radius:8px;}
+.payment-upi-id{font-size:.85rem;color:var(--text);font-weight:600;margin-top:10px;
+  background:var(--surface);padding:8px 14px;border-radius:8px;display:inline-block;}
+.payment-steps{text-align:left;background:rgba(108,63,255,.06);border:1px solid rgba(108,63,255,.18);
+  border-radius:12px;padding:14px 16px;margin:16px 0;font-size:.8rem;color:var(--muted);line-height:1.7;}
+.payment-confirm-btn{width:100%;padding:14px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:.95rem;font-weight:700;
+  cursor:pointer;margin-top:10px;transition:opacity .3s;}
+.payment-confirm-btn:hover{opacity:.88;}
+.payment-back-link{font-size:.8rem;color:var(--muted);cursor:pointer;margin-top:14px;display:inline-block;}
+.payment-back-link:hover{color:var(--text);}
+.payment-success-icon{font-size:4rem;margin:10px 0;}
+
+/* ── ADMIN: PAYMENT SETTINGS ── */
+.pay-method-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:18px;margin-bottom:14px;}
+.pay-method-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pay-method-head h4{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.pay-toggle{position:relative;width:46px;height:24px;background:var(--border);border-radius:14px;
+  cursor:pointer;transition:background .3s;flex-shrink:0;}
+.pay-toggle.active{background:var(--green);}
+.pay-toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;
+  background:#fff;border-radius:50%;transition:transform .3s;}
+.pay-toggle.active::after{transform:translateX(22px);}
+
+/* ── ADMIN: ORDERS ── */
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;margin-bottom:12px;}
+.order-card.pending{border-left:3px solid #f59e0b;}
+.order-card.confirmed{border-left:3px solid var(--green);}
+.order-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.order-id{font-size:.78rem;color:var(--muted);}
+.order-status-badge{font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:10px;text-transform:uppercase;}
+.order-status-badge.pending{background:rgba(245,158,11,.15);color:#f59e0b;}
+.order-status-badge.confirmed{background:rgba(34,197,94,.15);color:var(--green);}
+.order-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.82rem;margin-bottom:10px;}
+.order-detail-grid div span{color:var(--muted);}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--card);
   border:1px solid var(--accent);border-radius:12px;padding:13px 20px;
@@ -583,6 +688,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
       <button class="ap-tab" onclick="apTab('gallery',this)">🖼️ Gallery</button>
       <button class="ap-tab" onclick="apTab('messages',this)">📩 Messages <span id="msgBadge" style="background:var(--red);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px;margin-left:4px;display:none;">0</span></button>
       <button class="ap-tab" onclick="apTab('reviews',this)">⭐ Reviews</button>
+      <button class="ap-tab" onclick="apTab('orders',this)">🧾 Orders <span id="orderBadge" style="background:var(--red);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:8px;margin-left:4px;display:none;">0</span></button>
+      <button class="ap-tab" onclick="apTab('payment',this)">💳 Payment Setup</button>
       <button class="ap-tab" onclick="apTab('store',this)">🏪 Store Info</button>
       <button class="ap-tab" onclick="apTab('hero',this)">🏠 Hero</button>
     </div>
@@ -640,18 +747,54 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
               <option value="hot">HOT</option>
             </select>
           </div>
+          <div class="fg"><label>Pre-Order Available?</label>
+            <select id="pf-preorder">
+              <option value="">No — Call Shop only</option>
+              <option value="yes">Yes — Allow Pre-Order</option>
+            </select>
+          </div>
+          <div class="fg"><label>Pre-Order Down Payment %</label>
+            <select id="pf-preorder-pct">
+              <option value="10">10%</option>
+              <option value="20">20%</option>
+              <option value="both">Let customer choose (10% or 20%)</option>
+            </select>
+          </div>
           <div class="fg"><label>Emoji Icon (fallback)</label>
             <input type="text" id="pf-icon" placeholder="📱" maxlength="2" value="📱"/>
           </div>
-          <!-- PHOTO UPLOAD -->
+          <!-- PHOTO UPLOAD — 3 SLOTS -->
           <div class="fg full">
-            <label>Phone Photo (Upload Image)</label>
-            <div class="photo-upload-area" id="photoUploadArea">
-              <input type="file" id="pf-photo" accept="image/*" onchange="previewPhoto(this)"/>
-              <div class="photo-upload-label">📷 Click to upload phone photo<br><span>JPG, PNG, WEBP supported</span></div>
-              <img id="photoPreviewImg" class="photo-preview" alt="preview"/>
+            <label>Phone Photos (Upload up to 3 images — 1st photo shows on Home & Listing cards)</label>
+            <div class="multi-photo-grid">
+              <div class="multi-photo-slot">
+                <span class="multi-photo-slot-num">1</span>
+                <div class="photo-upload-area" id="photoUploadArea1">
+                  <input type="file" id="pf-photo1" accept="image/*" onchange="previewPhoto(this,1)"/>
+                  <div class="photo-upload-label">📷 Main Photo<br><span>Cover image</span></div>
+                  <img id="photoPreviewImg1" class="photo-preview" alt="preview"/>
+                </div>
+                <input type="hidden" id="pf-photoData1" value=""/>
+              </div>
+              <div class="multi-photo-slot">
+                <span class="multi-photo-slot-num">2</span>
+                <div class="photo-upload-area" id="photoUploadArea2">
+                  <input type="file" id="pf-photo2" accept="image/*" onchange="previewPhoto(this,2)"/>
+                  <div class="photo-upload-label">📷 Photo 2<br><span>Optional</span></div>
+                  <img id="photoPreviewImg2" class="photo-preview" alt="preview"/>
+                </div>
+                <input type="hidden" id="pf-photoData2" value=""/>
+              </div>
+              <div class="multi-photo-slot">
+                <span class="multi-photo-slot-num">3</span>
+                <div class="photo-upload-area" id="photoUploadArea3">
+                  <input type="file" id="pf-photo3" accept="image/*" onchange="previewPhoto(this,3)"/>
+                  <div class="photo-upload-label">📷 Photo 3<br><span>Optional</span></div>
+                  <img id="photoPreviewImg3" class="photo-preview" alt="preview"/>
+                </div>
+                <input type="hidden" id="pf-photoData3" value=""/>
+              </div>
             </div>
-            <input type="hidden" id="pf-photoData" value=""/>
           </div>
         </div>
         <input type="hidden" id="pf-editId" value=""/>
@@ -816,7 +959,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
           <h3>📩 Customer Messages (<span id="msgCount">0</span>)</h3>
           <button class="ap-btn ap-btn-danger" onclick="clearAllMessages()" style="font-size:.75rem;padding:6px 12px;">🗑️ Clear All</button>
         </div>
-        <div id="adminMsgList"><p style="color:var(--muted);font-size:.85rem;">Koi message nahi abhi.</p></div>
+        <div id="adminMsgList"><p style="color:var(--muted);font-size:.85rem;">No messages yet.</p></div>
       </div>
     </div>
 
@@ -827,7 +970,79 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
           <h3>⭐ Customer Reviews (<span id="adminReviewCount">0</span>)</h3>
           <div style="font-size:.82rem;color:var(--muted);">Average: <strong id="adminAvgRating">—</strong></div>
         </div>
-        <div id="adminReviewList"><p style="color:var(--muted);font-size:.85rem;">Koi review nahi abhi.</p></div>
+        <div id="adminReviewList"><p style="color:var(--muted);font-size:.85rem;">No reviews yet.</p></div>
+      </div>
+    </div>
+
+    <!-- PAYMENT SETUP -->
+    <div class="ap-section" id="aps-payment">
+
+      <div class="ap-card" id="masterPaySwitchCard" style="border:1px solid var(--border);">
+        <div class="ap-card-head" style="margin-bottom:6px;">
+          <h3>🔌 Payment System Master Switch</h3>
+        </div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+          Turn this OFF to immediately stop accepting any new pre-order payments site-wide. Customers will see the Pre-Order button disabled. Orders already in progress are not affected — they will complete normally.
+        </p>
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+          <div class="pay-toggle" id="masterPayToggle" onclick="toggleMasterPayment()"></div>
+          <span id="masterPayStatusLabel" style="font-weight:700;font-size:.9rem;">Loading...</span>
+          <button class="ap-btn ap-btn-edit ap-btn-sm" style="margin-left:auto;" onclick="reverifyPendingOrdersNow()">🔄 Re-check Pending Orders Now</button>
+        </div>
+      </div>
+
+      <div class="ap-card">
+        <div class="ap-card-head"><h3>💳 Configure Payment Methods (UPI QR)</h3></div>
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:18px;line-height:1.6;">
+          Enter your shop's UPI ID for each method you want to accept. A QR code is generated automatically — money goes <strong style="color:var(--text);">directly to your bank account</strong>. No middleman, no fees, 100% safe.
+        </p>
+
+        <div class="pay-method-card">
+          <div class="pay-method-head">
+            <h4>📱 Google Pay</h4>
+            <div class="pay-toggle" id="pm-toggle-gpay" onclick="togglePayMethod('gpay')"></div>
+          </div>
+          <div class="fg"><label>UPI ID (e.g. yourname@okicici)</label><input type="text" id="pm-gpay-upi" placeholder="aftabazmi@okicici"/></div>
+        </div>
+
+        <div class="pay-method-card">
+          <div class="pay-method-head">
+            <h4>💜 PhonePe</h4>
+            <div class="pay-toggle" id="pm-toggle-phonepe" onclick="togglePayMethod('phonepe')"></div>
+          </div>
+          <div class="fg"><label>UPI ID (e.g. yourname@ybl)</label><input type="text" id="pm-phonepe-upi" placeholder="aftabazmi@ybl"/></div>
+        </div>
+
+
+        <div class="pay-method-card">
+          <div class="pay-method-head">
+            <h4>🔵 Paytm</h4>
+            <div class="pay-toggle" id="pm-toggle-paytm" onclick="togglePayMethod('paytm')"></div>
+          </div>
+          <div class="fg"><label>UPI ID (e.g. yourname@paytm)</label><input type="text" id="pm-paytm-upi" placeholder="aftabazmi@paytm"/></div>
+        </div>
+
+        <div class="pay-method-card">
+          <div class="pay-method-head">
+            <h4>🅿️ PayPal</h4>
+            <div class="pay-toggle" id="pm-toggle-paypal" onclick="togglePayMethod('paypal')"></div>
+          </div>
+          <div class="fg"><label>PayPal.me Link or Email</label><input type="text" id="pm-paypal-id" placeholder="paypal.me/aftabazmi or your@email.com"/></div>
+          <p style="font-size:.72rem;color:var(--muted);margin-top:6px;">Note: PayPal is mainly for international customers and doesn't generate a QR — customer will be shown your PayPal link.</p>
+        </div>
+
+        <div class="fg-btns"><button class="ap-btn ap-btn-primary" onclick="savePaymentSettings()">💾 Save Payment Settings</button></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="ap-section" id="aps-orders">
+      <div class="ap-card">
+        <div class="ap-card-head">
+          <h3>🧾 Pre-Orders (<span id="orderCount">0</span>)</h3>
+          <button class="ap-btn ap-btn-danger" onclick="clearAllOrders()" style="font-size:.75rem;padding:6px 12px;">🗑️ Clear All</button>
+        </div>
+        <div id="adminOrdersList"><p style="color:var(--muted);font-size:.85rem;">No pre-orders yet.</p></div>
       </div>
     </div>
 
@@ -1274,7 +1489,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
     <button class="auth-close" onclick="closeLogin()">✕</button>
     <div class="auth-logo">🔑</div>
     <div class="auth-title">Welcome Back!</div>
-    <div class="auth-sub">Login apne account mein</div>
+    <div class="auth-sub">Login to your account</div>
     <div class="auth-error" id="loginError2"></div>
     <div class="auth-field"><label>Email or Username *</label><input type="text" id="log-id" placeholder="Enter email or username"/></div>
     <div class="auth-field"><label>Password *</label><input type="password" id="log-pass" placeholder="Your password"/></div>
@@ -1314,9 +1529,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   <div class="pd-container">
     <div class="pd-back" onclick="closePhoneDetail()">← Back to Phones</div>
     <div class="pd-body">
-      <div class="pd-img-section" id="pdImgSection">
-        <span class="pd-img-emoji" id="pdEmoji">📱</span>
-        <span class="pd-badge-overlay phone-badge" id="pdBadgeOverlay" style="display:none;"></span>
+      <div class="pd-img-col">
+        <div class="pd-img-section" id="pdImgSection">
+          <span class="pd-img-emoji" id="pdEmoji">📱</span>
+          <span class="pd-badge-overlay phone-badge" id="pdBadgeOverlay" style="display:none;"></span>
+        </div>
+        <div class="pd-thumb-row" id="pdThumbRow" style="display:none;"></div>
       </div>
       <div class="pd-info">
         <div class="pd-brand-tag" id="pdBrand">Brand</div>
@@ -1339,6 +1557,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
         <div class="pd-actions" style="margin-top:20px;">
           <button class="pd-btn-wa" onclick="inquireWhatsApp()">💬 WhatsApp Inquiry</button>
           <button class="pd-btn-call" onclick="callStore()">📞 Call Store</button>
+          <button class="pd-btn-preorder" id="pdPreorderBtn" onclick="openPreorder()" style="display:none;">🎯 Pre-Order Now (Pay Advance)</button>
         </div>
         <div style="margin-top:14px;background:rgba(108,63,255,.08);border:1px solid rgba(108,63,255,.2);
           border-radius:10px;padding:12px 14px;font-size:.8rem;color:var(--muted);line-height:1.6;">
@@ -1346,6 +1565,79 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ PRE-ORDER MODAL — STEP 1: Customer Details + % ══ -->
+<div class="preorder-overlay" id="preorderOverlay">
+  <div class="preorder-box">
+    <button class="auth-close" onclick="closePreorder()">✕</button>
+    <div class="auth-logo">🎯</div>
+    <div class="auth-title">Pre-Order This Phone</div>
+    <div class="auth-sub">Reserve now by paying a small advance</div>
+
+    <div class="preorder-product-summary" id="preorderProductSummary"></div>
+
+    <div style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Choose Down Payment</div>
+    <div class="preorder-pct-row" id="preorderPctRow"></div>
+
+    <div class="preorder-amount-box">
+      <div class="amt" id="preorderAmountDisplay">₹0</div>
+      <div class="lbl">Advance amount to pay now</div>
+    </div>
+
+    <div class="auth-error" id="preorderError"></div>
+    <div class="auth-field"><label>Full Name *</label><input type="text" id="po-name" placeholder="Your full name"/></div>
+    <div class="auth-field"><label>Mobile Number *</label><input type="tel" id="po-phone" placeholder="10-digit mobile number"/></div>
+    <div class="auth-field"><label>Email (optional)</label><input type="email" id="po-email" placeholder="your@email.com"/></div>
+
+    <button class="auth-btn" onclick="proceedToPayment()">Continue to Payment →</button>
+  </div>
+</div>
+
+<!-- ══ PAYMENT PAGE — STEP 2: Select Method + QR ══ -->
+<div class="payment-overlay" id="paymentOverlay">
+  <div class="payment-box" id="paymentBoxContent">
+    <button class="auth-close" onclick="closePayment()">✕</button>
+    <div style="font-size:.8rem;color:var(--muted);">Pay Advance Amount</div>
+    <div class="payment-amount-display" id="paymentAmountDisplay">₹0</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:6px;" id="paymentForProduct"></div>
+
+    <div class="payment-method-grid" id="paymentMethodGrid"></div>
+
+    <div class="payment-qr-box" id="paymentQrBox">
+      <img id="paymentQrImg" alt="UPI QR Code"/>
+      <div class="payment-upi-id" id="paymentUpiIdDisplay"></div>
+    </div>
+
+    <div id="paypalLinkBox" style="display:none;margin:16px 0;">
+      <a id="paypalLinkAnchor" href="#" target="_blank" class="auth-btn" style="display:inline-block;text-decoration:none;">Open PayPal →</a>
+    </div>
+
+    <div class="payment-steps" id="paymentStepsBox" style="display:none;">
+      <strong style="color:var(--text);">How to pay:</strong><br/>
+      1. Open your UPI app (the one you selected)<br/>
+      2. Scan the QR code above<br/>
+      3. Enter the exact amount shown<br/>
+      4. Complete the payment<br/>
+      5. Tap "I've Paid" below to confirm your order
+    </div>
+
+    <button class="payment-confirm-btn" id="paymentConfirmBtn" onclick="confirmPaymentDone()" style="display:none;">✅ I've Paid — Confirm Order</button>
+    <div class="payment-back-link" onclick="backToPreorder()">← Back to order details</div>
+  </div>
+</div>
+
+<!-- ══ PAYMENT SUCCESS ══ -->
+<div class="payment-overlay" id="paymentSuccessOverlay">
+  <div class="payment-box">
+    <div class="payment-success-icon">🎉</div>
+    <div class="auth-title">Order Placed Successfully!</div>
+    <p style="font-size:.85rem;color:var(--muted);margin:10px 0 4px;line-height:1.6;">
+      Your pre-order has been recorded. Our team will verify your payment and contact you within a few hours to confirm.
+    </p>
+    <p style="font-size:.8rem;color:var(--accent2);font-weight:600;margin-bottom:18px;" id="orderRefDisplay"></p>
+    <button class="auth-btn" onclick="closeAllPaymentModals()">Done</button>
   </div>
 </div>
 
@@ -1425,6 +1717,41 @@ let storeInfo = ld('mg_store',{
   fb:'#',ig:'#',wa:'9876543210',yt:'#',
   stat1:'500+',stat2:'15+',stat3:'10K+',
 });
+
+// ─── PAYMENT SETTINGS (UPI QR — money goes directly to shop's bank account) ───
+let paymentSettings = ld('mg_payment_settings',{
+  gpay:{enabled:false,upi:''},
+  phonepe:{enabled:false,upi:''},
+  paytm:{enabled:false,upi:''},
+  paypal:{enabled:false,id:''}
+});
+
+// ─── MASTER PAYMENT SWITCH — instantly stop/allow new payments ───
+let paymentSystemEnabled = ld('mg_payment_master_enabled', true);
+
+// ════════════════════════════════════════════════════════════
+//  CASHFREE CONFIG — automatic payment confirmation
+//  👉 Replace BACKEND_URL with your deployed Cloud Functions
+//     base URL after running `firebase deploy --only functions`.
+//     It looks like:
+//     https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net
+//  👉 Set CASHFREE_MODE to "sandbox" while testing, "production"
+//     once you've completed Cashfree KYC and gone live.
+//  👉 ADMIN_API_KEY must match EXACTLY what you set with:
+//     firebase functions:secrets:set ADMIN_API_KEY
+//     This protects the "re-verify pending orders" admin action.
+//     Treat it like a password — don't share this file publicly
+//     with the real key still in it.
+// ════════════════════════════════════════════════════════════
+const BACKEND_URL = "https://us-central1-mobilegallery-f1f0c.cloudfunctions.net";
+const CASHFREE_MODE = "sandbox"; // "sandbox" | "production"
+const ADMIN_API_KEY = "REPLACE_WITH_YOUR_ADMIN_API_KEY";
+let cashfreeInstance = null;
+try{
+  if (typeof Cashfree !== 'undefined') {
+    cashfreeInstance = Cashfree({ mode: CASHFREE_MODE });
+  }
+}catch(e){ console.warn('[Cashfree] SDK init failed:', e.message); }
 
 let heroData = ld('mg_hero',{
   badge:"Bihar's #1 Mobile Store",h1:'The Biggest',h2:'Mobile Store',
@@ -1542,16 +1869,39 @@ function openPhoneDetail(id){
   const imgSec = document.getElementById('pdImgSection');
   const oldImg = imgSec.querySelector('img.pd-real-img');
   if(oldImg) oldImg.remove();
-  if(p.photo){
-    const img = document.createElement('img');
-    img.src=p.photo; img.className='pd-real-img';
-    img.style.cssText='max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;';
-    imgSec.insertBefore(img, imgSec.firstChild);
-    document.getElementById('pdEmoji').style.display='none';
-  } else {
-    document.getElementById('pdEmoji').style.display='block';
-    document.getElementById('pdEmoji').textContent=p.icon||'📱';
+
+  const photosArr = (p.photos && p.photos.length) ? p.photos : (p.photo ? [p.photo] : []);
+
+  function setMainImage(src){
+    const existing = imgSec.querySelector('img.pd-real-img');
+    if(existing) existing.remove();
+    if(src){
+      const img = document.createElement('img');
+      img.src=src; img.className='pd-real-img';
+      img.style.cssText='max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;';
+      imgSec.insertBefore(img, imgSec.firstChild);
+      document.getElementById('pdEmoji').style.display='none';
+    } else {
+      document.getElementById('pdEmoji').style.display='block';
+      document.getElementById('pdEmoji').textContent=p.icon||'📱';
+    }
   }
+
+  setMainImage(photosArr[0] || '');
+
+  // Thumbnail row
+  const thumbRow = document.getElementById('pdThumbRow');
+  if(photosArr.length > 1){
+    thumbRow.style.display='flex';
+    thumbRow.innerHTML = photosArr.map((src,i)=>`
+      <div class="pd-thumb ${i===0?'active':''}" onclick="selectPdThumb(this,'${src.replace(/'/g,"\\'")}')">
+        <img src="${src}" alt="Photo ${i+1}"/>
+      </div>`).join('');
+  } else {
+    thumbRow.style.display='none';
+    thumbRow.innerHTML='';
+  }
+
   const bdgEl=document.getElementById('pdBadgeOverlay');
   if(p.badgeText){ bdgEl.textContent=p.badgeText; bdgEl.className='pd-badge-overlay phone-badge '+(p.badge||''); bdgEl.style.display='block'; }
   else bdgEl.style.display='none';
@@ -1566,6 +1916,19 @@ function openPhoneDetail(id){
   ov.classList.add('show'); ov.scrollTop=0; document.body.style.overflow='hidden';
 }
 
+function selectPdThumb(el, src){
+  const imgSec = document.getElementById('pdImgSection');
+  const existing = imgSec.querySelector('img.pd-real-img');
+  if(existing) existing.remove();
+  const img = document.createElement('img');
+  img.src=src; img.className='pd-real-img';
+  img.style.cssText='max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;';
+  imgSec.insertBefore(img, imgSec.firstChild);
+  document.getElementById('pdEmoji').style.display='none';
+  document.querySelectorAll('.pd-thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
 function closePhoneDetail(){
   document.getElementById('phoneDetailOverlay').classList.remove('show');
   document.body.style.overflow='';
@@ -1573,7 +1936,7 @@ function closePhoneDetail(){
 
 function inquireWhatsApp(){
   if(!currentDetailPhone) return;
-  const msg=encodeURIComponent(`Salaam! Main "${currentDetailPhone.name}" ke baare mein puchna chahta hoon. Price: ${currentDetailPhone.price}. Kya available hai?`);
+  const msg=encodeURIComponent(`Hi! I'm interested in "${currentDetailPhone.name}". Price: ${currentDetailPhone.price}. Is it available?`);
   window.open('https://wa.me/'+(storeInfo.wa||'9876543210')+'?text='+msg,'_blank');
 }
 function callStore(){
@@ -1845,17 +2208,45 @@ function friendlyAuthError(code){
 
 
 // ─── NAVIGATION ────────────────────────────────────
-function showPage(name){
+function showPage(name, addHistory){
+  // Default: add to history (true). Pass false only for popstate handler.
+  if(addHistory !== false){
+    const state = {page: name};
+    const url   = '#' + name;
+    // If same page, replace; otherwise push
+    if(window.location.hash === url){
+      history.replaceState(state, '', url);
+    } else {
+      history.pushState(state, '', url);
+    }
+  }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
+  const pageEl = document.getElementById('page-'+name);
+  if(pageEl) pageEl.classList.add('active');
   document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
   const el=document.getElementById('nav-'+name);
   if(el) el.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   // Close mobile menu
   const l=document.getElementById('navLinks');
-  l.style.display='';
+  if(l) l.style.display='';
 }
+
+// Browser Back/Forward button handler
+window.addEventListener('popstate', function(e){
+  const page = (e.state && e.state.page) ? e.state.page : 'home';
+  showPage(page, false);
+});
+
+// On first load — read hash from URL so direct links work
+(function initPageFromHash(){
+  const hash = window.location.hash.replace('#','');
+  const validPages = ['home','phones','gadgets','brands','events','about','gallery','contact','reviews'];
+  const startPage  = validPages.includes(hash) ? hash : 'home';
+  // Set initial state so back from first page doesn't leave the site
+  history.replaceState({page: startPage}, '', '#' + startPage);
+  if(startPage !== 'home') showPage(startPage, false);
+})();
 function addToCart(name){showToast('🛒 '+name+' – inquiry registered!');}
 function sendMessage(){
   const n=document.getElementById('formName').value.trim();
@@ -1914,6 +2305,7 @@ function openAdminPanel(){
   renderAdminDashboard();renderAdminPhones();renderAdminBrands();renderAdminGallery();
   renderAdminGadgets();renderAdminEvents();
   renderAdminMessages();renderAdminReviews();
+  renderAdminOrders();loadPaymentSettingsForm();
   loadStoreForm();loadHeroForm();
 }
 function exitAdmin(){
@@ -1950,13 +2342,13 @@ function renderAdminDashboard(){
     </div>`).join('');
 }
 
-// photo preview
-function previewPhoto(input){
+// photo preview — supports 3 slots
+function previewPhoto(input, slotNum){
   const file=input.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=function(e){
-    document.getElementById('pf-photoData').value=e.target.result;
-    const img=document.getElementById('photoPreviewImg');
+    document.getElementById('pf-photoData'+slotNum).value=e.target.result;
+    const img=document.getElementById('photoPreviewImg'+slotNum);
     img.src=e.target.result;img.style.display='block';
   };
   reader.readAsDataURL(file);
@@ -1992,19 +2384,34 @@ function savePhone(){
   const specs=document.getElementById('pf-specs').value.trim();
   const badgeVal=document.getElementById('pf-badge').value;
   const icon=document.getElementById('pf-icon').value||'📱';
-  const photo=document.getElementById('pf-photoData').value;
+  const preorderEnabled=document.getElementById('pf-preorder').value;
+  const preorderPct=document.getElementById('pf-preorder-pct').value;
+  const photo1=document.getElementById('pf-photoData1').value;
+  const photo2=document.getElementById('pf-photoData2').value;
+  const photo3=document.getElementById('pf-photoData3').value;
   const editId=document.getElementById('pf-editId').value;
   if(!brand||!name||!price){showToast('❌ Brand, name and price are required!');return;}
   const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
-  const obj={brand,name,price,specs,icon,badge:badgeVal,badgeText:bmap[badgeVal]||'',photo};
+  // Build photos array (only non-empty), keep backward-compat 'photo' = first photo
+  const newPhotos=[photo1,photo2,photo3].filter(Boolean);
+  const obj={brand,name,price,specs,icon,badge:badgeVal,badgeText:bmap[badgeVal]||'',preorderEnabled,preorderPct};
   if(editId){
     const idx=phones.findIndex(p=>p.id==editId);
     if(idx>-1){
-      // keep old photo if no new one uploaded
-      if(!photo && phones[idx].photo) obj.photo=phones[idx].photo;
+      // If no new photos uploaded in a slot, keep old ones
+      const oldPhotos = phones[idx].photos || (phones[idx].photo?[phones[idx].photo]:[]);
+      const finalPhotos = [
+        photo1 || oldPhotos[0] || '',
+        photo2 || oldPhotos[1] || '',
+        photo3 || oldPhotos[2] || ''
+      ].filter(Boolean);
+      obj.photos = finalPhotos;
+      obj.photo  = finalPhotos[0] || '';
       phones[idx]={...phones[idx],...obj};
     }
   } else {
+    obj.photos = newPhotos;
+    obj.photo  = newPhotos[0] || '';
     obj.id=nextPid++;sv('mg_npid',nextPid);phones.push(obj);
   }
   sv('mg_phones',phones);
@@ -2020,12 +2427,18 @@ function editPhone(id){
   document.getElementById('pf-specs').value=p.specs;
   document.getElementById('pf-badge').value=p.badge||'';
   document.getElementById('pf-icon').value=p.icon||'📱';
+  document.getElementById('pf-preorder').value=p.preorderEnabled||'';
+  document.getElementById('pf-preorder-pct').value=p.preorderPct||'10';
   document.getElementById('pf-editId').value=p.id;
-  document.getElementById('pf-photoData').value=p.photo||'';
+  const photosArr = p.photos || (p.photo?[p.photo]:[]);
+  for(let i=1;i<=3;i++){
+    const ph = photosArr[i-1] || '';
+    document.getElementById('pf-photoData'+i).value = ph;
+    const img=document.getElementById('photoPreviewImg'+i);
+    if(ph){img.src=ph;img.style.display='block';}
+    else{img.style.display='none';img.src='';}
+  }
   document.getElementById('phoneFormTitle').textContent='✏️ Edit Phone: '+p.name;
-  const img=document.getElementById('photoPreviewImg');
-  if(p.photo){img.src=p.photo;img.style.display='block';}
-  else{img.style.display='none';}
   apTabClick('phones');
   document.getElementById('aps-phones').scrollIntoView({behavior:'smooth'});
 }
@@ -2037,10 +2450,16 @@ function deletePhone(id){
 }
 
 function clearPhoneForm(){
-  ['pf-brand','pf-name','pf-price','pf-specs','pf-badge','pf-editId','pf-photoData'].forEach(id=>document.getElementById(id).value='');
+  ['pf-brand','pf-name','pf-price','pf-specs','pf-badge','pf-editId'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pf-icon').value='📱';
-  document.getElementById('pf-photo').value='';
-  document.getElementById('photoPreviewImg').style.display='none';
+  document.getElementById('pf-preorder').value='';
+  document.getElementById('pf-preorder-pct').value='10';
+  for(let i=1;i<=3;i++){
+    document.getElementById('pf-photoData'+i).value='';
+    document.getElementById('pf-photo'+i).value='';
+    const img=document.getElementById('photoPreviewImg'+i);
+    img.style.display='none';img.src='';
+  }
   document.getElementById('phoneFormTitle').textContent='📱 Add New Phone';
 }
 
@@ -2292,6 +2711,557 @@ async function fbSaveCollection(col, data){
   }catch(e){console.warn('[Firebase] fbSaveCollection failed:',e.message);}
 }
 
+// ════════════════════════════════════════════════════
+//  PAYMENT SYSTEM — UPI QR Pre-Orders
+//  Money goes DIRECTLY to shop owner's bank account via
+//  UPI. No backend, no secret keys, no middleman — 100% safe.
+// ════════════════════════════════════════════════════
+
+// ─── ADMIN: Payment Settings ─────────────────────────
+function togglePayMethod(method){
+  paymentSettings[method].enabled = !paymentSettings[method].enabled;
+  document.getElementById('pm-toggle-'+method).classList.toggle('active', paymentSettings[method].enabled);
+}
+
+function loadPaymentSettingsForm(){
+  updateMasterPaySwitchUI();
+  ['gpay','phonepe','paytm'].forEach(m=>{
+    document.getElementById('pm-toggle-'+m).classList.toggle('active', paymentSettings[m].enabled);
+    document.getElementById('pm-'+m+'-upi').value = paymentSettings[m].upi || '';
+  });
+  document.getElementById('pm-toggle-paypal').classList.toggle('active', paymentSettings.paypal.enabled);
+  document.getElementById('pm-paypal-id').value = paymentSettings.paypal.id || '';
+}
+
+// ─── MASTER PAYMENT SWITCH ────────────────────────────
+function updateMasterPaySwitchUI(){
+  const toggle = document.getElementById('masterPayToggle');
+  const label  = document.getElementById('masterPayStatusLabel');
+  if(!toggle || !label) return;
+  toggle.classList.toggle('active', paymentSystemEnabled);
+  label.textContent = paymentSystemEnabled ? '✅ Payments are ON — customers can pre-order' : '⛔ Payments are OFF — pre-orders are paused';
+  label.style.color = paymentSystemEnabled ? 'var(--green)' : 'var(--red)';
+  // Also reflect the state on the customer-facing pre-order button, if open
+  refreshPreorderButtonState();
+}
+
+function toggleMasterPayment(){
+  paymentSystemEnabled = !paymentSystemEnabled;
+  sv('mg_payment_master_enabled', paymentSystemEnabled);
+  updateMasterPaySwitchUI();
+
+  if(paymentSystemEnabled){
+    showToast('✅ Payment system turned ON — checking pending orders...');
+    reverifyPendingOrdersNow();
+  } else {
+    showToast('⛔ Payment system turned OFF — no new pre-orders can be started');
+  }
+}
+
+// Calls the backend to ask Cashfree the REAL status of every order
+// still marked "pending", and updates Firestore accordingly.
+// This never invents a result — only what Cashfree confirms gets written.
+async function reverifyPendingOrdersNow(){
+  const toggle = document.getElementById('masterPayToggle');
+  if(toggle) toggle.style.opacity = '0.5';
+  try{
+    const resp = await fetch(`${BACKEND_URL}/reverifyPendingOrders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-key': ADMIN_API_KEY
+      }
+    });
+    const data = await resp.json();
+    if(!resp.ok){
+      showToast('❌ Could not re-verify pending orders: ' + (data.error || 'Unknown error'));
+      return;
+    }
+    if(data.checked === 0){
+      showToast('✅ No pending orders to check.');
+    } else {
+      showToast(`✅ Checked ${data.checked} pending order(s) — ${data.paid} confirmed paid, ${data.failed} failed, ${data.stillPending} still pending.`);
+    }
+    renderAdminOrders();
+  }catch(e){
+    console.error('Re-verify failed:', e);
+    showToast('❌ Could not connect to payment server to re-verify orders.');
+  }finally{
+    if(toggle) toggle.style.opacity = '';
+  }
+}
+
+// Disables the "Pre-Order Now" button on the phone detail page
+// when payments are globally off.
+function refreshPreorderButtonState(){
+  const btn = document.getElementById('pdPreorderBtn');
+  if(!btn) return;
+  if(!paymentSystemEnabled){
+    btn.disabled = true;
+    btn.dataset.origText = btn.dataset.origText || btn.textContent;
+    btn.textContent = '⛔ Pre-Orders Temporarily Paused';
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+  } else {
+    btn.disabled = false;
+    if(btn.dataset.origText) btn.textContent = btn.dataset.origText;
+    btn.style.opacity = '';
+    btn.style.cursor = '';
+  }
+}
+
+function savePaymentSettings(){
+  ['gpay','phonepe','paytm'].forEach(m=>{
+    paymentSettings[m].upi = document.getElementById('pm-'+m+'-upi').value.trim();
+  });
+  paymentSettings.paypal.id = document.getElementById('pm-paypal-id').value.trim();
+  // basic validation: if enabled, UPI ID should look valid
+  for(const m of ['gpay','phonepe','paytm']){
+    if(paymentSettings[m].enabled && !paymentSettings[m].upi.includes('@')){
+      showToast('❌ '+m+': Please enter a valid UPI ID (e.g. name@bank)');
+      return;
+    }
+  }
+  if(paymentSettings.paypal.enabled && !paymentSettings.paypal.id){
+    showToast('❌ PayPal: Please enter your PayPal.me link or email');
+    return;
+  }
+  sv('mg_payment_settings', paymentSettings);
+  showToast('✅ Payment settings saved!');
+}
+
+// ─── PRE-ORDER FLOW — STEP 1 ─────────────────────────
+let preorderState = {product:null, type:'phone', pct:10, amount:0};
+
+function openPreorder(){
+  if(!paymentSystemEnabled){
+    showToast('⛔ Pre-orders are temporarily paused by the store. Please try again later.');
+    return;
+  }
+  if(!currentDetailPhone) return;
+  const p = currentDetailPhone;
+  preorderState.product = p;
+  preorderState.type = 'phone';
+
+  // Product summary
+  const summary = document.getElementById('preorderProductSummary');
+  const priceNum = parsePrice(p.price);
+  summary.innerHTML = `
+    ${p.photo?`<img src="${p.photo}" alt="${p.name}"/>`:`<div class="pp-emoji">${p.icon||'📱'}</div>`}
+    <div>
+      <div class="preorder-product-name">${p.name}</div>
+      <div class="preorder-product-price">Full Price: ${p.price}</div>
+    </div>`;
+
+  // Determine which % options to show based on admin setting
+  const mode = p.preorderPct || '10';
+  const pctRow = document.getElementById('preorderPctRow');
+  let options = [];
+  if(mode === 'both') options = [10,20];
+  else options = [parseInt(mode)||10];
+
+  pctRow.innerHTML = options.map((pct,i)=>`
+    <div class="preorder-pct-btn ${i===0?'active':''}" data-pct="${pct}" onclick="selectPreorderPct(${pct},this)">
+      <div class="preorder-pct-label">Pay Now</div>
+      <div class="preorder-pct-value">${pct}%</div>
+    </div>`).join('');
+
+  preorderState.pct = options[0];
+  updatePreorderAmount(priceNum, options[0]);
+
+  document.getElementById('preorderError').style.display='none';
+  ['po-name','po-phone','po-email'].forEach(id=>document.getElementById(id).value='');
+  closePhoneDetail();
+  document.getElementById('preorderOverlay').classList.add('show');
+}
+
+function parsePrice(priceStr){
+  // Extract numeric value from "₹25,999" style string
+  const digits = (priceStr||'').replace(/[^\d]/g,'');
+  return parseInt(digits) || 0;
+}
+
+function selectPreorderPct(pct, el){
+  preorderState.pct = pct;
+  document.querySelectorAll('.preorder-pct-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const priceNum = parsePrice(preorderState.product.price);
+  updatePreorderAmount(priceNum, pct);
+}
+
+function updatePreorderAmount(priceNum, pct){
+  const amount = Math.round(priceNum * pct / 100);
+  preorderState.amount = amount;
+  document.getElementById('preorderAmountDisplay').textContent = '₹' + amount.toLocaleString('en-IN');
+}
+
+function closePreorder(){
+  document.getElementById('preorderOverlay').classList.remove('show');
+}
+
+function proceedToPayment(){
+  const name  = document.getElementById('po-name').value.trim();
+  const phone = document.getElementById('po-phone').value.trim();
+  const email = document.getElementById('po-email').value.trim();
+  const errEl = document.getElementById('preorderError');
+  errEl.style.display='none';
+
+  if(!name || !phone){ showAuthError(errEl,'❌ Name and mobile number are required!'); return; }
+  if(phone.replace(/\D/g,'').length < 10){ showAuthError(errEl,'❌ Please enter a valid 10-digit mobile number!'); return; }
+  if(preorderState.amount <= 0){ showAuthError(errEl,'❌ Invalid order amount. Please try again.'); return; }
+
+  preorderState.name = name;
+  preorderState.phone = phone;
+  preorderState.email = email;
+
+  closePreorder();
+  openPaymentPage();
+}
+
+// ─── PAYMENT FLOW — STEP 2 ────────────────────────────
+let selectedPaymentMethod = null;
+
+function openPaymentPage(){
+  document.getElementById('paymentAmountDisplay').textContent = '₹' + preorderState.amount.toLocaleString('en-IN');
+  document.getElementById('paymentForProduct').textContent = 'For: ' + preorderState.product.name + ' (' + preorderState.pct + '% advance)';
+
+  // One unified UPI button (covers GPay/PhonePe/Paytm — Cashfree's
+  // checkout shows all installed UPI apps automatically) + PayPal.
+  const methods = [
+    {key:'upi', icon:'📱', name:'UPI (GPay / PhonePe / Paytm)'}
+  ];
+  if(paymentSettings.paypal.enabled) methods.push({key:'paypal', icon:'🅿️', name:'PayPal'});
+
+  const grid = document.getElementById('paymentMethodGrid');
+  grid.innerHTML = methods.map(m=>`
+    <div class="payment-method-btn" data-method="${m.key}" onclick="selectPaymentMethod('${m.key}', this)">
+      <div class="pm-icon">${m.icon}</div>
+      <div class="pm-name">${m.name}</div>
+    </div>`).join('');
+
+  // Reset state
+  selectedPaymentMethod = null;
+  document.getElementById('paymentQrBox').classList.remove('show');
+  document.getElementById('paypalLinkBox').style.display = 'none';
+  document.getElementById('paymentStepsBox').style.display = 'none';
+  document.getElementById('paymentConfirmBtn').style.display = 'none';
+
+  document.getElementById('paymentOverlay').classList.add('show');
+}
+
+function selectPaymentMethod(key, el){
+  selectedPaymentMethod = key;
+  document.querySelectorAll('.payment-method-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+
+  if(key === 'paypal'){
+    document.getElementById('paymentQrBox').classList.remove('show');
+    document.getElementById('paymentStepsBox').style.display='none';
+    const id = paymentSettings.paypal.id;
+    const link = id.startsWith('http') ? id : (id.includes('@') ? null : 'https://'+id);
+    const box = document.getElementById('paypalLinkBox');
+    const anchor = document.getElementById('paypalLinkAnchor');
+    if(link){
+      anchor.href = link; box.style.display='block';
+    } else {
+      box.style.display='none';
+    }
+    document.getElementById('paymentConfirmBtn').style.display='block';
+    document.getElementById('paymentConfirmBtn').textContent = "✅ I've Paid — Confirm Order";
+    document.getElementById('paymentConfirmBtn').onclick = confirmPaymentDone;
+  } else if(key === 'upi'){
+    // GPay / PhonePe / Paytm — all go through Cashfree's secure
+    // checkout, which automatically shows UPI apps + QR + cards.
+    // No static QR anymore — payment status is confirmed
+    // automatically by the backend webhook, not by the user.
+    document.getElementById('paymentQrBox').classList.remove('show');
+    document.getElementById('paypalLinkBox').style.display='none';
+    document.getElementById('paymentStepsBox').style.display='none';
+    document.getElementById('paymentConfirmBtn').style.display='block';
+    document.getElementById('paymentConfirmBtn').textContent = "🔒 Pay Securely Now";
+    document.getElementById('paymentConfirmBtn').onclick = startCashfreeCheckout;
+  }
+}
+
+// ─── CASHFREE CHECKOUT — real automatic confirmation ─────
+async function startCashfreeCheckout(){
+  if(!paymentSystemEnabled){
+    showToast('⛔ Pre-orders are temporarily paused by the store.');
+    closePayment();
+    return;
+  }
+  if(!currentUser){
+    showToast('❌ Please login first to make a payment!');
+    closePayment();
+    openLogin();
+    return;
+  }
+  if(!cashfreeInstance){
+    showToast('❌ Payment system not loaded. Please refresh the page.');
+    return;
+  }
+
+  const btn = document.getElementById('paymentConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating order...';
+
+  try{
+    const resp = await fetch(`${BACKEND_URL}/createPreOrder`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        uid: currentUser.uid,
+        productId: preorderState.product.id,
+        productName: preorderState.product.name,
+        fullPrice: parsePrice(preorderState.product.price),
+        advancePercent: preorderState.pct,
+        customerName: preorderState.name,
+        customerPhone: preorderState.phone,
+        customerEmail: preorderState.email
+      })
+    });
+    const data = await resp.json();
+    if(!resp.ok){
+      showToast('❌ ' + (data.error || 'Could not start payment'));
+      btn.disabled = false;
+      btn.textContent = '🔒 Pay Securely Now';
+      return;
+    }
+
+    // Remember this order id so we can check its status when the
+    // checkout closes (in case the webhook takes a few seconds).
+    preorderState.activeOrderId = data.orderId;
+
+    btn.textContent = '🔒 Pay Securely Now';
+    btn.disabled = false;
+
+    cashfreeInstance.checkout({
+      paymentSessionId: data.paymentSessionId,
+      redirectTarget: '_modal' // opens as an in-page popup, not a redirect
+    }).then(async (result)=>{
+      if(result.error){
+        console.warn('[Cashfree] checkout closed/error:', result.error);
+      }
+      // Whether the popup closed via success, failure, or user
+      // closing it — check the real status from our backend
+      // (driven by the webhook), never trust the popup result alone.
+      await pollOrderStatus(data.orderId);
+    });
+  }catch(e){
+    console.error('Checkout start failed:', e);
+    showToast('❌ Could not connect to payment server. Please try again.');
+    btn.disabled = false;
+    btn.textContent = '🔒 Pay Securely Now';
+  }
+}
+
+// Polls our backend (which is updated by Cashfree's webhook) to see
+// if the payment has actually been confirmed.
+async function pollOrderStatus(orderId, attempt=0){
+  try{
+    const resp = await fetch(`${BACKEND_URL}/checkOrderStatus?orderId=${encodeURIComponent(orderId)}`);
+    const data = await resp.json();
+
+    if(data.status === 'paid'){
+      closePayment();
+      document.getElementById('orderRefDisplay').textContent = 'Order Reference: #' + orderId;
+      document.getElementById('paymentSuccessOverlay').classList.add('show');
+      renderAdminOrders();
+      return;
+    }
+    if(data.status === 'failed'){
+      closePayment();
+      showToast('❌ Payment failed or was cancelled. Please try again.');
+      return;
+    }
+    // still "pending" — webhook may take a couple seconds, retry a few times
+    if(attempt < 6){
+      setTimeout(()=>pollOrderStatus(orderId, attempt+1), 2000);
+    } else {
+      showToast('⏳ Payment is still processing. We will confirm your order shortly.');
+      closePayment();
+    }
+  }catch(e){
+    console.warn('Status check failed:', e.message);
+  }
+}
+
+function backToPreorder(){
+  closePayment();
+  document.getElementById('preorderOverlay').classList.add('show');
+}
+
+function closePayment(){
+  document.getElementById('paymentOverlay').classList.remove('show');
+}
+
+// ─── PAYPAL MANUAL CONFIRM — saves to Firebase/localStorage ──
+// (PayPal stays manual since it's outside the Cashfree/UPI system.
+//  Admin should verify PayPal payments arrived before marking
+//  fulfilled in the admin panel.)
+async function confirmPaymentDone(){
+  if(!selectedPaymentMethod){ showToast('❌ Please select a payment method first!'); return; }
+
+  const order = {
+    id: Date.now(),
+    productName: preorderState.product.name,
+    productPrice: preorderState.product.price,
+    pct: preorderState.pct,
+    advanceAmount: preorderState.amount,
+    customerName: preorderState.name,
+    customerPhone: preorderState.phone,
+    customerEmail: preorderState.email || '',
+    paymentMethod: selectedPaymentMethod,
+    status: 'pending', // pending until shop owner verifies money received
+    time: new Date().toISOString()
+  };
+
+  // Save locally
+  let orders = ld('mg_orders',[]);
+  orders.unshift(order);
+  _svLocal('mg_orders', orders);
+
+  // Save to Firebase
+  if(firebaseEnabled){
+    try{
+      await db.collection('orders').doc(String(order.id)).set(order);
+    }catch(e){ console.warn('[Firebase] Order save failed:', e.message); }
+  }
+
+  closePayment();
+  document.getElementById('orderRefDisplay').textContent = 'Order Reference: #' + order.id;
+  document.getElementById('paymentSuccessOverlay').classList.add('show');
+  renderAdminOrders();
+}
+
+function closeAllPaymentModals(){
+  document.getElementById('paymentSuccessOverlay').classList.remove('show');
+  document.getElementById('preorderOverlay').classList.remove('show');
+  document.getElementById('paymentOverlay').classList.remove('show');
+}
+
+// ─── ADMIN: Orders Management ────────────────────────
+async function renderAdminOrders(){
+  let orders = ld('mg_orders',[]); // legacy/PayPal manual orders (numeric id, writable)
+  let cfOrders = []; // Cashfree orders (string id, read-only from browser — backend/webhook owns them)
+
+  if(firebaseEnabled){
+    try{
+      const snap = await db.collection('orders').orderBy('createdAt','desc').get();
+      if(!snap.empty){
+        snap.docs.forEach(d=>{
+          const data = d.data();
+          if(data.cashfreeOrderId) cfOrders.push(data);
+        });
+      }
+    }catch(e){ console.warn('[Firebase] Could not load Cashfree orders:', e.message); }
+  }
+
+  // Normalize both formats into one shape for rendering
+  const normalized = [
+    ...orders.map(o=>({
+      id: o.id, isManual: true, productName: o.productName, productPrice: o.productPrice,
+      pct: o.pct, advanceAmount: o.advanceAmount, customerName: o.customerName,
+      customerPhone: o.customerPhone, customerEmail: o.customerEmail,
+      paymentMethod: o.paymentMethod, status: o.status,
+      whenLabel: new Date(o.time).toLocaleString('en-IN')
+    })),
+    ...cfOrders.map(o=>({
+      id: o.cashfreeOrderId, isManual: false, productName: o.productName,
+      productPrice: '₹'+(o.fullPrice||0).toLocaleString('en-IN'),
+      pct: o.advancePercent, advanceAmount: o.advanceAmount, customerName: o.customerName,
+      customerPhone: o.customerPhone, customerEmail: o.customerEmail,
+      paymentMethod: 'upi/card (Cashfree)', status: o.status==='paid'?'confirmed':o.status,
+      whenLabel: o.createdAt && o.createdAt.toDate ? o.createdAt.toDate().toLocaleString('en-IN') : '—'
+    }))
+  ];
+
+  const pending = normalized.filter(o=>o.status==='pending').length;
+  document.getElementById('orderCount').textContent = normalized.length;
+  const badge = document.getElementById('orderBadge');
+  if(pending>0){ badge.textContent=pending; badge.style.display='inline'; }
+  else badge.style.display='none';
+
+  if(!normalized.length){
+    document.getElementById('adminOrdersList').innerHTML = '<p style="color:var(--muted);font-size:.85rem;">No pre-orders yet.</p>';
+    return;
+  }
+  document.getElementById('adminOrdersList').innerHTML = normalized.map(o=>`
+    <div class="order-card ${o.status}">
+      <div class="order-head">
+        <div><strong>${o.productName}</strong><div class="order-id">#${o.id} • ${o.whenLabel}</div></div>
+        <span class="order-status-badge ${o.status}">${o.status==='pending'?'⏳ Pending Verification':(o.status==='failed'?'❌ Failed':'✅ Confirmed — Paid Automatically')}</span>
+      </div>
+      <div class="order-detail-grid">
+        <div><span>Customer: </span><strong>${o.customerName}</strong></div>
+        <div><span>Phone: </span><strong>${o.customerPhone}</strong></div>
+        <div><span>Advance Paid: </span><strong style="color:var(--accent2);">₹${(o.advanceAmount||0).toLocaleString('en-IN')} (${o.pct}%)</strong></div>
+        <div><span>Method: </span><strong>${o.paymentMethod}</strong></div>
+        ${o.customerEmail?`<div><span>Email: </span>${o.customerEmail}</div>`:''}
+        <div><span>Full Price: </span>${o.productPrice}</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        ${(o.isManual && o.status==='pending')?`<button class="ap-btn ap-btn-primary ap-btn-sm" onclick="markOrderConfirmed(${o.id})">✅ Mark Payment Received</button>`:''}
+        ${(!o.isManual)?`<span style="font-size:.72rem;color:var(--muted);">🔒 Auto-verified by Cashfree — no manual action needed</span>`:''}
+        <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="window.open('tel:${o.customerPhone}')">📞 Call Customer</button>
+        ${o.isManual?`<button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteOrder(${o.id})">🗑️</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function markOrderConfirmed(id){
+  let orders = ld('mg_orders',[]);
+  const idx = orders.findIndex(o=>o.id==id);
+  if(idx>-1){ orders[idx].status='confirmed'; _svLocal('mg_orders',orders); }
+  if(firebaseEnabled) db.collection('orders').doc(String(id)).update({status:'confirmed'}).catch(e=>{});
+  renderAdminOrders();
+  showToast('✅ Order marked as confirmed!');
+}
+
+function deleteOrder(id){
+  if(!confirm('Delete this order record?'))return;
+  let orders = ld('mg_orders',[]);
+  orders = orders.filter(o=>o.id!=id);
+  _svLocal('mg_orders',orders);
+  if(firebaseEnabled) db.collection('orders').doc(String(id)).delete().catch(e=>{});
+  renderAdminOrders();
+  showToast('🗑️ Order deleted!');
+}
+
+function clearAllOrders(){
+  if(!confirm('Delete ALL order records? This cannot be undone.'))return;
+  _svLocal('mg_orders',[]);
+  if(firebaseEnabled){
+    db.collection('orders').get().then(snap=>{
+      const batch=db.batch(); snap.docs.forEach(d=>batch.delete(d.ref)); batch.commit();
+    }).catch(e=>{});
+  }
+  renderAdminOrders();
+  showToast('🗑️ All orders cleared!');
+}
+
+// ─── Show/hide Pre-Order button based on phone setting ──
+// (hooked into openPhoneDetail via override below)
+const _origOpenPhoneDetail = openPhoneDetail;
+function openPhoneDetail(id){
+  _origOpenPhoneDetail(id);
+  const btn = document.getElementById('pdPreorderBtn');
+  if(currentDetailPhone && currentDetailPhone.preorderEnabled === 'yes'){
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+  refreshPreorderButtonState();
+}
+
+// ESC key closes payment modals too
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    closePreorder(); closePayment();
+    document.getElementById('paymentSuccessOverlay').classList.remove('show');
+  }
+});
+
 // ─── REALME LOGO FIX ────────────────────────────────
 (function fixRealmeLogo(){
   const idx=brands.findIndex(b=>b.name==='Realme');
@@ -2524,7 +3494,7 @@ let firebaseEnabled = false;
 async function fbLoad(col, fallback){
   if (!firebaseEnabled) return fallback;
   try {
-    if (col === 'store' || col === 'hero') {
+    if (col === 'store' || col === 'hero' || col === 'paymentmaster') {
       const snap = await db.collection('config').doc(col).get();
       return snap.exists ? snap.data() : fallback;
     } else {
@@ -2541,7 +3511,7 @@ async function fbLoad(col, fallback){
 async function fbSave(col, data){
   if (!firebaseEnabled) return;
   try {
-    if (col === 'store' || col === 'hero') {
+    if (col === 'store' || col === 'hero' || col === 'paymentmaster') {
       await db.collection('config').doc(col).set(data);
     } else {
       // data is an array → batch write
@@ -2576,6 +3546,7 @@ function sv(k, v){
   if (k === 'mg_brands')  fbSave('brands', v);
   if (k === 'mg_store')   fbSave('store', v);
   if (k === 'mg_hero')    fbSave('hero', v);
+  if (k === 'mg_payment_master_enabled') fbSave('paymentmaster', {enabled: v});
 }
 
 // ─── Firebase sync indicator in Admin nav ────────────
@@ -2595,22 +3566,28 @@ function updateFbStatus(){
 async function initApp(){
   if (firebaseEnabled) {
     showToast('☁️ Loading data...');
-    const [fbPhones, fbBrands, fbStore, fbHero, fbGallery] = await Promise.all([
+    const [fbPhones, fbBrands, fbStore, fbHero, fbGallery, fbPayMaster] = await Promise.all([
       fbLoad('phones', phones),
       fbLoad('brands', brands),
       fbLoad('store',  storeInfo),
       fbLoad('hero',   heroData),
       fbLoad('gallery',gallery),
+      fbLoad('paymentmaster', {enabled: paymentSystemEnabled}),
     ]);
     if (fbPhones  && fbPhones.length)                phones     = fbPhones;
     if (fbBrands  && fbBrands.length)                brands     = fbBrands;
     if (fbStore   && Object.keys(fbStore).length)    storeInfo  = fbStore;
     if (fbHero    && Object.keys(fbHero).length)     heroData   = fbHero;
     if (fbGallery && fbGallery.length)               gallery    = fbGallery;
+    if (fbPayMaster && typeof fbPayMaster.enabled === 'boolean'){
+      paymentSystemEnabled = fbPayMaster.enabled;
+      _svLocal('mg_payment_master_enabled', paymentSystemEnabled);
+    }
   }
   renderSite();
   updateFbStatus();
   initAuth();
+  updateMasterPaySwitchUI();
 }
 
 initApp();
