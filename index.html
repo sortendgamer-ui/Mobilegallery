@@ -861,7 +861,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
           </div>
           <div class="fg"><label>Product Name *</label><input type="text" id="gd-name" placeholder="e.g. TWS Earbuds Pro"/></div>
           <div class="fg"><label>Price *</label><input type="text" id="gd-price" placeholder="e.g. ₹1,499"/></div>
-          <div class="fg"><label>Icon Emoji</label><input type="text" id="gd-icon" placeholder="e.g. 🎧" maxlength="4"/></div>
+          <div class="fg"><label>Icon Emoji (used if no photo uploaded)</label><input type="text" id="gd-icon" placeholder="e.g. 🎧" maxlength="4"/></div>
+          <div class="fg full">
+            <label>Product Photo (optional — overrides emoji icon if uploaded)</label>
+            <div class="photo-upload-area" id="gadgetPhotoUploadArea">
+              <input type="file" id="gd-photo" accept="image/*" onchange="previewGadgetPhoto(this)"/>
+              <div class="photo-upload-label">📷 Click to upload product photo<br><span>JPG, PNG, WEBP supported</span></div>
+              <img id="gadgetPhotoPreviewImg" class="photo-preview" alt="preview"/>
+            </div>
+            <input type="hidden" id="gd-photoData" value=""/>
+          </div>
           <div class="fg full"><label>Short Description *</label><input type="text" id="gd-desc" placeholder="e.g. Active noise cancellation, 30hr battery, Bluetooth 5.3"/></div>
           <div class="fg"><label>Badge</label>
             <select id="gd-badge">
@@ -1861,7 +1870,7 @@ function filterPhones(brand,btn){
 // ─── PHONE DETAIL PAGE ──────────────────────────────
 let currentDetailPhone = null;
 
-function openPhoneDetail(id){
+function openPhoneDetailBase(id){
   const p = phones.find(x=>x.id==id);
   if(!p) return;
   currentDetailPhone = p;
@@ -2637,11 +2646,23 @@ function renderAdminEvents(){
 }
 
 // ─── GADGETS ADMIN ───────────────────────────────────
+function previewGadgetPhoto(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    document.getElementById('gd-photoData').value=e.target.result;
+    const img=document.getElementById('gadgetPhotoPreviewImg');
+    img.src=e.target.result; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
 function saveGadget(){
   const cat    = document.getElementById('gd-cat').value;
   const name   = document.getElementById('gd-name').value.trim();
   const price  = document.getElementById('gd-price').value.trim();
   const icon   = document.getElementById('gd-icon').value||'📦';
+  const photo  = document.getElementById('gd-photoData').value;
   const desc   = document.getElementById('gd-desc').value.trim();
   const badge  = document.getElementById('gd-badge').value;
   const editId = document.getElementById('gd-editId').value;
@@ -2650,8 +2671,14 @@ function saveGadget(){
   const obj={cat,name,price,icon,desc,badge,badgeText:bmap[badge]||''};
   if(editId){
     const idx=gadgets.findIndex(g=>g.id==editId);
-    if(idx>-1) gadgets[idx]={...gadgets[idx],...obj};
+    if(idx>-1){
+      // Keep old photo if no new one uploaded in this edit
+      if(!photo && gadgets[idx].photo) obj.photo=gadgets[idx].photo;
+      else obj.photo=photo;
+      gadgets[idx]={...gadgets[idx],...obj};
+    }
   } else {
+    obj.photo=photo;
     obj.id=nextGadgetId++;_svLocal('mg_ngadgetid',nextGadgetId);gadgets.push(obj);
   }
   _svLocal('mg_gadgets',gadgets);
@@ -2676,12 +2703,18 @@ function editGadget(id){
   document.getElementById('gd-desc').value=g.desc;
   document.getElementById('gd-badge').value=g.badge||'';
   document.getElementById('gd-editId').value=g.id;
+  document.getElementById('gd-photoData').value=g.photo||'';
+  const img=document.getElementById('gadgetPhotoPreviewImg');
+  if(g.photo){img.src=g.photo;img.style.display='block';}
+  else{img.style.display='none';img.src='';}
   document.getElementById('gadgetFormTitle').textContent='✏️ Edit: '+g.name;
   apTabClick('gadgets');
 }
 
 function clearGadgetForm(){
-  ['gd-cat','gd-name','gd-price','gd-icon','gd-desc','gd-badge','gd-editId'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['gd-cat','gd-name','gd-price','gd-icon','gd-desc','gd-badge','gd-editId','gd-photoData'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const photoInput=document.getElementById('gd-photo'); if(photoInput) photoInput.value='';
+  const img=document.getElementById('gadgetPhotoPreviewImg'); if(img){img.style.display='none';img.src='';}
   document.getElementById('gadgetFormTitle').textContent='🛍️ Add New Product';
 }
 
@@ -2690,10 +2723,11 @@ function renderAdminGadgets(){
   const bh=b=>b==='new'?'<span class="bdg-new">NEW</span>':b==='sale'?'<span class="bdg-sale">SALE</span>':b==='hot'?'<span class="bdg-hot">HOT</span>':'—';
   document.getElementById('adminGadgetsTable').innerHTML=gadgets.map(g=>`
     <tr>
-      <td><span style="font-size:1.3rem;">${g.icon||'📦'}</span> <strong>${g.cat}</strong></td>
+      <td>${g.photo?`<img src="${g.photo}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px;"/>`:`<span style="font-size:1.3rem;">${g.icon||'📦'}</span>`} <strong>${g.cat}</strong></td>
       <td style="font-weight:600;">${g.name}</td>
       <td style="color:var(--accent2);font-weight:700;">${g.price}</td>
       <td>${bh(g.badge)}</td>
+
       <td><div class="td-act">
         <button class="ap-btn ap-btn-edit ap-btn-sm" onclick="editGadget(${g.id})">✏️ Edit</button>
         <button class="ap-btn ap-btn-danger ap-btn-sm" onclick="deleteGadget(${g.id})">🗑️</button>
@@ -3241,10 +3275,8 @@ function clearAllOrders(){
 }
 
 // ─── Show/hide Pre-Order button based on phone setting ──
-// (hooked into openPhoneDetail via override below)
-const _origOpenPhoneDetail = openPhoneDetail;
 function openPhoneDetail(id){
-  _origOpenPhoneDetail(id);
+  openPhoneDetailBase(id);
   const btn = document.getElementById('pdPreorderBtn');
   if(currentDetailPhone && currentDetailPhone.preorderEnabled === 'yes'){
     btn.style.display = 'flex';
@@ -3422,8 +3454,8 @@ function renderGadgetsPage(filter){
   const bdg={new:'new',sale:'sale',hot:'hot'};
   grid.innerHTML=list.map(g=>`
     <div class="phone-card">
-      <div class="phone-img" style="display:flex;align-items:center;justify-content:center;min-height:140px;font-size:5rem;position:relative;">
-        <span>${g.icon||'📦'}</span>
+      <div class="phone-img" style="display:flex;align-items:center;justify-content:center;min-height:140px;${g.photo?'':'font-size:5rem;'}position:relative;overflow:hidden;">
+        ${g.photo?`<img src="${g.photo}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;"/>`:`<span>${g.icon||'📦'}</span>`}
         ${g.badgeText?`<span class="phone-badge ${bdg[g.badge]||''}">${g.badgeText}</span>`:''}
       </div>
       <div class="phone-info">
