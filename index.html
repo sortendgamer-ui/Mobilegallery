@@ -223,6 +223,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 #phoneDetailOverlay{display:none;position:fixed;inset:0;z-index:3000;
   background:rgba(0,0,0,.85);backdrop-filter:blur(10px);overflow-y:auto;padding:80px 4% 40px;}
 #phoneDetailOverlay.show{display:block;}
+#gadgetDetailOverlay{display:none;position:fixed;inset:0;z-index:3000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(10px);overflow-y:auto;padding:80px 4% 40px;}
+#gadgetDetailOverlay.show{display:block;}
 .pd-container{max-width:960px;margin:0 auto;background:var(--card);border:1px solid var(--border);
   border-radius:20px;overflow:hidden;}
 .pd-back{display:flex;align-items:center;gap:8px;background:var(--surface);
@@ -574,10 +577,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
 
 .ap-nav{background:var(--surface);border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 4%;height:62px;position:sticky;top:0;z-index:10;gap:10px;}
+  padding:10px 4%;min-height:62px;position:sticky;top:0;z-index:10;gap:10px;flex-wrap:wrap;}
 .ap-logo{font-size:1rem;font-weight:800;white-space:nowrap;}
 .ap-logo span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.ap-tabs{display:flex;gap:4px;overflow-x:auto;}
+.ap-tabs{display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0;}
 .ap-tab{background:none;border:none;color:var(--muted);padding:8px 14px;border-radius:8px;
   cursor:pointer;font-size:.82rem;font-weight:600;transition:all .3s;
   font-family:'Poppins',sans-serif;white-space:nowrap;}
@@ -1650,6 +1653,46 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:50px
   </div>
 </div>
 
+<!-- GADGET DETAIL OVERLAY -->
+<div id="gadgetDetailOverlay">
+  <div class="pd-container">
+    <div class="pd-back" onclick="closeGadgetDetail()">← Back to Gadgets</div>
+    <div class="pd-body">
+      <div class="pd-img-col">
+        <div class="pd-img-section" id="gdImgSection">
+          <span class="pd-img-emoji" id="gdEmoji">📦</span>
+          <span class="pd-badge-overlay phone-badge" id="gdBadgeOverlay" style="display:none;"></span>
+        </div>
+      </div>
+      <div class="pd-info">
+        <div class="pd-brand-tag" id="gdCat">Category</div>
+        <div class="pd-name" id="gdName">Product Name</div>
+        <div class="pd-price-row">
+          <div class="pd-price" id="gdPrice">₹0</div>
+          <span class="pd-price-tag">Best Price Guarantee ✓</span>
+        </div>
+        <div class="pd-specs-box">
+          <h4>Product Description</h4>
+          <div id="gdDescBox" style="font-size:.85rem;color:var(--text);line-height:1.7;"></div>
+        </div>
+        <div class="pd-features">
+          <span class="pd-feat-pill">✅ 100% Original</span>
+          <span class="pd-feat-pill">📦 Sealed Pack</span>
+          <span class="pd-feat-pill">🔧 Warranty</span>
+        </div>
+        <div class="pd-actions" style="margin-top:20px;">
+          <button class="pd-btn-wa" onclick="inquireGadgetWhatsApp()">💬 WhatsApp Inquiry</button>
+          <button class="pd-btn-call" onclick="callStore()">📞 Call Store</button>
+        </div>
+        <div style="margin-top:14px;background:rgba(108,63,255,.08);border:1px solid rgba(108,63,255,.2);
+          border-radius:10px;padding:12px 14px;font-size:.8rem;color:var(--muted);line-height:1.6;">
+          📍 <strong style="color:var(--text);">Aftab Azmi's Mobile Gallery</strong> — Karjain Road, Simrahi Bazar, Bihar 852111
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- GALLERY LIGHTBOX -->
 <div id="galleryLightbox">
   <button class="lb-close" onclick="closeLightbox()">✕</button>
@@ -1674,17 +1717,17 @@ function _svLocal(k,v){localStorage.setItem(k,JSON.stringify(v));}
 
 // ─── DEFAULT DATA ──────────────────────────────────
 let phones = ld('mg_phones',[
-  {id:1,brand:'Apple',name:'iPhone 15 Pro Max',specs:'A17 Pro • 48MP • 256GB',price:'₹1,34,900',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:1,brand:'Apple',name:'iPhone 15 Pro Max',specs:'A17 Pro • 48MP • 256GB',price:'₹1,34,900',icon:'📱',badge:'new',badgeText:'NEW',photo:'',preorderEnabled:'yes',preorderPct:'both'},
   {id:2,brand:'Apple',name:'iPhone 15',specs:'A16 • 48MP • 128GB',price:'₹79,900',icon:'📱',badge:'',badgeText:'',photo:''},
   {id:3,brand:'Apple',name:'iPhone 14',specs:'A15 • 12MP • 128GB',price:'₹69,900',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
-  {id:4,brand:'Samsung',name:'Galaxy S24 Ultra',specs:'Snapdragon 8 Gen3 • 200MP • 256GB',price:'₹1,29,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
+  {id:4,brand:'Samsung',name:'Galaxy S24 Ultra',specs:'Snapdragon 8 Gen3 • 200MP • 256GB',price:'₹1,29,999',icon:'📱',badge:'new',badgeText:'NEW',photo:'',preorderEnabled:'yes',preorderPct:'10'},
   {id:5,brand:'Samsung',name:'Galaxy A55',specs:'Exynos 1480 • 50MP • 128GB',price:'₹38,999',icon:'📱',badge:'',badgeText:'',photo:''},
   {id:6,brand:'Samsung',name:'Galaxy A35',specs:'Exynos 1380 • 50MP • 128GB',price:'₹30,999',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
   {id:7,brand:'Vivo',name:'Vivo V30 Pro',specs:'Dimensity 8200 • 50MP • 256GB',price:'₹42,999',icon:'📱',badge:'new',badgeText:'HOT',photo:''},
   {id:8,brand:'Vivo',name:'Vivo Y200',specs:'Snapdragon 4 Gen1 • 50MP • 128GB',price:'₹22,999',icon:'📱',badge:'',badgeText:'',photo:''},
   {id:9,brand:'Oppo',name:'Oppo Reno 11',specs:'Dimensity 8200 • 50MP • 256GB',price:'₹32,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
   {id:10,brand:'Oppo',name:'Oppo A79',specs:'Dimensity 6020 • 50MP • 128GB',price:'₹18,999',icon:'📱',badge:'',badgeText:'',photo:''},
-  {id:11,brand:'Xiaomi',name:'Redmi Note 13 Pro',specs:'Dimensity 7200 • 200MP • 256GB',price:'₹26,999',icon:'📱',badge:'new',badgeText:'HOT',photo:''},
+  {id:11,brand:'Xiaomi',name:'Redmi Note 13 Pro',specs:'Dimensity 7200 • 200MP • 256GB',price:'₹26,999',icon:'📱',badge:'new',badgeText:'HOT',photo:'',preorderEnabled:'yes',preorderPct:'20'},
   {id:12,brand:'Xiaomi',name:'Redmi 13C',specs:'Helio G85 • 50MP • 128GB',price:'₹10,999',icon:'📱',badge:'sale',badgeText:'SALE',photo:''},
   {id:13,brand:'Realme',name:'Realme 12 Pro+',specs:'Snapdragon 7s Gen2 • 50MP • 256GB',price:'₹27,999',icon:'📱',badge:'new',badgeText:'NEW',photo:''},
   {id:14,brand:'Realme',name:'Realme C67',specs:'Snapdragon 685 • 108MP • 128GB',price:'₹13,999',icon:'📱',badge:'',badgeText:'',photo:''},
@@ -1708,13 +1751,19 @@ let brands = ld('mg_brands',[
 {id:3, name:'Vivo',     icon:brandImg('vivo','Vivo'),         desc:'V & Y Series • 20+ Models'},
 {id:4, name:'Oppo',     icon:brandImg('oppo','Oppo'),         desc:'A & Reno Series • 18+ Models'},
 {id:5, name:'Xiaomi',   icon:brandImg('xiaomi','Xiaomi'),     desc:'Redmi & Note Series • 25+ Models'},
-{id:6, name:'Realme',   icon:brandImg('realme','Realme'),     desc:'C & Number Series • 15+ Models'},
+{id:6, name:'Realme',   icon:brandSvgText('realme'),          desc:'C & Number Series • 15+ Models'},
 {id:7, name:'Tecno',    icon:brandSvgText('TECNO'),           desc:'Spark & Camon Series • 12+ Models'},
 {id:8, name:'Infinix',  icon:brandSvgText('INFINIX'),         desc:'Hot & Note Series • 10+ Models'},
 {id:9, name:'Nokia',    icon:brandImg('nokia','Nokia'),       desc:'G & C Series • 8+ Models'},
 {id:10,name:'OnePlus',  icon:brandImg('oneplus','OnePlus'),   desc:'Nord Series • 6+ Models'},
 {id:11,name:'Google',   icon:brandImg('google','Google'),     desc:'Pixel Series • 5+ Models'},
-{id:12,name:'Motorola', icon:brandImg('motorola','Motorola'), desc:'Moto G Series • 8+ Models'}
+{id:12,name:'Motorola', icon:brandImg('motorola','Motorola'), desc:'Moto G Series • 8+ Models'},
+{id:13,name:'boAt',     icon:brandSvgText('boAt'),            desc:'Earbuds, Smartwatches & Speakers'},
+{id:14,name:'Noise',    icon:brandSvgText('noise'),           desc:'Smartwatches & TWS Earbuds'},
+{id:15,name:'JBL',      icon:brandSvgText('JBL'),             desc:'Premium Speakers & Headphones'},
+{id:16,name:'Sony',     icon:brandImg('sony','Sony'),         desc:'Headphones & Audio Gear'},
+{id:17,name:'Anker',    icon:brandImg('anker','Anker'),       desc:'Chargers, Cables & Power Banks'},
+{id:18,name:'pTron',    icon:brandSvgText('pTron'),           desc:'Affordable Earphones & Cables'}
 ]);
 
 let storeInfo = ld('mg_store',{
@@ -1954,6 +2003,52 @@ function callStore(){
   else showToast('Phone number not set — please update in Admin Panel');
 }
 
+// ─── GADGET DETAIL PAGE ──────────────────────────────
+let currentDetailGadget = null;
+
+function openGadgetDetail(id){
+  const g = gadgets.find(x=>x.id==id);
+  if(!g) return;
+  currentDetailGadget = g;
+  const ov = document.getElementById('gadgetDetailOverlay');
+  const imgSec = document.getElementById('gdImgSection');
+  const oldImg = imgSec.querySelector('img.pd-real-img');
+  if(oldImg) oldImg.remove();
+
+  if(g.photo){
+    const img = document.createElement('img');
+    img.src=g.photo; img.className='pd-real-img';
+    img.style.cssText='max-width:100%;max-height:300px;object-fit:contain;border-radius:10px;';
+    imgSec.insertBefore(img, imgSec.firstChild);
+    document.getElementById('gdEmoji').style.display='none';
+  } else {
+    document.getElementById('gdEmoji').style.display='block';
+    document.getElementById('gdEmoji').textContent=g.icon||'📦';
+  }
+
+  const bdgEl=document.getElementById('gdBadgeOverlay');
+  if(g.badgeText){ bdgEl.textContent=g.badgeText; bdgEl.className='pd-badge-overlay phone-badge '+(g.badge||''); bdgEl.style.display='block'; }
+  else bdgEl.style.display='none';
+
+  document.getElementById('gdCat').textContent   = g.cat;
+  document.getElementById('gdName').textContent  = g.name;
+  document.getElementById('gdPrice').textContent = g.price;
+  document.getElementById('gdDescBox').textContent = g.desc || 'No description available.';
+
+  ov.classList.add('show'); ov.scrollTop=0; document.body.style.overflow='hidden';
+}
+
+function closeGadgetDetail(){
+  document.getElementById('gadgetDetailOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function inquireGadgetWhatsApp(){
+  if(!currentDetailGadget) return;
+  const msg=encodeURIComponent(`Hi! I'm interested in "${currentDetailGadget.name}". Price: ${currentDetailGadget.price}. Is it available?`);
+  window.open('https://wa.me/'+(storeInfo.wa||'9876543210')+'?text='+msg,'_blank');
+}
+
 // ─── GALLERY DATA & FUNCTIONS ────────────────────────
 let gallery  = ld('mg_gallery',[]);
 let nextGid  = ld('mg_ngid',1);
@@ -1982,7 +2077,7 @@ function closeLightbox(){
   document.getElementById('galleryLightbox').classList.remove('show');
   document.body.style.overflow='';
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhoneDetail();closeLightbox();closeRegister();closeLogin();closeProfile();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhoneDetail();closeGadgetDetail();closeLightbox();closeRegister();closeLogin();closeProfile();}});
 
 function previewGalleryPhoto(input){
   const file=input.files[0]; if(!file) return;
@@ -3453,7 +3548,7 @@ function renderGadgetsPage(filter){
   if(!list.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);"><div style="font-size:4rem;">🛍️</div><p>No products in this category yet.</p></div>';return;}
   const bdg={new:'new',sale:'sale',hot:'hot'};
   grid.innerHTML=list.map(g=>`
-    <div class="phone-card">
+    <div class="phone-card" onclick="openGadgetDetail(${g.id})">
       <div class="phone-img" style="display:flex;align-items:center;justify-content:center;min-height:140px;${g.photo?'':'font-size:5rem;'}position:relative;overflow:hidden;">
         ${g.photo?`<img src="${g.photo}" alt="${g.name}" style="width:100%;height:100%;object-fit:cover;"/>`:`<span>${g.icon||'📦'}</span>`}
         ${g.badgeText?`<span class="phone-badge ${bdg[g.badge]||''}">${g.badgeText}</span>`:''}
@@ -3464,7 +3559,7 @@ function renderGadgetsPage(filter){
         <div class="phone-specs" style="font-size:.78rem;line-height:1.5;">${g.desc}</div>
         <div class="phone-footer">
           <div class="phone-price">${g.price}</div>
-          <button class="add-btn" onclick="addToCart('${g.name.replace(/'/g,"\\'")}')">+</button>
+          <button class="add-btn" onclick="event.stopPropagation();addToCart('${g.name.replace(/'/g,"\\'")}')">+</button>
         </div>
       </div>
     </div>`).join('');
