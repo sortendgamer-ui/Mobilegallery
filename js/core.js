@@ -35,15 +35,19 @@ window.addEventListener('popstate', function(e){
   showPage(page, false);
 });
 
-// On first load — read hash from URL so direct links work
-(function initPageFromHash(){
+// On first load — record the validated start page so popstate/back
+// button works correctly. The ACTUAL showPage() call for a deep-linked
+// page happens later in initApp() (firebase.js), after renderSite() has
+// populated the page content — calling it here is too early since the
+// page divs don't have their content yet.
+const VALID_PAGES = ['home','phones','gadgets','brands','events','about','gallery','contact','reviews'];
+function getStartPageFromHash(){
   const hash = window.location.hash.replace('#','');
-  const validPages = ['home','phones','gadgets','brands','events','about','gallery','contact','reviews'];
-  const startPage  = validPages.includes(hash) ? hash : 'home';
-  // Set initial state so back from first page doesn't leave the site
+  const startPage = VALID_PAGES.includes(hash) ? hash : 'home';
   history.replaceState({page: startPage}, '', '#' + startPage);
-  if(startPage !== 'home') showPage(startPage, false);
-})();
+  return startPage;
+}
+getStartPageFromHash();
 function addToCart(name){showToast('🛒 '+name+' – inquiry registered!');}
 function sendMessage(){
   const n=document.getElementById('formName').value.trim();

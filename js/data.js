@@ -101,11 +101,20 @@ const BACKEND_URL = "https://us-central1-mobilegallery-f1f0c.cloudfunctions.net"
 const CASHFREE_MODE = "sandbox"; // "sandbox" | "production"
 const ADMIN_API_KEY = "REPLACE_WITH_YOUR_ADMIN_API_KEY";
 let cashfreeInstance = null;
-try{
-  if (typeof Cashfree !== 'undefined') {
-    cashfreeInstance = Cashfree({ mode: CASHFREE_MODE });
-  }
-}catch(e){ console.warn('[Cashfree] SDK init failed:', e.message); }
+// NOTE: Cashfree SDK script now loads with `defer` (for page speed), so it
+// may not be available yet at this exact point in script execution. The
+// actual cashfreeInstance is created later by ensureCashfreeReady() —
+// called lazily right before it's needed (when the user opens the payment
+// page), instead of forcing it to load on every single page visit.
+function ensureCashfreeReady(){
+  if (cashfreeInstance) return cashfreeInstance;
+  try{
+    if (typeof Cashfree !== 'undefined') {
+      cashfreeInstance = Cashfree({ mode: CASHFREE_MODE });
+    }
+  }catch(e){ console.warn('[Cashfree] SDK init failed:', e.message); }
+  return cashfreeInstance;
+}
 
 let heroData = ld('mg_hero',{
   badge:"Bihar's #1 Mobile Store",h1:'The Biggest',h2:'Mobile Store',

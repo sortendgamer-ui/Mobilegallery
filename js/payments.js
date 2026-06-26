@@ -170,6 +170,7 @@ async function startCashfreeCheckout(){
     openLogin();
     return;
   }
+  ensureCashfreeReady();
   if(!cashfreeInstance){
     showToast('❌ Payment system not loaded. Please refresh the page.');
     return;

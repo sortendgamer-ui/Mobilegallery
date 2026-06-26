@@ -74,23 +74,51 @@ async function fbLoad(col, fallback){
   }
 }
 
+// fbSave for whole-array collections (legacy, kept for store/hero/paymentmaster
+// which really are single config docs). For phones/brands/gadgets/etc, prefer
+// fbSaveOne() below — it only writes the ONE item that changed, instead of
+// re-uploading every single item (which risks hitting Firestore batch/size
+// limits as your catalog grows, and fails the WHOLE save if any one old
+// item has a problem).
 async function fbSave(col, data){
   if (!firebaseEnabled) return;
   try {
     if (col === 'store' || col === 'hero' || col === 'paymentmaster') {
-      await db.collection('config').doc(col).set(data);
-    } else {
-      // data is an array → batch write
-      const batch = db.batch();
-      data.forEach(item => {
-        const ref = db.collection(col).doc(String(item.id));
-        batch.set(ref, item);
-      });
-      await batch.commit();
+      await withTimeout(db.collection('config').doc(col).set(data), FIRESTORE_TIMEOUT_MS);
+      showToast('☁️ Saved to cloud!');
+      return;
     }
-    showToast('☁️ Saved to cloud!');
+    // Write each item individually instead of one giant batch. This way,
+    // if ONE old item somehow has a problem (e.g. unexpectedly large),
+    // it doesn't block every other item — and most importantly, it
+    // doesn't block the NEW item you just added from saving.
+    let failCount = 0;
+    for (const item of data) {
+      try {
+        await withTimeout(db.collection(col).doc(String(item.id)).set(item), FIRESTORE_TIMEOUT_MS);
+      } catch(itemErr) {
+        failCount++;
+        console.warn(`[Firebase] Save '${col}' item ${item.id} failed:`, itemErr.message);
+      }
+    }
+    if (failCount === 0) showToast('☁️ Saved to cloud!');
+    else showToast(`⚠️ ${failCount} item(s) failed to sync — saved locally`);
   } catch(e) {
     console.warn(`[Firebase] Save '${col}' failed:`, e.message);
+    showToast('⚠️ Cloud save failed – saved locally');
+  }
+}
+
+// Saves just ONE item to its collection — much safer than re-writing the
+// entire array on every single add/edit. Use this for phones/brands/gadgets/
+// events/gallery/reviews/messages going forward.
+async function fbSaveOne(col, item){
+  if (!firebaseEnabled) return;
+  try {
+    await withTimeout(db.collection(col).doc(String(item.id)).set(item), FIRESTORE_TIMEOUT_MS);
+    showToast('☁️ Saved to cloud!');
+  } catch(e) {
+    console.warn(`[Firebase] Save one '${col}' failed:`, e.message);
     showToast('⚠️ Cloud save failed – saved locally');
   }
 }
@@ -154,6 +182,14 @@ async function initApp(){
   updateFbStatus();
   initAuth();
   updateMasterPaySwitchUI();
+  // Now that renderSite() has populated every page's content, it's safe
+  // to actually switch to whatever page the URL hash pointed to (e.g. on
+  // a refresh while viewing #phones). Doing this earlier (before render)
+  // would show an empty page since the content didn't exist yet.
+  const startPage = window.location.hash.replace('#','') || 'home';
+  if (VALID_PAGES.includes(startPage) && startPage !== 'home') {
+    showPage(startPage, false);
+  }
 }
 
 initApp();
