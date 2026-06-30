@@ -9,7 +9,44 @@ const ADMIN_PASS = 'mobilegallery#@123';
 
 // ─── STORAGE HELPERS ───────────────────────────────
 function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
-function _svLocal(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+// Strips heavy base64 photo fields out of array data before it goes into
+// localStorage. localStorage has a small ~5-10MB total quota shared across
+// the whole site — it was never meant to hold image data. Firestore (synced
+// separately via fbSave/fbSaveOne) remains the real, full-data storage;
+// localStorage here is only a lightweight offline-fallback cache of the
+// text fields, so the save can never fail just because photos are large.
+function _stripPhotosForLocalCache(v){
+  if (!Array.isArray(v)) return v;
+  return v.map(item=>{
+    if (item && typeof item === 'object' && (item.photo || item.photos)) {
+      const copy = {...item};
+      if (copy.photo) copy.photo = '';
+      if (copy.photos) copy.photos = [];
+      return copy;
+    }
+    return item;
+  });
+}
+
+function _svLocal(k,v){
+  try{
+    localStorage.setItem(k,JSON.stringify(v));
+  }catch(e){
+    // Most likely cause: quota exceeded because v contains base64 photos.
+    // Retry once with photos stripped out — this keeps all the TEXT data
+    // (name, price, specs, etc.) safely cached locally even when photos
+    // are too big for localStorage. The full data (with photos) is still
+    // safe in Firestore via fbSave/fbSaveOne, which has no such limit
+    // (aside from the per-document 1MB cap, handled separately).
+    try{
+      localStorage.setItem(k, JSON.stringify(_stripPhotosForLocalCache(v)));
+      console.warn('[Storage] localStorage quota hit — saved without photos locally. Full data with photos is still safe in the cloud.');
+    }catch(e2){
+      console.warn('[Storage] localStorage save failed even without photos:', e2.message);
+    }
+  }
+}
 
 // ─── DEFAULT DATA ──────────────────────────────────
 let phones = ld('mg_phones',[

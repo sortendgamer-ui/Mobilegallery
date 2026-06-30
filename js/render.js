@@ -287,19 +287,24 @@ function previewGalleryPhoto(input){
   });
 }
 function saveGalleryPhoto(){
-  const title=document.getElementById('gf-title').value.trim();
-  const desc=document.getElementById('gf-desc').value.trim();
-  const photo=document.getElementById('gf-photoData').value;
-  const editId=document.getElementById('gf-editId').value;
-  if(!title){showToast('❌ Title required!');return;}
-  const obj={title,desc,photo};
-  if(editId){
-    const idx=gallery.findIndex(g=>g.id==editId);
-    if(idx>-1){if(!photo&&gallery[idx].photo)obj.photo=gallery[idx].photo;gallery[idx]={...gallery[idx],...obj};}
-  } else { obj.id=nextGid++;_svLocal('mg_ngid',nextGid);gallery.push(obj); }
-  _svLocal('mg_gallery',gallery); fbSaveGallery();
-  clearGalleryForm();renderAdminGallery();renderGalleryPage();
-  showToast(editId?'✅ Photo updated!':'✅ Photo added!');
+  try{
+    const title=document.getElementById('gf-title').value.trim();
+    const desc=document.getElementById('gf-desc').value.trim();
+    const photo=document.getElementById('gf-photoData').value;
+    const editId=document.getElementById('gf-editId').value;
+    if(!title){showToast('❌ Title required!');return;}
+    const obj={title,desc,photo};
+    if(editId){
+      const idx=gallery.findIndex(g=>g.id==editId);
+      if(idx>-1){if(!photo&&gallery[idx].photo)obj.photo=gallery[idx].photo;gallery[idx]={...gallery[idx],...obj};}
+    } else { obj.id=nextGid++;_svLocal('mg_ngid',nextGid);gallery.push(obj); }
+    _svLocal('mg_gallery',gallery); fbSaveGallery();
+    clearGalleryForm();renderAdminGallery();renderGalleryPage();
+    showToast(editId?'✅ Photo updated!':'✅ Photo added!');
+  }catch(e){
+    console.error('[saveGalleryPhoto] Unexpected error:', e);
+    showToast('❌ Could not save photo: '+e.message);
+  }
 }
 function deleteGalleryPhoto(id){
   if(!confirm('Delete this photo?'))return;

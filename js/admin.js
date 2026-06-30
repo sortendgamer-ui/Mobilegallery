@@ -93,46 +93,51 @@ function renderAdminPhones(){
 }
 
 function savePhone(){
-  const brand=document.getElementById('pf-brand').value;
-  const name=document.getElementById('pf-name').value.trim();
-  const price=document.getElementById('pf-price').value.trim();
-  const specs=document.getElementById('pf-specs').value.trim();
-  const badgeVal=document.getElementById('pf-badge').value;
-  const stock=document.getElementById('pf-stock').value;
-  const icon=document.getElementById('pf-icon').value||'📱';
-  const preorderEnabled=document.getElementById('pf-preorder').value;
-  const preorderPct=document.getElementById('pf-preorder-pct').value;
-  const photo1=document.getElementById('pf-photoData1').value;
-  const photo2=document.getElementById('pf-photoData2').value;
-  const photo3=document.getElementById('pf-photoData3').value;
-  const editId=document.getElementById('pf-editId').value;
-  if(!brand||!name||!price){showToast('❌ Brand, name and price are required!');return;}
-  const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
-  // Build photos array (only non-empty), keep backward-compat 'photo' = first photo
-  const newPhotos=[photo1,photo2,photo3].filter(Boolean);
-  const obj={brand,name,price,specs,icon,badge:badgeVal,badgeText:bmap[badgeVal]||'',stock,preorderEnabled,preorderPct};
-  if(editId){
-    const idx=phones.findIndex(p=>p.id==editId);
-    if(idx>-1){
-      // If no new photos uploaded in a slot, keep old ones
-      const oldPhotos = phones[idx].photos || (phones[idx].photo?[phones[idx].photo]:[]);
-      const finalPhotos = [
-        photo1 || oldPhotos[0] || '',
-        photo2 || oldPhotos[1] || '',
-        photo3 || oldPhotos[2] || ''
-      ].filter(Boolean);
-      obj.photos = finalPhotos;
-      obj.photo  = finalPhotos[0] || '';
-      phones[idx]={...phones[idx],...obj};
+  try{
+    const brand=document.getElementById('pf-brand').value;
+    const name=document.getElementById('pf-name').value.trim();
+    const price=document.getElementById('pf-price').value.trim();
+    const specs=document.getElementById('pf-specs').value.trim();
+    const badgeVal=document.getElementById('pf-badge').value;
+    const stock=document.getElementById('pf-stock').value;
+    const icon=document.getElementById('pf-icon').value||'📱';
+    const preorderEnabled=document.getElementById('pf-preorder').value;
+    const preorderPct=document.getElementById('pf-preorder-pct').value;
+    const photo1=document.getElementById('pf-photoData1').value;
+    const photo2=document.getElementById('pf-photoData2').value;
+    const photo3=document.getElementById('pf-photoData3').value;
+    const editId=document.getElementById('pf-editId').value;
+    if(!brand||!name||!price){showToast('❌ Brand, name and price are required!');return;}
+    const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
+    // Build photos array (only non-empty), keep backward-compat 'photo' = first photo
+    const newPhotos=[photo1,photo2,photo3].filter(Boolean);
+    const obj={brand,name,price,specs,icon,badge:badgeVal,badgeText:bmap[badgeVal]||'',stock,preorderEnabled,preorderPct};
+    if(editId){
+      const idx=phones.findIndex(p=>p.id==editId);
+      if(idx>-1){
+        // If no new photos uploaded in a slot, keep old ones
+        const oldPhotos = phones[idx].photos || (phones[idx].photo?[phones[idx].photo]:[]);
+        const finalPhotos = [
+          photo1 || oldPhotos[0] || '',
+          photo2 || oldPhotos[1] || '',
+          photo3 || oldPhotos[2] || ''
+        ].filter(Boolean);
+        obj.photos = finalPhotos;
+        obj.photo  = finalPhotos[0] || '';
+        phones[idx]={...phones[idx],...obj};
+      }
+    } else {
+      obj.photos = newPhotos;
+      obj.photo  = newPhotos[0] || '';
+      obj.id=nextPid++;sv('mg_npid',nextPid);phones.push(obj);
     }
-  } else {
-    obj.photos = newPhotos;
-    obj.photo  = newPhotos[0] || '';
-    obj.id=nextPid++;sv('mg_npid',nextPid);phones.push(obj);
+    sv('mg_phones',phones);
+    clearPhoneForm();renderAdminPhones();renderAdminDashboard();
+    showToast(editId?'✅ Phone updated!':'✅ New phone added!');
+  }catch(e){
+    console.error('[savePhone] Unexpected error:', e);
+    showToast('❌ Could not save phone: '+e.message);
   }
-  sv('mg_phones',phones);
-  clearPhoneForm();renderAdminPhones();renderAdminDashboard();
-  showToast(editId?'✅ Phone updated!':'✅ New phone added!');
 }
 
 function editPhone(id){
@@ -199,14 +204,19 @@ function renderAdminBrands(){
   }).join('');
 }
 function saveBrand(){
-  const name=document.getElementById('bf-name').value.trim();
-  const icon=document.getElementById('bf-icon').value||'📱';
-  const desc=document.getElementById('bf-desc').value.trim();
-  const editId=document.getElementById('bf-editId').value;
-  if(!name){showToast('❌ Brand name is required!');return;}
-  if(editId){const idx=brands.findIndex(b=>b.id==editId);if(idx>-1)brands[idx]={...brands[idx],name,icon,desc};}
-  else{brands.push({id:nextBid++,name,icon,desc});sv('mg_nbid',nextBid);}
-  sv('mg_brands',brands);clearBrandForm();renderAdminBrands();showToast(editId?'✅ Brand updated!':'✅ Brand added!');
+  try{
+    const name=document.getElementById('bf-name').value.trim();
+    const icon=document.getElementById('bf-icon').value||'📱';
+    const desc=document.getElementById('bf-desc').value.trim();
+    const editId=document.getElementById('bf-editId').value;
+    if(!name){showToast('❌ Brand name is required!');return;}
+    if(editId){const idx=brands.findIndex(b=>b.id==editId);if(idx>-1)brands[idx]={...brands[idx],name,icon,desc};}
+    else{brands.push({id:nextBid++,name,icon,desc});sv('mg_nbid',nextBid);}
+    sv('mg_brands',brands);clearBrandForm();renderAdminBrands();showToast(editId?'✅ Brand updated!':'✅ Brand added!');
+  }catch(e){
+    console.error('[saveBrand] Unexpected error:', e);
+    showToast('❌ Could not save brand: '+e.message);
+  }
 }
 function editBrand(id){
   const b=brands.find(x=>x.id==id);if(!b)return;
@@ -298,24 +308,29 @@ function previewEventPhoto(input){
 }
 
 function saveEvent(){
-  const title  = document.getElementById('ev-title').value.trim();
-  const desc   = document.getElementById('ev-desc').value.trim();
-  const badge  = document.getElementById('ev-badge').value.trim();
-  const date   = document.getElementById('ev-date').value.trim();
-  const photo  = document.getElementById('ev-photoData').value;
-  const editId = document.getElementById('ev-editId').value;
-  if(!title||!desc){showToast('❌ Title and description are required!');return;}
-  const obj={title,desc,badge,date,photo};
-  if(editId){
-    const idx=events.findIndex(e=>e.id==editId);
-    if(idx>-1){if(!photo&&events[idx].photo)obj.photo=events[idx].photo;events[idx]={...events[idx],...obj};}
-  } else {
-    obj.id=nextEvid++;_svLocal('mg_nevid',nextEvid);events.push(obj);
+  try{
+    const title  = document.getElementById('ev-title').value.trim();
+    const desc   = document.getElementById('ev-desc').value.trim();
+    const badge  = document.getElementById('ev-badge').value.trim();
+    const date   = document.getElementById('ev-date').value.trim();
+    const photo  = document.getElementById('ev-photoData').value;
+    const editId = document.getElementById('ev-editId').value;
+    if(!title||!desc){showToast('❌ Title and description are required!');return;}
+    const obj={title,desc,badge,date,photo};
+    if(editId){
+      const idx=events.findIndex(e=>e.id==editId);
+      if(idx>-1){if(!photo&&events[idx].photo)obj.photo=events[idx].photo;events[idx]={...events[idx],...obj};}
+    } else {
+      obj.id=nextEvid++;_svLocal('mg_nevid',nextEvid);events.push(obj);
+    }
+    _svLocal('mg_events',events);
+    if(firebaseEnabled) fbSaveCollection('events',events);
+    clearEventForm();renderAdminEvents();renderEventsPage();
+    showToast(editId?'✅ Event updated!':'✅ Event added!');
+  }catch(e){
+    console.error('[saveEvent] Unexpected error:', e);
+    showToast('❌ Could not save event: '+e.message);
   }
-  _svLocal('mg_events',events);
-  if(firebaseEnabled) fbSaveCollection('events',events);
-  clearEventForm();renderAdminEvents();renderEventsPage();
-  showToast(editId?'✅ Event updated!':'✅ Event added!');
 }
 
 function deleteEvent(id){
@@ -379,34 +394,39 @@ function previewGadgetPhoto(input){
 }
 
 function saveGadget(){
-  const cat    = document.getElementById('gd-cat').value;
-  const name   = document.getElementById('gd-name').value.trim();
-  const price  = document.getElementById('gd-price').value.trim();
-  const icon   = document.getElementById('gd-icon').value||'📦';
-  const photo  = document.getElementById('gd-photoData').value;
-  const desc   = document.getElementById('gd-desc').value.trim();
-  const badge  = document.getElementById('gd-badge').value;
-  const stock  = document.getElementById('gd-stock').value;
-  const editId = document.getElementById('gd-editId').value;
-  if(!cat||!name||!price||!desc){showToast('❌ Category, name, price and description are required!');return;}
-  const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
-  const obj={cat,name,price,icon,desc,badge,badgeText:bmap[badge]||'',stock};
-  if(editId){
-    const idx=gadgets.findIndex(g=>g.id==editId);
-    if(idx>-1){
-      // Keep old photo if no new one uploaded in this edit
-      if(!photo && gadgets[idx].photo) obj.photo=gadgets[idx].photo;
-      else obj.photo=photo;
-      gadgets[idx]={...gadgets[idx],...obj};
+  try{
+    const cat    = document.getElementById('gd-cat').value;
+    const name   = document.getElementById('gd-name').value.trim();
+    const price  = document.getElementById('gd-price').value.trim();
+    const icon   = document.getElementById('gd-icon').value||'📦';
+    const photo  = document.getElementById('gd-photoData').value;
+    const desc   = document.getElementById('gd-desc').value.trim();
+    const badge  = document.getElementById('gd-badge').value;
+    const stock  = document.getElementById('gd-stock').value;
+    const editId = document.getElementById('gd-editId').value;
+    if(!cat||!name||!price||!desc){showToast('❌ Category, name, price and description are required!');return;}
+    const bmap={new:'NEW',sale:'SALE',hot:'HOT'};
+    const obj={cat,name,price,icon,desc,badge,badgeText:bmap[badge]||'',stock};
+    if(editId){
+      const idx=gadgets.findIndex(g=>g.id==editId);
+      if(idx>-1){
+        // Keep old photo if no new one uploaded in this edit
+        if(!photo && gadgets[idx].photo) obj.photo=gadgets[idx].photo;
+        else obj.photo=photo;
+        gadgets[idx]={...gadgets[idx],...obj};
+      }
+    } else {
+      obj.photo=photo;
+      obj.id=nextGadgetId++;_svLocal('mg_ngadgetid',nextGadgetId);gadgets.push(obj);
     }
-  } else {
-    obj.photo=photo;
-    obj.id=nextGadgetId++;_svLocal('mg_ngadgetid',nextGadgetId);gadgets.push(obj);
+    _svLocal('mg_gadgets',gadgets);
+    if(firebaseEnabled) fbSaveCollection('gadgets',gadgets);
+    clearGadgetForm();renderAdminGadgets();renderGadgetsPage();
+    showToast(editId?'✅ Product updated!':'✅ Product added!');
+  }catch(e){
+    console.error('[saveGadget] Unexpected error:', e);
+    showToast('❌ Could not save product: '+e.message);
   }
-  _svLocal('mg_gadgets',gadgets);
-  if(firebaseEnabled) fbSaveCollection('gadgets',gadgets);
-  clearGadgetForm();renderAdminGadgets();renderGadgetsPage();
-  showToast(editId?'✅ Product updated!':'✅ Product added!');
 }
 
 function deleteGadget(id){
